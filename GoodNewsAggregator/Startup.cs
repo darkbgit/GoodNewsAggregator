@@ -1,4 +1,4 @@
-using GoodNewsAggregator.Data;
+using GoodNewsAggregator.DAL.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +12,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GoodNewsAggregator.Core.Services.Interfaces;
+using GoodNewsAggregator.DAL.Core.Entities;
+using GoodNewsAggregator.DAL.Repositories.Implementation;
+using GoodNewsAggregator.DAL.Repositories.Implementation.Repositories;
+using GoodNewsAggregator.DAL.Repositories.Interfaces;
+using GoodNewsAggregator.Services.Implementation;
+using AutoMapper;
+using GoodNewsAggregator.Services.Implementation.Mapping;
 
 namespace GoodNewsAggregator
 {
@@ -27,13 +35,32 @@ namespace GoodNewsAggregator
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<GoodNewsAggregatorContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
+            //services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddTransient<IRepository<News>, NewsRepository>();
+            services.AddTransient<IRepository<RssSourse>, RssSourseRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<IRssSourseService, RssSourseService>();
+
+            services.AddTransient<IWebPageParser, OnlinerParser>();
+
+            //services.AddAutoMapper(typeof(Startup));
+
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddControllersWithViews();
         }
 
@@ -64,7 +91,7 @@ namespace GoodNewsAggregator
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                //endpoints.MapRazorPages();
             });
         }
     }
