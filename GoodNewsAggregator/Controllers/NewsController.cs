@@ -38,12 +38,25 @@ namespace GoodNewsAggregator.Controllers
 
 
         // GET: News
-        public async Task<IActionResult> Index(Guid? sourseId)
+        public async Task<IActionResult> Index(Guid?[] sourseIds)
         {
-            var news = (await _newsService.GetNewsBySourseId(sourseId))
-                .ToList();
+            IEnumerable<NewsDto> news = new List<NewsDto>();
 
-            return View(news.Select(n => new NewsList()
+            if (sourseIds.Length > 0)
+            {
+                foreach (var sourseId in sourseIds)
+                {
+                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
+                        .ToList();
+                    news = news.Concat(sourseNews);
+                }
+            }
+            else
+            {
+                news = (await _newsService.GetNewsBySourseId(null)).ToList();
+            }
+
+            var newsList = news.Select(n => new NewsList()
             {
                 Id = n.Id,
                 Title = n.Title,
@@ -51,7 +64,33 @@ namespace GoodNewsAggregator.Controllers
                 ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
                 ImageUrl = n.ImageUrl,
                 PublicationDate = n.PublicationDate
-            }).ToList());
+            }).ToList();
+
+            //_mapper.Map<NewsList>(news)).ToList();
+
+            var rssSourses = _rssSourseService.GetAllRssSourses();
+
+            var newsListWithRss = new NewsListWhithRss()
+            {
+                NewsLists = newsList,
+                RssSourses = rssSourses
+            };
+
+            return View(newsList);
+            
+            
+            
+            //new NewsList()
+            
+            
+            //{
+            //    Id = n.Id,
+            //    Title = n.Title,
+            //    Url = n.Url,
+            //    ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+            //    ImageUrl = n.ImageUrl,
+            //    PublicationDate = n.PublicationDate
+            //}).ToList());
         }
 
         // GET: News/Details/5
@@ -71,7 +110,7 @@ namespace GoodNewsAggregator.Controllers
             }
 
             var oneNews = _mapper.Map<OneNews>(news);
-                
+
             //    new OneNews()
             //{
             //    Id = news.Id,
@@ -82,6 +121,8 @@ namespace GoodNewsAggregator.Controllers
             //    PublicationDate = news.PublicationDate,
             //    RssSourseId = news.RssSourseId
             //};
+
+            
 
             return View(oneNews);
         }

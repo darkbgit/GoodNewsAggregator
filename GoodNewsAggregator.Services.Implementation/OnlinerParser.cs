@@ -12,7 +12,6 @@ namespace GoodNewsAggregator.Services.Implementation
     {
         public async Task<string> Parse(string url)
         {
-            //https://people.onliner.by/2021/04/11/v-breste-pojman-sharik-iz-gollandii
             var web = new HtmlWeb();
             var doc = web.Load(url);
 

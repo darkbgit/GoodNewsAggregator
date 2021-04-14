@@ -18,6 +18,8 @@ namespace GoodNewsAggregator.Services.Implementation.Mapping
             CreateMap<NewsDto, News>();
 
             CreateMap<NewsDto, OneNews>();
+
+            CreateMap<NewsDto, NewsList>();
         }
     }
 }
