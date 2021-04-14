@@ -68,15 +68,15 @@ namespace GoodNewsAggregator.Controllers
 
             //_mapper.Map<NewsList>(news)).ToList();
 
-            var rssSourses = _rssSourseService.GetAllRssSourses();
+            var rssSourses = (await _rssSourseService.GetAllRssSourses()).ToList();
 
-            var newsListWithRss = new NewsListWhithRss()
+            var newsListWithRss = new NewsListWithRss()
             {
                 NewsLists = newsList,
                 RssSourses = rssSourses
             };
 
-            return View(newsList);
+            return View(newsListWithRss);
             
             
             

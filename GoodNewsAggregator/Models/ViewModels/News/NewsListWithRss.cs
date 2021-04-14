@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Models.ViewModels.News
 {
-    public class NewsListWhithRss
+    public class NewsListWithRss
     {
         public IEnumerable<NewsList> NewsLists { get; set; }
 
