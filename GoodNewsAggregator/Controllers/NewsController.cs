@@ -93,6 +93,53 @@ namespace GoodNewsAggregator.Controllers
             //}).ToList());
         }
 
+
+        [HttpPost]
+
+        public async Task<IActionResult> Index(Guid[] rssIds)
+        {
+            //Guid[] sourseIds = Request.Headers.ContainsKey("rssIds").ToString();
+
+            IEnumerable<NewsDto> news = new List<NewsDto>();
+
+
+            if (rssIds.Length > 0)
+            {
+                foreach (var sourseId in rssIds)
+                {
+                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
+                        .ToList();
+                    news = news.Concat(sourseNews);
+                }
+            }
+            else
+            {
+                news = (await _newsService.GetNewsBySourseId(null)).ToList();
+            }
+
+            var newsList = news.Select(n => new NewsList()
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Url = n.Url,
+                ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+                ImageUrl = n.ImageUrl,
+                PublicationDate = n.PublicationDate
+            }).ToList();
+
+            //_mapper.Map<NewsList>(news)).ToList();
+
+            var rssSourses = (await _rssSourseService.GetAllRssSourses()).ToList();
+
+            var newsListWithRss = new NewsListWithRss()
+            {
+                NewsLists = newsList,
+                RssSourses = rssSourses
+            };
+
+            return View(newsListWithRss);
+        }
+
         // GET: News/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -292,14 +339,14 @@ namespace GoodNewsAggregator.Controllers
                 {
                     var newsList = await _newsService
                         .GetNewsInfoFromRssSourse(rssSourse);
-                    if (rssSourse.Name.Equals("Onliner"))
-                    {
-                        foreach (var newsDto in newsList)
-                        {
-                            var newsBody = await _onlinerParser.Parse(newsDto.Url);
-                            newsDto.Body = newsBody;
-                        }
-                    }
+                    //if (rssSourse.Name.Equals("Onliner"))
+                    //{
+                    //    foreach (var newsDto in newsList)
+                    //    {
+                    //        var newsBody = await _onlinerParser.Parse(newsDto.Url);
+                    //        newsDto.Body = newsBody;
+                    //    }
+                    //}
 
                     newInfos.AddRange(newsList);
                 }
