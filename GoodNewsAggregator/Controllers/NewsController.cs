@@ -95,7 +95,7 @@ namespace GoodNewsAggregator.Controllers
 
 
         [HttpPost]
-
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(Guid[] rssIds)
         {
             //Guid[] sourseIds = Request.Headers.ContainsKey("rssIds").ToString();
@@ -137,7 +137,9 @@ namespace GoodNewsAggregator.Controllers
                 RssSourses = rssSourses
             };
 
-            return View(newsListWithRss);
+
+
+            return PartialView(newsListWithRss);
         }
 
         // GET: News/Details/5

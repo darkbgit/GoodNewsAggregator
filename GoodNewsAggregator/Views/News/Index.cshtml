@@ -4,7 +4,10 @@
     ViewData["Title"] = "News";
 }
 
-
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
 
 <h3>Are you sure you want to aggregate news? it can take a time</h3>
 <hr />
@@ -37,7 +40,7 @@
                                 @source.Name
                             </label>
                             <input class="form-check-input" type="checkbox"
-                                   id="flexCheckBox" value="@source.Id" 
+                                   id="flexCheckBox" value="@source.Id"
                                    onchange="OnChangeCheckBoxFunc(this)" />
                         </div>
                     }
@@ -118,13 +121,16 @@ function OnChangeCheckBoxFunc(e) {
 }
 
 function getCheckedCheckBoxesMove() {
-
+    var form = $('#__AjaxAntiForgeryForm');
+    var token = $('input[name="__RequestVerificationToken"]', form).val();
     $.ajax({
         type: 'POST',
         url: '@Url.Action("Index", "News")',
         data: {
+            __RequestVerificationToken: token,
             rssIds: rssIds,
         },
+        dataType: 'json',
         success: function (data) {
             console.log('success!');
         }

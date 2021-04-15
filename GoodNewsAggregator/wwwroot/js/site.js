@@ -4,6 +4,12 @@
 // Write your JavaScript code.
 
 
+    function gettoken() {
+        var token = '@Html.AntiForgeryToken()';
+        token = $(token).val();
+        return token;
+    }
+
 //checkedCheckBox = [];
 
 //function OnChangeCheckBoxFunc(e) {
