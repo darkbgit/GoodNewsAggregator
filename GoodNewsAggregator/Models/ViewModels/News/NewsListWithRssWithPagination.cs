@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Models.ViewModels.News
 {
-    public class NewsListWithRss
+    public class NewsListWithRssWithPagination
     {
         public IEnumerable<NewsList> NewsLists { get; set; }
 
-        public IEnumerable<RssSourseDto> RssSourses { get; set; }
+        public IEnumerable<RssList> RssList { get; set; }
+
+        public PageInfo Pagination { get; set; }
     }
 }

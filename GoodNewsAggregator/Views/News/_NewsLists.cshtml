@@ -1,0 +1,10 @@
+﻿@model IEnumerable<GoodNewsAggregator.Models.ViewModels.News.NewsList>
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        await Html.RenderPartialAsync("ShortNewsPreview", item);
+    }
+
+</div>

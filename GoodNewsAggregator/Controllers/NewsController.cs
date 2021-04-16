@@ -13,6 +13,7 @@ using System.Diagnostics;
 using GoodNewsAggregator.Core.DTOs;
 using Serilog;
 using AutoMapper;
+using GoodNewsAggregator.Models.ViewModels;
 
 namespace GoodNewsAggregator.Controllers
 {
@@ -38,7 +39,7 @@ namespace GoodNewsAggregator.Controllers
 
 
         // GET: News
-        public async Task<IActionResult> Index(Guid?[] sourseIds)
+        public async Task<IActionResult> Index(Guid?[] sourseIds, int page = 1)
         {
             IEnumerable<NewsDto> news = new List<NewsDto>();
 
@@ -56,7 +57,11 @@ namespace GoodNewsAggregator.Controllers
                 news = (await _newsService.GetNewsBySourseId(null)).ToList();
             }
 
-            var newsList = news.Select(n => new NewsList()
+            var newsPerPageCount = 25;
+
+            var newsPerPage = news.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
+
+            var newsList = newsPerPage.Select(n => new NewsList()
             {
                 Id = n.Id,
                 Title = n.Title,
@@ -70,10 +75,26 @@ namespace GoodNewsAggregator.Controllers
 
             var rssSourses = (await _rssSourseService.GetAllRssSourses()).ToList();
 
-            var newsListWithRss = new NewsListWithRss()
+            var rssList = rssSourses.Select(r => new RssList()
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Url = r.Url,
+                Checked = sourseIds.Contains(r.Id)
+            });
+
+            var pageInfo = new PageInfo()
+            {
+                PageNumber = page,
+                PageSize = newsPerPageCount,
+                TotalNews = news.Count()
+            };
+
+            var newsListWithRss = new NewsListWithRssWithPagination()
             {
                 NewsLists = newsList,
-                RssSourses = rssSourses
+                RssList = rssList,
+                Pagination = pageInfo
             };
 
             return View(newsListWithRss);
@@ -96,7 +117,7 @@ namespace GoodNewsAggregator.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(Guid[] rssIds)
+        public async Task<IActionResult> Index(Guid?[] sourseIds, int page = 1)
         {
             //Guid[] sourseIds = Request.Headers.ContainsKey("rssIds").ToString();
 
@@ -129,17 +150,11 @@ namespace GoodNewsAggregator.Controllers
 
             //_mapper.Map<NewsList>(news)).ToList();
 
-            var rssSourses = (await _rssSourseService.GetAllRssSourses()).ToList();
-
-            var newsListWithRss = new NewsListWithRss()
-            {
-                NewsLists = newsList,
-                RssSourses = rssSourses
-            };
 
 
 
-            return PartialView(newsListWithRss);
+
+            return PartialView("_NewsLists", newsList);
         }
 
         // GET: News/Details/5
