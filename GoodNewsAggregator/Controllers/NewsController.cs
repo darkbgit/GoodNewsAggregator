@@ -13,6 +13,7 @@ using System.Diagnostics;
 using GoodNewsAggregator.Core.DTOs;
 using Serilog;
 using AutoMapper;
+using GoodNewsAggregator.Models;
 using GoodNewsAggregator.Models.ViewModels;
 
 namespace GoodNewsAggregator.Controllers
@@ -39,15 +40,15 @@ namespace GoodNewsAggregator.Controllers
 
 
         // GET: News
-        public async Task<IActionResult> Index(Guid?[] sourseIds, int page = 1)
+        public async Task<IActionResult> Index(Guid?[] sourceIds, int page = 1)
         {
             IEnumerable<NewsDto> news = new List<NewsDto>();
 
-            if (sourseIds.Length > 0)
+            if (sourceIds.Length > 0)
             {
-                foreach (var sourseId in sourseIds)
+                foreach (var sourceId in sourceIds)
                 {
-                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
+                    var sourseNews = (await _newsService.GetNewsBySourseId(sourceId))
                         .ToList();
                     news = news.Concat(sourseNews);
                 }
@@ -80,15 +81,11 @@ namespace GoodNewsAggregator.Controllers
                 Id = r.Id,
                 Name = r.Name,
                 Url = r.Url,
-                Checked = sourseIds.Contains(r.Id)
+                Checked = !sourceIds.Any() || sourceIds.Contains(r.Id)
             });
 
-            var pageInfo = new PageInfo()
-            {
-                PageNumber = page,
-                PageSize = newsPerPageCount,
-                TotalNews = news.Count()
-            };
+            var pageInfo = new Paging(newsPerPageCount, page, news.Count(), "");
+
 
             var newsListWithRss = new NewsListWithRssWithPagination()
             {
@@ -115,47 +112,47 @@ namespace GoodNewsAggregator.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(Guid?[] sourseIds, int page = 1)
-        {
-            //Guid[] sourseIds = Request.Headers.ContainsKey("rssIds").ToString();
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Index(Guid?[] sourceIds, int page = 1)
+        //{
+        //    //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
 
-            IEnumerable<NewsDto> news = new List<NewsDto>();
-
-
-            if (rssIds.Length > 0)
-            {
-                foreach (var sourseId in rssIds)
-                {
-                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
-                        .ToList();
-                    news = news.Concat(sourseNews);
-                }
-            }
-            else
-            {
-                news = (await _newsService.GetNewsBySourseId(null)).ToList();
-            }
-
-            var newsList = news.Select(n => new NewsList()
-            {
-                Id = n.Id,
-                Title = n.Title,
-                Url = n.Url,
-                ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
-                ImageUrl = n.ImageUrl,
-                PublicationDate = n.PublicationDate
-            }).ToList();
-
-            //_mapper.Map<NewsList>(news)).ToList();
+        //    IEnumerable<NewsDto> news = new List<NewsDto>();
 
 
+        //    if (rssIds.Length > 0)
+        //    {
+        //        foreach (var sourseId in rssIds)
+        //        {
+        //            var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
+        //                .ToList();
+        //            news = news.Concat(sourseNews);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        news = (await _newsService.GetNewsBySourseId(null)).ToList();
+        //    }
+
+        //    var newsList = news.Select(n => new NewsList()
+        //    {
+        //        Id = n.Id,
+        //        Title = n.Title,
+        //        Url = n.Url,
+        //        ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+        //        ImageUrl = n.ImageUrl,
+        //        PublicationDate = n.PublicationDate
+        //    }).ToList();
+
+        //    //_mapper.Map<NewsList>(news)).ToList();
 
 
 
-            return PartialView("_NewsLists", newsList);
-        }
+
+
+        //    return PartialView("_NewsLists", newsList);
+        //}
 
         // GET: News/Details/5
         public async Task<IActionResult> Details(Guid? id)
