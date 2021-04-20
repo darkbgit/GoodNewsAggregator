@@ -40,8 +40,10 @@ namespace GoodNewsAggregator
                     Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDatabaseDeveloperPageExceptionFilter();
 
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<User, Role>(options =>
+                    options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<GoodNewsAggregatorContext>();
+            
             services.AddTransient<IRepository<News>, NewsRepository>();
             services.AddTransient<IRepository<RssSourse>, RssSourseRepository>();
 

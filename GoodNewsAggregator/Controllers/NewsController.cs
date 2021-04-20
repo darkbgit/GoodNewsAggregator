@@ -40,6 +40,7 @@ namespace GoodNewsAggregator.Controllers
 
 
         // GET: News
+        [HttpGet]
         public async Task<IActionResult> Index(Guid?[] sourceIds, int page = 1)
         {
             IEnumerable<NewsDto> news = new List<NewsDto>();
@@ -84,7 +85,7 @@ namespace GoodNewsAggregator.Controllers
                 Checked = !sourceIds.Any() || sourceIds.Contains(r.Id)
             });
 
-            var pageInfo = new Paging(newsPerPageCount, page, news.Count(), "");
+            var pageInfo = new PageInfo(newsPerPageCount, page, news.Count());
 
 
             var newsListWithRss = new NewsListWithRssWithPagination()
@@ -112,47 +113,52 @@ namespace GoodNewsAggregator.Controllers
         }
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Index(Guid?[] sourceIds, int page = 1)
-        //{
-        //    //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(Guid[] rssIds, int page = 1)
+        {
+            //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
+            //Request.Headers.TryGetValue("rssIds", sourceIds).ToList();
 
-        //    IEnumerable<NewsDto> news = new List<NewsDto>();
-
-
-        //    if (rssIds.Length > 0)
-        //    {
-        //        foreach (var sourseId in rssIds)
-        //        {
-        //            var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
-        //                .ToList();
-        //            news = news.Concat(sourseNews);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        news = (await _newsService.GetNewsBySourseId(null)).ToList();
-        //    }
-
-        //    var newsList = news.Select(n => new NewsList()
-        //    {
-        //        Id = n.Id,
-        //        Title = n.Title,
-        //        Url = n.Url,
-        //        ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
-        //        ImageUrl = n.ImageUrl,
-        //        PublicationDate = n.PublicationDate
-        //    }).ToList();
-
-        //    //_mapper.Map<NewsList>(news)).ToList();
+            IEnumerable<NewsDto> news = new List<NewsDto>();
 
 
+                foreach (var sourseId in rssIds)
+                {
+                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
+                        .ToList();
+                    news = news.Concat(sourseNews);
+                }
+
+            var newsPerPageCount = 25;
+
+            var newsPerPage = news.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
+
+            var newsList = newsPerPage.Select(n => new NewsList()
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Url = n.Url,
+                ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+                ImageUrl = n.ImageUrl,
+                PublicationDate = n.PublicationDate
+            }).ToList();
+
+
+            var pageInfo = new PageInfo(newsPerPageCount, page, news.Count());
+
+            //_mapper.Map<NewsList>(news)).ToList();
+
+            var newsListsWithPagination = new NewsListWithPagination()
+            {
+                NewsLists = newsList,
+                Pagination = pageInfo
+            };
 
 
 
-        //    return PartialView("_NewsLists", newsList);
-        //}
+            return PartialView("_NewsListsWithPagination", newsListsWithPagination);
+        }
 
         // GET: News/Details/5
         public async Task<IActionResult> Details(Guid? id)

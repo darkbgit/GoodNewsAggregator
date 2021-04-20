@@ -1,5 +1,6 @@
 ﻿@model GoodNewsAggregator.Models.ViewModels.News.NewsListWithRssWithPagination
 @using GoodNewsAggregator.HtmlHelpers
+@using GoodNewsAggregator.Models.ViewModels.News
 
 @{
     ViewData["Title"] = "News";
@@ -32,14 +33,16 @@
     <a asp-action="Create">Create New</a>
 </p>
 
-<partial name="_NewsLists" model="Model.NewsLists" />
-
-<partial name="_Pagination" model="Model.Pagination" />
-
 
 <div id="outputField">
-    @{ await Html.RenderPartialAsync("_NewsLists", Model.NewsLists);}
+    @{ await Html.RenderPartialAsync("_NewsListsWithPagination",
+           new NewsListWithPagination()
+           {
+               NewsLists = Model.NewsLists,
+               Pagination = Model.Pagination
+           });}
 </div>
+
 
 
 
@@ -49,40 +52,67 @@
 
     <script>
 
-    rssIds = [];
+        $('.form-check-input').on('change', function () {
+            updatePageFromSwitch();
+        });
 
-function OnChangeCheckBoxFunc(e) {
-    var rssId = e.value;
+        $('body').on('click', '.page-item', function () {
+            var page = $(this).children('label').attr('value');
+            //alert(page);
+            updatePageFromPagination(page);
+        });
 
-    if (rssIds.indexOf(rssId) > -1)
-    {
-        var elementIndex = rssIds.indexOf(rssId);
-        rssIds.splice(elementIndex, 1);
-    }
-    else
-    {
-        rssIds.push(rssId);
-    }
-    getCheckedCheckBoxesMove();
-}
 
-function getCheckedCheckBoxesMove() {
-    var form = $('#__AjaxAntiForgeryForm');
-    var token = $('input[name="__RequestVerificationToken"]', form).val();
-    $.ajax({
-        type: 'POST',
-        url: '@Url.Action("Index", "News")',
-        data: {
-            __RequestVerificationToken: token,
-            rssIds: rssIds,
-        },
-        //dataType: 'json',
-        success: function (response) {
-            console.log('success!');
-            $('#outputField').html(response);
-        }
-    });
-}
+
+        function getCheckedRssIds() {
+            var rssIds = [];
+
+            $('.form-check-input:checked').each(function () {
+                rssIds.push($(this).val());
+            });
+            return rssIds;
+        };
+
+        function updatePageFromSwitch(rssIds) {
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+            var rssIds = getCheckedRssIds();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Index", "News")',
+                data: {
+                    __RequestVerificationToken: token,
+                    rssIds: rssIds,
+                },
+                //dataType: 'json',
+                success: function (response) {
+                    console.log('success!');
+                    $('#outputField').html(response);
+                }
+            });
+        };
+
+        function updatePageFromPagination(page) {
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+            var rssIds = getCheckedRssIds();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Index", "News")',
+                data: {
+                    __RequestVerificationToken: token,
+                    rssIds: rssIds,
+                    page: page
+                },
+                //dataType: 'json',
+                success: function (response) {
+                    console.log('success!');
+                    $('#outputField').html(response);
+                }
+            });
+        };
 
     </script>
 }

@@ -10,6 +10,9 @@ namespace GoodNewsAggregator.DAL.Core.Entities
     {
         public Guid Id { get; set; }
 
+        public string Text { get; set; }
+        public DateTime dateTime { get; set; }
+
         public Guid NewsId { get; set; }
         public virtual News News { get; set; }
 
