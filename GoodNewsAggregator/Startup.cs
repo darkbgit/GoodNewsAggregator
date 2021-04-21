@@ -41,7 +41,7 @@ namespace GoodNewsAggregator
             //services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentity<User, Role>(options =>
-                    options.SignIn.RequireConfirmedAccount = true)
+                    options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<GoodNewsAggregatorContext>();
             
             services.AddTransient<IRepository<News>, NewsRepository>();
@@ -80,6 +80,8 @@ namespace GoodNewsAggregator
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            //app.UseAuthentication();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

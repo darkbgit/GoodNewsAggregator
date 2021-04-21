@@ -13,6 +13,6 @@ namespace GoodNewsAggregator.DAL.Core.Entities
         public string Name { get; set; }
         public string Url { get; set; }
 
-        public ICollection<News> NewsCollection { get; set; }
+        public virtual ICollection<News> NewsCollection { get; set; }
     }
 }
