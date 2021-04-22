@@ -71,7 +71,7 @@ namespace GoodNewsAggregator.Controllers
                 ReturnUrl = returnUrl
             };
 
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -96,7 +96,7 @@ namespace GoodNewsAggregator.Controllers
                     ModelState.AddModelError("", "Неверный логин и (или) пароль");
                 }
             }
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]

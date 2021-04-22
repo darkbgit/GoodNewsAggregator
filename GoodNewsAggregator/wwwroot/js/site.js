@@ -39,3 +39,21 @@
 //        }
 //    });
 //}
+
+$(document).ready(function () {
+    $('#msform').submit(function () {
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function (result) {
+                $('#registermodel').html(reult);
+                $('registermodel').show();
+            },
+            error: function (result) {
+                $('#registermodel').html(reult);
+                $('registermodel').show();
+            }
+        });
+    });
+});
