@@ -1,36 +1,41 @@
 ﻿@model GoodNewsAggregator.Models.ViewModels.Account.LoginViewModel
 
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog">
     <div class="modal-content">
-        <div class="row justify-content-center">
-            <h2 id="heading">Вход в приложение</h2>
-        <form class="form-horizontal" role="form" id="msform" name="msform" method="post" asp-controller="Account" asp-action="Login"
-              asp-route-reurnUrl="@Model.ReturnUrl">
-            <div asp-validation-summary="ModelOnly"></div>
+        <div class="modal-header">
+            <h5 class="modal-title" id="loginModalLabel">Вход в приложение</h5>
+        </div>
+            <form class="form-horizontal" role="form" id="loginForm" name="loginForm" method="post" asp-controller="Account" asp-action="Login"
+                  asp-route-reurnUrl="@Model.ReturnUrl">
+                <div class="modal-body">
+                <div asp-validation-summary="ModelOnly"></div>
 
-            <label asp-for="Email"></label>
-            <br />
-            <input asp-for="Email" />
-            <span asp-validation-for="Email"></span>
-
-
-            <label asp-for="Password"></label>
-            <br />
-            <input asp-for="Password" />
-            <span asp-validation-for="Password"></span>
-
-            <p><a href="#">Забыли пароль?</a></p>
-
-                <label asp-for="RememberMe"></label>
+                <label asp-for="Email"></label>
                 <br />
+                <input asp-for="Email" />
+                <span asp-validation-for="Email"></span>
+
+
+                <label asp-for="Password"></label>
+                <br />
+                <input asp-for="Password" />
+                <span asp-validation-for="Password"></span>
+
+                <p><a href="#">Забыли пароль?</a></p>
+
+
+                <br />
+                    </div>
+                <div class="model-footer">
                 <input asp-for="RememberMe" />
+                <label asp-for="RememberMe"></label>
 
                 <input type="submit" value="Войти" />
+                    </div>
 
 
-
-            @*<label for="name">Логин:</label>
+                @*<label for="name">Логин:</label>
         <input type="name">
         <label for="username">Пароль:</label>
         <p><a href="#">Забыли пароль?</a></p>
@@ -39,8 +44,9 @@
             <input type="checkbox"><label class="check" for="checkbox">Запомнить меня</label>
             <input type="submit" value="Войти">
         </div>*@
-        </form>
+            </form>
+
         </div>
     </div>
-    </div>
+
 

@@ -57,3 +57,34 @@ $(document).ready(function () {
         });
     });
 });
+
+$(function () {
+    $.ajaxSetup({ cache: false });
+    $('.loginClick').click(function (e) {
+        e.preventDefault();
+        $.get(this.href, function (data) {
+            $('#modalDialogContent').html(data);
+            $('#modalLogin').modal('show');
+        });
+    });
+});
+
+
+$(document).ready(function () {
+    $('#loginForm').submit(function () {
+        $.ajax({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function (data) {
+                $('#registermodel').html(data);
+                $('registermodel').show();
+            },
+            error: function (data) {
+                console.log('error');
+                $('#modalDialogContent').html(data.responseText);
+                //$('#modalLogin').modal('show');
+            }
+        });
+    });
+});

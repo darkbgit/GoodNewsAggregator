@@ -93,9 +93,11 @@ namespace GoodNewsAggregator.Controllers
                     }
                 else
                 {
+                    Response.StatusCode = 400;
                     ModelState.AddModelError("", "Неверный логин и (или) пароль");
                 }
             }
+            Response.StatusCode = 400;
             return PartialView(model);
         }
 
