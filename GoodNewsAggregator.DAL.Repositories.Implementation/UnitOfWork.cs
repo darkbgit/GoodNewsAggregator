@@ -13,11 +13,11 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation
     {
         private readonly GoodNewsAggregatorContext _db;
         private readonly IRepository<News> _newsRepository;
-        private readonly IRepository<RssSourse> _rssRepository;
+        private readonly IRepository<RssSource> _rssRepository;
 
         public UnitOfWork(GoodNewsAggregatorContext db,
             IRepository<News> newsRepository,
-            IRepository<RssSourse> rssRepository)
+            IRepository<RssSource> rssRepository)
         {
             _db = db;
             _newsRepository = newsRepository;
@@ -25,7 +25,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation
         }
 
         public IRepository<News> News => _newsRepository;
-        public IRepository<RssSourse> RssSourses => _rssRepository;
+        public IRepository<RssSource> RssSourses => _rssRepository;
 
         public void Dispose()
         {

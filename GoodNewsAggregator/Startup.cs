@@ -45,7 +45,7 @@ namespace GoodNewsAggregator
                 .AddEntityFrameworkStores<GoodNewsAggregatorContext>();
             
             services.AddTransient<IRepository<News>, NewsRepository>();
-            services.AddTransient<IRepository<RssSourse>, RssSourseRepository>();
+            services.AddTransient<IRepository<RssSource>, RssSourseRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

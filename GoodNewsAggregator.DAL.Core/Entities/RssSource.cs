@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.DAL.Core.Entities
 {
-    public class RssSourse : IBaseEntity
+    public class RssSource : IBaseEntity
     {
         public Guid Id { get; set; }
         

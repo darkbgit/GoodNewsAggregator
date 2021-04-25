@@ -47,7 +47,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RssSourses",
+                name: "RssSources",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -56,7 +56,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RssSourses", x => x.Id);
+                    table.PrimaryKey("PK_RssSources", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,18 +173,18 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShortNewsFromRssSourse = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShortNewsFromRssSource = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    RssSourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RssSourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_News", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_News_RssSourses_RssSourseId",
-                        column: x => x.RssSourseId,
-                        principalTable: "RssSourses",
+                        name: "FK_News_RssSources_RssSourceId",
+                        column: x => x.RssSourceId,
+                        principalTable: "RssSources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -266,9 +266,9 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_News_RssSourseId",
+                name: "IX_News_RssSourceId",
                 table: "News",
-                column: "RssSourseId");
+                column: "RssSourceId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -301,7 +301,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 name: "News");
 
             migrationBuilder.DropTable(
-                name: "RssSourses");
+                name: "RssSources");
         }
     }
 }

@@ -16,7 +16,7 @@ namespace GoodNewsAggregator.Models.ViewModels.News
         public string? ImageUrl { get; set; }
         public string? PublicationDate { get; set; }
 
-        //public Guid RssSourseId { get; set; }
+        //public Guid RssSourceId { get; set; }
 
         
     }

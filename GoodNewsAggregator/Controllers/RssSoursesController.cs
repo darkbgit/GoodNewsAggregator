@@ -21,7 +21,7 @@ namespace GoodNewsAggregator.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = await _context.RssSourses.ToListAsync();
+            var model = await _context.RssSources.ToListAsync();
             
             return View(model);
         }
@@ -34,15 +34,15 @@ namespace GoodNewsAggregator.Controllers
                 return NotFound();
             }
 
-            var sourse = await _context.RssSourses
+            var source = await _context.RssSources
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (sourse == null)
+            if (source == null)
             {
                 Log.Error("RssSoursesController Details sourse = null");
                 return NotFound();
             }
 
-            return View(sourse);
+            return View(source);
         }
 
         public IActionResult Create()
@@ -52,12 +52,12 @@ namespace GoodNewsAggregator.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RssSourse sourse)
+        public async Task<IActionResult> Create(RssSource sourse)
         {
             if (ModelState.IsValid)
             {
                 sourse.Id = Guid.NewGuid();
-                await _context.RssSourses.AddAsync(sourse);
+                await _context.RssSources.AddAsync(sourse);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

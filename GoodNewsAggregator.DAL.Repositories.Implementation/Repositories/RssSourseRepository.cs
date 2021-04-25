@@ -8,7 +8,7 @@ using GoodNewsAggregator.DAL.Core.Entities;
 
 namespace GoodNewsAggregator.DAL.Repositories.Implementation.Repositories
 {
-    public class RssSourseRepository : Repository<RssSourse>
+    public class RssSourseRepository : Repository<RssSource>
     {
         public RssSourseRepository(GoodNewsAggregatorContext context)
             : base(context)

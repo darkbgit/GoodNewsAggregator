@@ -41,7 +41,7 @@ namespace GoodNewsAggregator.Services.Implementation
 
             var news = id.HasValue
                 ? await _unitOfWork.News.FindBy(n
-                        => n.RssSourseId.Equals(id.GetValueOrDefault()))
+                        => n.RssSourceId.Equals(id.GetValueOrDefault()))
                     .ToListAsync()
                 : await _unitOfWork.News.FindBy(n => n.Id != null)
                     .ToListAsync();
@@ -79,7 +79,7 @@ namespace GoodNewsAggregator.Services.Implementation
         //    {
         //        var stopwatch = new Stopwatch();
         //        stopwatch.Start();
-        //        var rssSourses =  _unitOfWork.RssSourses.GetAll().ToList();
+        //        var rssSourses =  _unitOfWork.RssSources.GetAll().ToList();
         //        var newInfos = new List<NewsDto>();
 
         //        foreach (var rssSourse in rssSourses)
@@ -124,7 +124,7 @@ namespace GoodNewsAggregator.Services.Implementation
                                 RssSourseId = rssSourse.Id,
                                 Url = syndicationItem.Id,
                                 Title = syndicationItem.Title.Text,
-                                //ShortNewsFromRssSourse = syndicationItem.Summary.Text
+                                //ShortNewsFromRssSource = syndicationItem.Summary.Text
                                 ShortNewsFromRssSourse = GetPureShortNewsFromRssSource(syndicationItem.Summary.Text),
                                 ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text),
                                 PublicationDate = syndicationItem.PublishDate.DateTime.ToString()

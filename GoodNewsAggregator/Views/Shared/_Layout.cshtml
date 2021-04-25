@@ -29,10 +29,11 @@
                         </li>
                     </ul>
                 </div>
-                <div id="modalLogin" class="modal fade" tabindex="-1"
+                <div id="modal-placeholder"></div>
+                @*<div id="modalLogin" class="modal fade" tabindex="-1"
                      aria-labelledby="loginModalLabel" aria-hidden="true">
                     <div id="modalDialogContent" class="modal-dialog"></div>
-                </div>
+                </div>*@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <span>@User.Identity.Name</span>
@@ -42,7 +43,9 @@
                 }
                 else
                 {
-                    <a class="nav-link text-dark loginClick" asp-controller="Account" asp-action="Login">Вход</a>
+                    <button type="button" class="btn btn-primary" 
+                            data-toggle="ajax-modal" data-target="#modalLogin"
+                            data-url="@Url.Action("Login", "Account")">Login</button>
                     <a asp-controller="Account" asp-action="Register">Регистрация</a>
                 }
             </div>

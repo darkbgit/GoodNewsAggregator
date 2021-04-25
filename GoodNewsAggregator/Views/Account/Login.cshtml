@@ -1,52 +1,53 @@
 ﻿@model GoodNewsAggregator.Models.ViewModels.Account.LoginViewModel
 
-
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="loginModalLabel">Вход в приложение</h5>
-        </div>
-            <form class="form-horizontal" role="form" id="loginForm" name="loginForm" method="post" asp-controller="Account" asp-action="Login"
+<div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Вход в приложение</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" id="loginForm" name="loginForm" method="post" asp-controller="Account" asp-action="Login"
                   asp-route-reurnUrl="@Model.ReturnUrl">
+                <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                
                 <div class="modal-body">
-                <div asp-validation-summary="ModelOnly"></div>
-
-                <label asp-for="Email"></label>
-                <br />
-                <input asp-for="Email" />
-                <span asp-validation-for="Email"></span>
-
-
-                <label asp-for="Password"></label>
-                <br />
-                <input asp-for="Password" />
-                <span asp-validation-for="Password"></span>
-
-                <p><a href="#">Забыли пароль?</a></p>
-
-
-                <br />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <br />
                     </div>
-                <div class="model-footer">
-                <input asp-for="RememberMe" />
-                <label asp-for="RememberMe"></label>
-
-                <input type="submit" value="Войти" />
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
+
+                    <p><a href="#">Забыли пароль?</a></p>
+
+                </div>
+
+                <div class="modal-footer">
+                    <input asp-for="RememberMe" />
+                    <label asp-for="RememberMe"></label>
+                    <button type="button" class="btn btn-primary" data-login="modal">Login</button>
+                </div>
 
 
                 @*<label for="name">Логин:</label>
-        <input type="name">
-        <label for="username">Пароль:</label>
-        <p><a href="#">Забыли пароль?</a></p>
-        <input type="password">
-        <div id="lower">
-            <input type="checkbox"><label class="check" for="checkbox">Запомнить меня</label>
-            <input type="submit" value="Войти">
-        </div>*@
+            <input type="name">
+            <label for="username">Пароль:</label>
+            <p><a href="#">Забыли пароль?</a></p>
+            <input type="password">
+            <div id="lower">
+                <input type="checkbox"><label class="check" for="checkbox">Запомнить меня</label>
+                <input type="submit" value="Войти">
+            </div>*@
             </form>
-
         </div>
     </div>
+</div>
 
 

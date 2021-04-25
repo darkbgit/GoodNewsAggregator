@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoodNewsAggregator.DAL.Core.Migrations
 {
     [DbContext(typeof(GoodNewsAggregatorContext))]
-    [Migration("20210421123631_Init")]
+    [Migration("20210425151743_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,10 +63,10 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     b.Property<DateTime?>("PublicationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("RssSourseId")
+                    b.Property<Guid>("RssSourceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ShortNewsFromRssSourse")
+                    b.Property<string>("ShortNewsFromRssSource")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -77,7 +77,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RssSourseId");
+                    b.HasIndex("RssSourceId");
 
                     b.ToTable("News");
                 });
@@ -110,7 +110,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.RssSourse", b =>
+            modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.RssSource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -124,7 +124,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RssSourses");
+                    b.ToTable("RssSources");
                 });
 
             modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.User", b =>
@@ -315,13 +315,13 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
 
             modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.News", b =>
                 {
-                    b.HasOne("GoodNewsAggregator.DAL.Core.Entities.RssSourse", "RssSourse")
+                    b.HasOne("GoodNewsAggregator.DAL.Core.Entities.RssSource", "RssSource")
                         .WithMany("NewsCollection")
-                        .HasForeignKey("RssSourseId")
+                        .HasForeignKey("RssSourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RssSourse");
+                    b.Navigation("RssSource");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -380,7 +380,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.RssSourse", b =>
+            modelBuilder.Entity("GoodNewsAggregator.DAL.Core.Entities.RssSource", b =>
                 {
                     b.Navigation("NewsCollection");
                 });

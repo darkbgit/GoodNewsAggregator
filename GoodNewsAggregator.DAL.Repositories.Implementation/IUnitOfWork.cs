@@ -8,7 +8,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation
     public interface IUnitOfWork : IDisposable
     {
         IRepository<News> News { get; }
-        IRepository<RssSourse> RssSourses { get; }
+        IRepository<RssSource> RssSourses { get; }
 
         Task<int> SaveChangesAsync();
     }

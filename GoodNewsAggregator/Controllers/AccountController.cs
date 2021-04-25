@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Controllers
@@ -85,20 +86,32 @@ namespace GoodNewsAggregator.Controllers
                 if (result.Succeeded)
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        //return Redirect(model.ReturnUrl);
+                        var jsondata = JsonSerializer.Serialize(model.ReturnUrl);
+                        return Json(jsondata);
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        var jsondata = JsonSerializer.Serialize(("/Home/Index", "redirect"));
+                        return Json(jsondata);
+                        //return RedirectToAction("Index", "Home");
                     }
                 else
                 {
-                    Response.StatusCode = 400;
                     ModelState.AddModelError("", "Неверный логин и (или) пароль");
                 }
             }
-            Response.StatusCode = 400;
-            return PartialView(model);
+
+            var form = new
+            {
+                form = ViewRenderer
+            };
+            
+            var view1 = PartialView(model);
+            var view = PartialView("Login", model).ViewData;
+            var jsondata1 = JsonSerializer.Serialize(form);
+            return Json(jsondata1);
+            //return PartialView(model);
         }
 
         [HttpPost]

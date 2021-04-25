@@ -40,51 +40,61 @@
 //    });
 //}
 
-$(document).ready(function () {
-    $('#msform').submit(function () {
-        $.ajax({
-            url: this.action,
-            type: this.method,
-            data: $(this).serialize(),
-            success: function (result) {
-                $('#registermodel').html(reult);
-                $('registermodel').show();
-            },
-            error: function (result) {
-                $('#registermodel').html(reult);
-                $('registermodel').show();
-            }
-        });
-    });
-});
+//$(document).ready(function () {
+//    $('#msform').submit(function () {
+//        $.ajax({
+//            url: this.action,
+//            type: this.method,
+//            data: $(this).serialize(),
+//            success: function (result) {
+//                $('#registermodel').html(reult);
+//                $('registermodel').show();
+//            },
+//            error: function (result) {
+//                $('#registermodel').html(reult);
+//                $('registermodel').show();
+//            }
+//        });
+//    });
+//});
 
 $(function () {
+    var placeholder = $('#modal-placeholder');
     $.ajaxSetup({ cache: false });
-    $('.loginClick').click(function (e) {
+    $('button[data-toggle="ajax-modal"]').click(function (e) {
+        //e.preventDefault();
+        var url = $(this).data('url');
+        $.get(url).done(function (data) {
+            placeholder.html(data);
+            placeholder.find('.modal').modal('show');
+        });
+    });
+
+    placeholder.on('click', '[data-login="modal"]', function (e) {
         e.preventDefault();
-        $.get(this.href, function (data) {
-            $('#modalDialogContent').html(data);
-            $('#modalLogin').modal('show');
-        });
-    });
-});
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+
+        $.post(actionUrl, dataToSend).done(function (data, textStatus, xhr) {
+            
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                var newBody = $('.modal-body', data.form);
 
 
-$(document).ready(function () {
-    $('#loginForm').submit(function () {
-        $.ajax({
-            url: this.action,
-            type: this.method,
-            data: $(this).serialize(),
-            success: function (data) {
-                $('#registermodel').html(data);
-                $('registermodel').show();
-            },
-            error: function (data) {
-                console.log('error');
-                $('#modalDialogContent').html(data.responseText);
-                //$('#modalLogin').modal('show');
+                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                if (isValid) {
+                    placeholder.find('.modal').modal('hide');
+                } else {
+                    placeholder.find('.modal-body').replaceWith(newBody);
+                }
             }
+
+
         });
     });
 });
+

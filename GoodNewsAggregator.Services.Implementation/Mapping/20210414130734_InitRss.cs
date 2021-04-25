@@ -8,7 +8,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
-               table: "RssSourses",
+               table: "RssSources",
                columns: new[] { "Id", "Name", "Url" },
                values: new object[]
                {
@@ -17,7 +17,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     "https://www.onliner.by/feed"
                });
             migrationBuilder.InsertData(
-               table: "RssSourses",
+               table: "RssSources",
                columns: new[] { "Id", "Name", "Url" },
                values: new object[]
                {
@@ -26,7 +26,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     "https://news.tut.by/rss/all.rss"
                });
             migrationBuilder.InsertData(
-               table: "RssSourses",
+               table: "RssSources",
                columns: new[] { "Id", "Name", "Url" },
                values: new object[]
                {
@@ -35,7 +35,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     "http://s13.ru/rss"
                });
             migrationBuilder.InsertData(
-               table: "RssSourses",
+               table: "RssSources",
                columns: new[] { "Id", "Name", "Url" },
                values: new object[]
                {
@@ -44,7 +44,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     "https://tjournal.ru/rss"
                });
             migrationBuilder.InsertData(
-               table: "RssSourses",
+               table: "RssSources",
                columns: new[] { "Id", "Name", "Url" },
                values: new object[]
                {

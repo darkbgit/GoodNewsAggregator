@@ -95,6 +95,11 @@ namespace GoodNewsAggregator.Controllers
                 Pagination = pageInfo
             };
 
+            if (!HttpContext.User.Identity.IsAuthenticated)
+            {
+                HttpContext.Response.Headers.Add("REQUIRES_AUTH", "1");
+            }
+
             return View(newsListWithRss);
             
             
@@ -106,7 +111,7 @@ namespace GoodNewsAggregator.Controllers
             //    Id = n.Id,
             //    Title = n.Title,
             //    Url = n.Url,
-            //    ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+            //    ShortNewsFromRssSource = n.ShortNewsFromRssSource,
             //    ImageUrl = n.ImageUrl,
             //    PublicationDate = n.PublicationDate
             //}).ToList());
@@ -186,7 +191,7 @@ namespace GoodNewsAggregator.Controllers
             //    Body = news.Body,
             //    ImageUrl = news.ImageUrl,
             //    PublicationDate = news.PublicationDate,
-            //    RssSourseId = news.RssSourseId
+            //    RssSourceId = news.RssSourceId
             //};
 
             
@@ -219,7 +224,7 @@ namespace GoodNewsAggregator.Controllers
             //    Body = news.Body,
             //    ImageUrl = news.ImageUrl,
             //    PublicationDate = news.PublicationDate,
-            //    RssSourseId = news.RssSourseId
+            //    RssSourceId = news.RssSourceId
             //};
 
             return View(oneNews);
@@ -228,7 +233,7 @@ namespace GoodNewsAggregator.Controllers
         //// GET: News/Create
         //public IActionResult Create()
         //{
-        //    ViewData["RssSourseId"] = new SelectList(_context.RssSourses, "Id", "Id");
+        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id");
         //    return View();
         //}
 
@@ -237,7 +242,7 @@ namespace GoodNewsAggregator.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,Title,Url,Body,ShortNewsFromRssSourse,RssSourseId")] News news)
+        //public async Task<IActionResult> Create([Bind("Id,Title,Url,Body,ShortNewsFromRssSource,RssSourceId")] News news)
         //{
         //    if (ModelState.IsValid)
         //    {
@@ -246,7 +251,7 @@ namespace GoodNewsAggregator.Controllers
         //        await _context.SaveChangesAsync();
         //        return RedirectToAction(nameof(Index));
         //    }
-        //    ViewData["RssSourseId"] = new SelectList(_context.RssSourses, "Id", "Id", news.RssSourseId);
+        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
         //    return View(news);
         //}
 
@@ -263,7 +268,7 @@ namespace GoodNewsAggregator.Controllers
         //    {
         //        return NotFound();
         //    }
-        //    ViewData["RssSourseId"] = new SelectList(_context.RssSourses, "Id", "Id", news.RssSourseId);
+        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
         //    return View(news);
         //}
 
@@ -272,7 +277,7 @@ namespace GoodNewsAggregator.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Url,Body,ShortNewsFromRssSourse,RssSourseId")] News news)
+        //public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Url,Body,ShortNewsFromRssSource,RssSourceId")] News news)
         //{
         //    if (id != news.Id)
         //    {
@@ -299,7 +304,7 @@ namespace GoodNewsAggregator.Controllers
         //        }
         //        return RedirectToAction(nameof(Index));
         //    }
-        //    ViewData["RssSourseId"] = new SelectList(_context.RssSourses, "Id", "Id", news.RssSourseId);
+        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
         //    return View(news);
         //}
 
@@ -312,7 +317,7 @@ namespace GoodNewsAggregator.Controllers
         //    }
 
         //    var news = await _context.News
-        //        .Include(n => n.RssSourse)
+        //        .Include(n => n.RssSource)
         //        .FirstOrDefaultAsync(m => m.Id == id);
         //    if (news == null)
         //    {
