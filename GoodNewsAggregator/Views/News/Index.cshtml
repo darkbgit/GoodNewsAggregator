@@ -20,18 +20,22 @@
 
     <partial name="_RssList" model="Model.RssList" />
 
-
-    <div class="col-md-4">
-        <form asp-action="Aggregate">
-            <input type="submit" value="Submit" class="btn btn-danger" />
-        </form>
-    </div>
-
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="col-md-4">
+            <form asp-action="Aggregate">
+                <input type="submit" value="Submit" class="btn btn-danger" />
+            </form>
+        </div>
+    }
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (User.Identity.IsAuthenticated)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 
 
 <div id="outputField">

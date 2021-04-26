@@ -76,13 +76,14 @@ $(function () {
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');
         var dataToSend = form.serialize();
+        dataToSend.add('ReturnUrl', url);
 
-        $.post(actionUrl, dataToSend).done(function (data, textStatus, xhr) {
+        $.post(actionUrl, dataToSend).done(function (data) {
             
-            if (data.redirect) {
-                window.location.href = data.redirect;
+            if (data.result == 'Redirect') {
+                window.location.href = data.url;
             } else {
-                var newBody = $('.modal-body', data.form);
+                var newBody = $('.modal-body', data);
 
 
                 var isValid = newBody.find('[name="IsValid"]').val() == 'True';

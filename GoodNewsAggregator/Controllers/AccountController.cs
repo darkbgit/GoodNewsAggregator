@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace GoodNewsAggregator.Controllers
 {
@@ -87,13 +91,11 @@ namespace GoodNewsAggregator.Controllers
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         //return Redirect(model.ReturnUrl);
-                        var jsondata = JsonSerializer.Serialize(model.ReturnUrl);
-                        return Json(jsondata);
+                        return Json(new { result = "Redirect", url = model.ReturnUrl });
                     }
                     else
                     {
-                        var jsondata = JsonSerializer.Serialize(("/Home/Index", "redirect"));
-                        return Json(jsondata);
+                        return Json(new {result = "Redirect", url = Url.Action("Index", "Home")});
                         //return RedirectToAction("Index", "Home");
                     }
                 else
@@ -102,16 +104,7 @@ namespace GoodNewsAggregator.Controllers
                 }
             }
 
-            var form = new
-            {
-                form = ViewRenderer
-            };
-            
-            var view1 = PartialView(model);
-            var view = PartialView("Login", model).ViewData;
-            var jsondata1 = JsonSerializer.Serialize(form);
-            return Json(jsondata1);
-            //return PartialView(model);
+            return PartialView(model);
         }
 
         [HttpPost]

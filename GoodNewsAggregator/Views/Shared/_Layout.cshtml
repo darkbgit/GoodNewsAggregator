@@ -36,7 +36,9 @@
                 </div>*@
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <span>@User.Identity.Name</span>
+                    <div>Привет 
+                        <span class="text-black-50">@User.Identity.Name</span>
+                    </div>
                     <form method="post" asp-controller="Account" asp-action="Logout">
                         <input type="submit" value="Выход" id="loginForm" />
                     </form>
