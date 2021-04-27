@@ -4,14 +4,16 @@ using GoodNewsAggregator.DAL.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GoodNewsAggregator.DAL.Core.Migrations
 {
     [DbContext(typeof(GoodNewsAggregatorContext))]
-    partial class GoodNewsAggregatorContextModelSnapshot : ModelSnapshot
+    [Migration("20210427180248_AddNewsFields")]
+    partial class AddNewsFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

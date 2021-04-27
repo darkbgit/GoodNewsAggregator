@@ -25,7 +25,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation
         }
 
         public IRepository<News> News => _newsRepository;
-        public IRepository<RssSource> RssSourses => _rssRepository;
+        public IRepository<RssSource> RssSources => _rssRepository;
 
         public void Dispose()
         {

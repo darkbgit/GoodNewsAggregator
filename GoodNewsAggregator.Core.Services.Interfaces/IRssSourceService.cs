@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Core.Services.Interfaces
 {
-    public interface IRssSourseService
+    public interface IRssSourceService
     {
-        Task<IEnumerable<RssSourseDto>> GetAllRssSourses();
+        Task<IEnumerable<RssSourceDto>> GetAllRssSources();
     }
 }

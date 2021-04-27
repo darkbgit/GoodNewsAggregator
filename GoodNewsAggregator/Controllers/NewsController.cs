@@ -23,16 +23,16 @@ namespace GoodNewsAggregator.Controllers
         //private readonly GoodNewsAggregatorContext _context;
 
         private readonly INewsService _newsService;
-        private readonly IRssSourseService _rssSourseService;
+        private readonly IRssSourceService _rssSourceService;
         private readonly IWebPageParser _onlinerParser;
         private readonly IMapper _mapper;
 
-        public NewsController(IRssSourseService rssSourseService,
+        public NewsController(IRssSourceService rssSourceService,
             INewsService newsService,
             IWebPageParser onlinerParser,
             IMapper mapper)
         {
-            _rssSourseService = rssSourseService;
+            _rssSourceService = rssSourceService;
             _newsService = newsService;
             _onlinerParser = onlinerParser;
             _mapper = mapper;
@@ -49,14 +49,14 @@ namespace GoodNewsAggregator.Controllers
             {
                 foreach (var sourceId in sourceIds)
                 {
-                    var sourseNews = (await _newsService.GetNewsBySourseId(sourceId))
+                    var sourceNews = (await _newsService.GetNewsBySourceId(sourceId))
                         .ToList();
-                    news = news.Concat(sourseNews);
+                    news = news.Concat(sourceNews);
                 }
             }
             else
             {
-                news = (await _newsService.GetNewsBySourseId(null)).ToList();
+                news = (await _newsService.GetNewsBySourceId(null)).ToList();
             }
 
             var newsPerPageCount = 25;
@@ -68,16 +68,16 @@ namespace GoodNewsAggregator.Controllers
                 Id = n.Id,
                 Title = n.Title,
                 Url = n.Url,
-                ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+                ShortNewsFromRssSource = n.ShortNewsFromRssSource,
                 ImageUrl = n.ImageUrl,
                 PublicationDate = n.PublicationDate
             }).ToList();
 
             //_mapper.Map<NewsList>(news)).ToList();
 
-            var rssSourses = (await _rssSourseService.GetAllRssSourses()).ToList();
+            var rssSources = (await _rssSourceService.GetAllRssSources()).ToList();
 
-            var rssList = rssSourses.Select(r => new RssList()
+            var rssList = rssSources.Select(r => new RssList()
             {
                 Id = r.Id,
                 Name = r.Name,
@@ -128,29 +128,32 @@ namespace GoodNewsAggregator.Controllers
             IEnumerable<NewsDto> news = new List<NewsDto>();
 
 
-                foreach (var sourseId in rssIds)
-                {
-                    var sourseNews = (await _newsService.GetNewsBySourseId(sourseId))
-                        .ToList();
-                    news = news.Concat(sourseNews);
-                }
+            foreach (var sourceId in rssIds)
+            {
+                var sourceNews = (await _newsService.GetNewsBySourceId(sourceId))
+                    .ToList();
+                news = news.Concat(sourceNews);
+            }
+
+            var newsDtoList = news.ToList();
+
 
             var newsPerPageCount = 25;
 
-            var newsPerPage = news.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
+            var newsPerPage = newsDtoList.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
 
             var newsList = newsPerPage.Select(n => new NewsList()
             {
                 Id = n.Id,
                 Title = n.Title,
                 Url = n.Url,
-                ShortNewsFromRssSourse = n.ShortNewsFromRssSourse,
+                ShortNewsFromRssSource = n.ShortNewsFromRssSource,
                 ImageUrl = n.ImageUrl,
                 PublicationDate = n.PublicationDate
             }).ToList();
 
 
-            var pageInfo = new PageInfo(newsPerPageCount, page, news.Count());
+            var pageInfo = new PageInfo(newsPerPageCount, page, newsDtoList.Count());
 
             //_mapper.Map<NewsList>(news)).ToList();
 
@@ -350,20 +353,20 @@ namespace GoodNewsAggregator.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Aggregate(CreateNewsViewModel sourse)
+        public async Task<IActionResult> Aggregate(CreateNewsViewModel source)
         {
             try
             {
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                var rssSourses = await _rssSourseService
-                    .GetAllRssSourses();
+                var rssSources = await _rssSourceService
+                    .GetAllRssSources();
                 var newInfos = new List<NewsDto>();
 
-                foreach (var rssSourse in rssSourses)
+                foreach (var rssSource in rssSources)
                 {
                     var newsList = await _newsService
-                        .GetNewsInfoFromRssSourse(rssSourse);
+                        .GetNewsInfoFromRssSource(rssSource);
                     //if (rssSourse.Name.Equals("Onliner"))
                     //{
                     //    foreach (var newsDto in newsList)

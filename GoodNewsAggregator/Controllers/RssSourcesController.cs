@@ -10,11 +10,11 @@ using Serilog;
 
 namespace GoodNewsAggregator.Controllers
 {
-    public class RssSoursesController : Controller
+    public class RssSourcesController : Controller
     {
         private readonly GoodNewsAggregatorContext _context;
 
-        public RssSoursesController(GoodNewsAggregatorContext context)
+        public RssSourcesController(GoodNewsAggregatorContext context)
         {
             _context = context;
         }
@@ -38,7 +38,7 @@ namespace GoodNewsAggregator.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (source == null)
             {
-                Log.Error("RssSoursesController Details sourse = null");
+                Log.Error("RssSourcesController Details source = null");
                 return NotFound();
             }
 
@@ -52,17 +52,17 @@ namespace GoodNewsAggregator.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RssSource sourse)
+        public async Task<IActionResult> Create(RssSource source)
         {
             if (ModelState.IsValid)
             {
-                sourse.Id = Guid.NewGuid();
-                await _context.RssSources.AddAsync(sourse);
+                source.Id = Guid.NewGuid();
+                await _context.RssSources.AddAsync(source);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(sourse);
+            return View(source);
         }
     }
 }

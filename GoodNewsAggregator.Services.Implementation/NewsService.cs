@@ -32,7 +32,7 @@ namespace GoodNewsAggregator.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<NewsDto>> GetNewsBySourseId(Guid? id)
+        public async Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id)
         {
             if (!id.HasValue)
             {
@@ -82,7 +82,7 @@ namespace GoodNewsAggregator.Services.Implementation
         //        var rssSourses =  _unitOfWork.RssSources.GetAll().ToList();
         //        var newInfos = new List<NewsDto>();
 
-        //        foreach (var rssSourse in rssSourses)
+        //        foreach (var rssSource in rssSourses)
         //        {
         //            var newList = await _unitOfWork.News.
         //        }
@@ -101,10 +101,10 @@ namespace GoodNewsAggregator.Services.Implementation
             return _mapper.Map<NewsDto>(entity);
         }
 
-        public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSourse(RssSourseDto rssSourse)
+        public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)
         {
             var news = new List<NewsDto>();
-            using (var reader = XmlReader.Create(rssSourse.Url))
+            using (var reader = XmlReader.Create(rssSource.Url))
             {
                 var feed = SyndicationFeed.Load(reader);
                 reader.Close();
@@ -118,17 +118,50 @@ namespace GoodNewsAggregator.Services.Implementation
                     {
                         if (!currentNewsUrls.Any(url => url.Equals(syndicationItem.Id)))
                         {
-                            var newsDto = new NewsDto()
+                            var newsDto = new NewsDto
                             {
                                 Id = Guid.NewGuid(),
-                                RssSourseId = rssSourse.Id,
-                                Url = syndicationItem.Id,
-                                Title = syndicationItem.Title.Text,
-                                //ShortNewsFromRssSource = syndicationItem.Summary.Text
-                                ShortNewsFromRssSourse = GetPureShortNewsFromRssSource(syndicationItem.Summary.Text),
-                                ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text),
-                                PublicationDate = syndicationItem.PublishDate.DateTime.ToString()
+                                RssSourceId = rssSource.Id
                             };
+                            switch (rssSource.Name)
+                            {
+                                case "TJournal":
+                                    newsDto.Author = syndicationItem.Authors?[0]?.Email;
+                                    newsDto.Url =
+                                        syndicationItem.Links.FirstOrDefault(sl => sl.RelationshipType.Equals("alternate"))?.Uri.AbsoluteUri;
+                                    newsDto.ImageUrl =
+                                        syndicationItem.Links.FirstOrDefault(sl =>
+                                            sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri;
+                                    newsDto.ShortNewsFromRssSource =  syndicationItem.Summary.Text.Trim();
+                                    break;
+                                case "S13":
+                                    continue;
+                                    break;
+                                case "DTF":
+                                    continue;
+                                    break;
+                                case "Tut.by":
+                                    continue;
+                                    break;
+                                case "Onliner":
+                                    continue;
+                                    break;
+                                default:
+                                    Log.Error("RSS source name is undefined");
+                                    break;
+                            }
+
+
+
+
+                            //newsDto.Url = syndicationItem.Id;
+                            newsDto.Title = syndicationItem.Title.Text;
+                                //ShortNewsFromRssSource = syndicationItem.Summary.Text
+                                newsDto.ShortNewsFromRssSource =
+                                    GetPureShortNewsFromRssSource(syndicationItem.Summary.Text);
+                                //newsDto.ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text);
+                                newsDto.PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime();
+
                             news.Add(newsDto);
                         }
                         

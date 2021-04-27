@@ -12,9 +12,9 @@ namespace GoodNewsAggregator.Models.ViewModels.News
         public string Title { get; set; }
         public string Url { get; set; }
 
-        public string ShortNewsFromRssSourse { get; set; }
+        public string ShortNewsFromRssSource { get; set; }
         public string? ImageUrl { get; set; }
-        public string? PublicationDate { get; set; }
+        public DateTime? PublicationDate { get; set; }
 
         //public Guid RssSourceId { get; set; }
 

@@ -16,6 +16,8 @@ namespace GoodNewsAggregator.DAL.Core.Entities
         public string ShortNewsFromRssSource { get; set; }
         public string? ImageUrl { get; set; }
         public DateTime? PublicationDate { get; set; }
+        public string? Category { get; set; }
+        public string? Author { get; set; }
 
         public Guid RssSourceId { get; set; }
         public virtual RssSource RssSource { get; set; }

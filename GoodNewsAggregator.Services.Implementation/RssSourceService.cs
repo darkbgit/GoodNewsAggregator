@@ -10,24 +10,24 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Services.Implementation
 {
-    public class RssSourseService : IRssSourseService
+    public class RssSourceService : IRssSourceService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public RssSourseService(IUnitOfWork unitOfWork)
+        public RssSourceService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<RssSourseDto>> GetAllRssSourses()
+        public async Task<IEnumerable<RssSourceDto>> GetAllRssSources()
         {
-            return await _unitOfWork.RssSourses.FindBy(sourse =>
-            !string.IsNullOrEmpty(sourse.Name))
-                .Select(sourse => new RssSourseDto()
+            return await _unitOfWork.RssSources.FindBy(source =>
+            !string.IsNullOrEmpty(source.Name))
+                .Select(source => new RssSourceDto()
                 {
-                    Id = sourse.Id,
-                    Name = sourse.Name,
-                    Url = sourse.Url
+                    Id = source.Id,
+                    Name = source.Name,
+                    Url = source.Url
                 }).ToListAsync();
         }
     }

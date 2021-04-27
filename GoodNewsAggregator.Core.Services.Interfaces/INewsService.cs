@@ -7,9 +7,9 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
 {
     public interface INewsService
     {
-        Task<IEnumerable<NewsDto>> GetNewsBySourseId(Guid? id);
+        Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id);
         Task<NewsDto> GetNewsById(Guid id);
-        Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSourse(RssSourseDto rssSourse);
+        Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource);
 
         
         Task Add(NewsDto news);

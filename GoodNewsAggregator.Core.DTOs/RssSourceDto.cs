@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Core.DTOs
 {
-    public class RssSourseDto
+    public class RssSourceDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

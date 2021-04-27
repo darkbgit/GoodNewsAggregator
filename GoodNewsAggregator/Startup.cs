@@ -45,12 +45,12 @@ namespace GoodNewsAggregator
                 .AddEntityFrameworkStores<GoodNewsAggregatorContext>();
             
             services.AddTransient<IRepository<News>, NewsRepository>();
-            services.AddTransient<IRepository<RssSource>, RssSourseRepository>();
+            services.AddTransient<IRepository<RssSource>, RssSourceRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<INewsService, NewsService>();
-            services.AddScoped<IRssSourseService, RssSourseService>();
+            services.AddScoped<IRssSourceService, RssSourceService>();
 
             services.AddTransient<IWebPageParser, OnlinerParser>();
 

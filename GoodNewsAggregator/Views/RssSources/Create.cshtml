@@ -9,15 +9,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @using (Html.BeginForm("Create", "RssSourses", FormMethod.Post))
+        @using (Html.BeginForm("Create", "RssSources", FormMethod.Post))
         {
             <div>
                 @Html.LabelFor(model => model.Name)
-                @Html.TextBoxFor(sourse => sourse.Name)
+                @Html.TextBoxFor(source => source.Name)
             </div>
             <div>
                 @Html.LabelFor(model => model.Url)
-                @Html.TextBoxFor(sourse => sourse.Url)
+                @Html.TextBoxFor(source => source.Url)
             </div>
             <input type="submit" />
         }

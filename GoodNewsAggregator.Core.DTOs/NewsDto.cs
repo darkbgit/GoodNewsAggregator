@@ -8,10 +8,12 @@ namespace GoodNewsAggregator.Core.DTOs
         public string Title { get; set; }
         public string Url { get; set; }
         public string Body { get; set; }
-        public string ShortNewsFromRssSourse { get; set; }
+        public string ShortNewsFromRssSource { get; set; }
         public string? ImageUrl { get; set; }
-        public string? PublicationDate { get; set; }
+        public DateTime? PublicationDate { get; set; }
+        public string Category { get; set; }
+        public string Author { get; set; }
 
-        public Guid RssSourseId { get; set; }
+        public Guid RssSourceId { get; set; }
     }
 }
