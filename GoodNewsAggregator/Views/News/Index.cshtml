@@ -22,10 +22,11 @@
 
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="col-md-4">
-            <form asp-action="Aggregate">
-                <input type="submit" value="Submit" class="btn btn-danger" />
-            </form>
+        <div class="col-md-4" id="aggregateDiv">
+            <button class="btn btn-primary" id="aggregate">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
+                Aggregate
+            </button>
         </div>
     }
 </div>
@@ -66,7 +67,19 @@
             updatePageFromPagination(page);
         });
 
-
+        $('#aggregate').on('click', function () {
+            let _this = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Aggregate","News")',
+                beforeSend: function () {
+                    _this.removeClass('d-none');
+                },
+                success: function () {
+                    window.location.href = '@Url.Action("Index", "News")';
+                }
+            });
+        });
 
         function getCheckedRssIds() {
             var rssIds = [];

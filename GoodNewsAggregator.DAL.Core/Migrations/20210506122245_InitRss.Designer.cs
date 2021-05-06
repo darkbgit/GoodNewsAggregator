@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoodNewsAggregator.DAL.Core.Migrations
 {
     [DbContext(typeof(GoodNewsAggregatorContext))]
-    [Migration("20210425151743_Init")]
-    partial class Init
+    [Migration("20210506122245_InitRss")]
+    partial class InitRss
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,7 +54,13 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Author")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")

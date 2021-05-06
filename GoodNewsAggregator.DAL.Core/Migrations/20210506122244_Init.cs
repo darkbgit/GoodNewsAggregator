@@ -176,6 +176,8 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     ShortNewsFromRssSource = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RssSourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

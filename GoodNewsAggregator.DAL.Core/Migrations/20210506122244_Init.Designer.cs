@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoodNewsAggregator.DAL.Core.Migrations
 {
     [DbContext(typeof(GoodNewsAggregatorContext))]
-    [Migration("20210427180248_AddNewsFields")]
-    partial class AddNewsFields
+    [Migration("20210506122244_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
