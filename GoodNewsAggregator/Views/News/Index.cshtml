@@ -69,11 +69,16 @@
 
         $('#aggregate').on('click', function () {
             let _this = $(this);
+            let  form = $('#__AjaxAntiForgeryForm');
+            let  token = $('input[name="__RequestVerificationToken"]', form).val();
             $.ajax({
                 type: 'POST',
                 url: '@Url.Action("Aggregate","News")',
+                data: {
+                    __RequestVerificationToken: token,
+                },
                 beforeSend: function () {
-                    _this.removeClass('d-none');
+                    _this.find('.spinner-border').removeClass('d-none');
                 },
                 success: function () {
                     window.location.href = '@Url.Action("Index", "News")';

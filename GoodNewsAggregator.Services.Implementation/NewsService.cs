@@ -24,12 +24,17 @@ namespace GoodNewsAggregator.Services.Implementation
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IWebPageParser _parser;
 
-        public NewsService(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
+        public NewsService(IUnitOfWork unitOfWork,
+            IConfiguration configuration,
+            IMapper mapper,
+            IWebPageParser parser)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
+            _parser = parser;
         }
 
         public async Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id)
@@ -101,75 +106,85 @@ namespace GoodNewsAggregator.Services.Implementation
             return _mapper.Map<NewsDto>(entity);
         }
 
-        public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)
+        public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource, IWebPageParser parser)
         {
-            var news = new List<NewsDto>();
-            using (var reader = XmlReader.Create(rssSource.Url))
-            {
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-                if (feed.Items.Any())
-                {
-                    var currentNewsUrls = await _unitOfWork.News
-                        .Get()
-                        .Select(n => n.Url)
-                        .ToListAsync();
-                    foreach (var syndicationItem in feed.Items)
-                    {
-                        if (!currentNewsUrls.Any(url => url.Equals(syndicationItem.Id)))
-                        {
-                            var newsDto = new NewsDto
-                            {
-                                Id = Guid.NewGuid(),
-                                RssSourceId = rssSource.Id
-                            };
-                            switch (rssSource.Name)
-                            {
-                                case "TJournal":
-                                    newsDto.Author = syndicationItem.Authors?[0]?.Email;
-                                    newsDto.Url =
-                                        syndicationItem.Links.FirstOrDefault(sl => sl.RelationshipType.Equals("alternate"))?.Uri.AbsoluteUri;
-                                    newsDto.ImageUrl =
-                                        syndicationItem.Links.FirstOrDefault(sl =>
-                                            sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri;
-                                    newsDto.ShortNewsFromRssSource =  syndicationItem.Summary.Text.Trim();
-                                    break;
-                                case "S13":
-                                    continue;
-                                    break;
-                                case "DTF":
-                                    continue;
-                                    break;
-                                case "Tut.by":
-                                    continue;
-                                    break;
-                                case "Onliner":
-                                    continue;
-                                    break;
-                                default:
-                                    Log.Error("RSS source name is undefined");
-                                    break;
-                            }
+            //var news = new List<NewsDto>();
+            var news = await parser.ParseRss(rssSource);
+
+            var currentNewsUrls = await _unitOfWork.News
+                .Get()
+                .Select(n => n.Url)
+                .ToListAsync();
+
+
+            var newsList = news.ToList();
+            var newNews = newsList.Where(n => !currentNewsUrls.Any(url=>url.Equals(n.Url)));
+            //using (var reader = XmlReader.Create(rssSource.Url))
+            //{
+            //    var feed = SyndicationFeed.Load(reader);
+            //    reader.Close();
+            //    if (feed.Items.Any())
+            //    {
+            //        var currentNewsUrls = await _unitOfWork.News
+            //            .Get()
+            //            .Select(n => n.Url)
+            //            .ToListAsync();
+            //        foreach (var syndicationItem in feed.Items)
+            //        {
+            //            if (!currentNewsUrls.Any(url => url.Equals(syndicationItem.Id)))
+            //            {
+            //                var newsDto = new NewsDto
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    RssSourceId = rssSource.Id
+            //                };
+            //                switch (rssSource.Name)
+            //                {
+            //                    case "TJournal":
+            //                        newsDto.Author = syndicationItem.Authors?[0]?.Email;
+            //                        newsDto.Url =
+            //                            syndicationItem.Links.FirstOrDefault(sl => sl.RelationshipType.Equals("alternate"))?.Uri.AbsoluteUri;
+            //                        newsDto.ImageUrl =
+            //                            syndicationItem.Links.FirstOrDefault(sl =>
+            //                                sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri;
+            //                        newsDto.ShortNewsFromRssSource =  syndicationItem.Summary.Text.Trim();
+            //                        break;
+            //                    case "S13":
+            //                        continue;
+            //                        break;
+            //                    case "DTF":
+            //                        continue;
+            //                        break;
+            //                    case "Tut.by":
+            //                        continue;
+            //                        break;
+            //                    case "Onliner":
+            //                        continue;
+            //                        break;
+            //                    default:
+            //                        Log.Error("RSS source name is undefined");
+            //                        break;
+            //                }
 
 
 
 
-                            //newsDto.Url = syndicationItem.Id;
-                            newsDto.Title = syndicationItem.Title.Text;
-                                //ShortNewsFromRssSource = syndicationItem.Summary.Text
-                                newsDto.ShortNewsFromRssSource =
-                                    GetPureShortNewsFromRssSource(syndicationItem.Summary.Text);
-                                //newsDto.ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text);
-                                newsDto.PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime();
+            //                //newsDto.Url = syndicationItem.Id;
+            //                newsDto.Title = syndicationItem.Title.Text;
+            //                    //ShortNewsFromRssSource = syndicationItem.Summary.Text
+            //                    newsDto.ShortNewsFromRssSource =
+            //                        GetPureShortNewsFromRssSource(syndicationItem.Summary.Text);
+            //                    //newsDto.ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text);
+            //                    newsDto.PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime();
 
-                            news.Add(newsDto);
-                        }
+            //                news.Add(newsDto);
+            //            }
                         
-                    }
-                }
-            }
+            //        }
+            //    }
+            //}
 
-            return news;
+            return newNews;
         }
 
         public static string GetPureShortNewsFromRssSource(string shortNews)

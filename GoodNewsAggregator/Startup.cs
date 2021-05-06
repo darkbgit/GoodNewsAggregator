@@ -20,6 +20,7 @@ using GoodNewsAggregator.DAL.Repositories.Interfaces;
 using GoodNewsAggregator.Services.Implementation;
 using AutoMapper;
 using GoodNewsAggregator.Services.Implementation.Mapping;
+using GoodNewsAggregator.Services.Implementation.Parsers;
 
 namespace GoodNewsAggregator
 {
@@ -53,6 +54,7 @@ namespace GoodNewsAggregator
             services.AddScoped<IRssSourceService, RssSourceService>();
 
             services.AddTransient<IWebPageParser, OnlinerParser>();
+            services.AddTransient<IWebPageParser, TutByParser>();
 
             //services.AddAutoMapper(typeof(Startup));
 
