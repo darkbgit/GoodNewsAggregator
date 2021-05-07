@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using GoodNewsAggregator.Core.DTOs;
@@ -13,6 +14,8 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 {
     public class OnlinerParser : IWebPageParser
     {
+        public string Name { get { return "Onliner"; } }
+
         public async Task<string> Parse(string url)
         {
             var web = new HtmlWeb();
@@ -67,10 +70,6 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
                 reader.Close();
                 if (feed.Items.Any())
                 {
-                    //var currentNewsUrls = await _unitOfWork.News
-                    //    .Get()
-                    //    .Select(n => n.Url)
-                    //    .ToListAsync();
                     foreach (var syndicationItem in feed.Items)
                     {
                         var newsDto = new NewsDto
@@ -93,7 +92,6 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
                             //    GetPureShortNewsFromRssSource(syndicationItem.Summary.Text);
                             //newsDto.ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text);
                             PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime()
-
                         };
                         news.Add(newsDto);
                     }
@@ -101,6 +99,66 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
             }
 
             return news;
+        }
+
+        public string GetSummary(SyndicationItem item)
+        {
+            return Regex.Replace(item.Summary.Text.Trim(), @"<.*?>", "");
+        }
+
+        public string GetCategory(SyndicationItem item)
+        {
+            if (item.Categories.Count > 0)
+            {
+                string category = "";
+                for (int i=0; i<item.Categories.Count; i++)
+                {
+                    category += item.Categories[i].Name;
+                    if (i > 1 && i != item.Categories.Count)
+                    {
+                        category += ", ";
+                    }
+                }
+                return category;
+            }
+            return null;
+        }
+
+        public string GetAuthor(SyndicationItem item)
+        {
+            if (item.Authors.Count > 0)
+            {
+                string author = "";
+                foreach (var a in item.Authors)
+                {
+                    author += a.Name;
+                }
+                return author;
+            }
+            return null;
+        }
+
+        public Task<string> GetBody(string url)
+        {
+            return null;
+        }
+
+
+        public string GetImageUrl(SyndicationItem item)
+        {
+            var link = item.Links.FirstOrDefault(sl =>
+                                    sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri;
+            if (link == null)
+            {
+                var match = Regex.Match(item.Summary.Text, "(?:<img src=\")(.*?)(?:\")");
+                link = match.Groups[1].Value;
+            }
+            return link;
+        }
+
+        public string GetUrl(SyndicationItem item)
+        {
+            return item.Id;
         }
     }
 }

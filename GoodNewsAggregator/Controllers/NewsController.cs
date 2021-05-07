@@ -50,13 +50,16 @@ namespace GoodNewsAggregator.Controllers
                 foreach (var sourceId in sourceIds)
                 {
                     var sourceNews = (await _newsService.GetNewsBySourceId(sourceId))
+                        .OrderByDescending(n => n.PublicationDate)
                         .ToList();
                     news = news.Concat(sourceNews);
                 }
             }
             else
             {
-                news = (await _newsService.GetNewsBySourceId(null)).ToList();
+                news = (await _newsService.GetNewsBySourceId(null))
+                    .OrderByDescending(n=>n.PublicationDate)
+                    .ToList();
             }
 
             var newsPerPageCount = 25;
@@ -70,7 +73,9 @@ namespace GoodNewsAggregator.Controllers
                 Url = n.Url,
                 ShortNewsFromRssSource = n.ShortNewsFromRssSource,
                 ImageUrl = n.ImageUrl,
-                PublicationDate = n.PublicationDate
+                PublicationDate = n.PublicationDate,
+                Author = n.Author,
+                Category = n.Category
             }).ToList();
 
             //_mapper.Map<NewsList>(news)).ToList();
@@ -135,7 +140,9 @@ namespace GoodNewsAggregator.Controllers
                 news = news.Concat(sourceNews);
             }
 
-            var newsDtoList = news.ToList();
+            var newsDtoList = news
+                .OrderByDescending(n => n.PublicationDate)
+                .ToList();
 
 
             var newsPerPageCount = 25;
@@ -149,7 +156,9 @@ namespace GoodNewsAggregator.Controllers
                 Url = n.Url,
                 ShortNewsFromRssSource = n.ShortNewsFromRssSource,
                 ImageUrl = n.ImageUrl,
-                PublicationDate = n.PublicationDate
+                PublicationDate = n.PublicationDate,
+                Author = n.Author,
+                Category = n.Category
             }).ToList();
 
 
@@ -355,8 +364,8 @@ namespace GoodNewsAggregator.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Aggregate(CreateNewsViewModel source)
         {
-            try
-            {
+            //try
+            //{
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 var rssSources = await _rssSourceService
@@ -364,6 +373,8 @@ namespace GoodNewsAggregator.Controllers
                 var newInfos = new List<NewsDto>();
 
                 foreach (var rssSource in rssSources)
+                {
+                try
                 {
                     var newsList = await _newsService
                         .GetNewsInfoFromRssSource(rssSource);
@@ -378,15 +389,22 @@ namespace GoodNewsAggregator.Controllers
 
                     newInfos.AddRange(newsList);
                 }
+                catch (Exception e)
+                {
+                    Log.Error(e, $"Aggregation error {e.Message}");
+                }
+            }
 
-                await _newsService.AddRange(newInfos);
-                stopwatch.Stop();
-                Log.Information($"Aggregation was executed in {stopwatch.ElapsedMilliseconds}");
+            try 
+            { 
+            await _newsService.AddRange(newInfos);
             }
             catch (Exception e)
             {
                 Log.Error(e, $"Aggregation error {e.Message}");
             }
+            stopwatch.Stop();
+            Log.Information($"Aggregation was executed in {stopwatch.ElapsedMilliseconds}");
 
             return RedirectToAction(nameof(Index));
         }

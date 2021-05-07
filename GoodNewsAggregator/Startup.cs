@@ -53,8 +53,26 @@ namespace GoodNewsAggregator
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IRssSourceService, RssSourceService>();
 
+            
+
             services.AddTransient<IWebPageParser, OnlinerParser>();
             services.AddTransient<IWebPageParser, TutByParser>();
+            services.AddTransient<IWebPageParser, DtfParser>();
+            services.AddTransient<IWebPageParser, S13Parser>();
+            services.AddTransient<IWebPageParser, TJournalParser>();
+
+            //services.AddTransient<ParserResolver>(ServiceProvider => name =>
+            //{
+            //    switch (name)
+            //    {
+            //        case "Onliner":
+            //            return ServiceProvider.GetService<OnlinerParser>();
+            //        case "Tut.by":
+            //            return ServiceProvider.GetService<TutByParser>();
+            //        default:
+            //            return null;
+            //    }
+            //});
 
             //services.AddAutoMapper(typeof(Startup));
 

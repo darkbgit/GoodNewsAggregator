@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Syndication" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GoodNewsAggregator.Core.DTOs\GoodNewsAggregator.Core.DTOs.csproj" />
   </ItemGroup>
 

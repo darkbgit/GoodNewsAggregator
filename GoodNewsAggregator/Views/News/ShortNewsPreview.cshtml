@@ -1,12 +1,19 @@
 ﻿@model GoodNewsAggregator.Models.ViewModels.News.NewsList
 @*<div class="card col-sm-12 col-md-6 col-lg-4 news-card">*@
 <div class="card mb-3">
-    <div class="row g-0">
-        <div class="col-md-4">
-            <img class="news-index__image" src="@Model.ImageUrl" alt="" />
+    <div class="card-body">
+        <div class="row g-0">
+            <p class="card-text text-end">
+                <small class="text-muted">
+                    @Model.Category
+                </small>
+            </p>
         </div>
-        <div class="col-md-8">
-            <div class="card-body">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img class="news-index__image" src="@Model.ImageUrl" alt="" />
+            </div>
+            <div class="col-md-8">
                 <h4 class="card-title">
                     @Model.Title
                 </h4>
@@ -15,19 +22,22 @@
                 </p>
             </div>
         </div>
-    </div>
-    <div class="row g-0">
+        </div>
         <div class="card-body">
             <a class="card-link" asp-action="Read" asp-route-id="@Model.Id">Читать новость</a>
             <a href="@Model.Url" class="card-link">Читать в источнике</a>
             <p class="card-text">
-                <small class="text-muted">@Model.PublicationDate</small>
+                <small class="text-muted">@Model.PublicationDate.Value.ToLocalTime()</small>
             </p>
         </div>
-        <div class="card-body">
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="card-footer">
             <a class="card-link" asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
             <a class="card-link" asp-action="Details" asp-route-id="@Model.Id">Details</a> |
             <a class="card-link" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
         </div>
-    </div>
+    }
 </div>
+
