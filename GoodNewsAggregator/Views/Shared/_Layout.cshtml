@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GoodNewsAggregator</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -30,25 +30,30 @@
                     </ul>
                 </div>
                 <div id="modal-placeholder"></div>
-                @*<div id="modalLogin" class="modal fade" tabindex="-1"
-                     aria-labelledby="loginModalLabel" aria-hidden="true">
-                    <div id="modalDialogContent" class="modal-dialog"></div>
-                </div>*@
+
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div>Привет 
+                    <div class="nav-login">
+                        <span>Привет</span>
                         <span class="text-black-50">@User.Identity.Name</span>
                     </div>
-                    <form method="post" asp-controller="Account" asp-action="Logout">
-                        <input type="submit" value="Выход" id="loginForm" />
-                    </form>
+                    <div class="nav-login">
+                        <form method="post" asp-controller="Account" asp-action="Logout">
+                        <button class="btn btn-outline-light" type="submit"
+                                id="loginForm">Logout</button>
+                        </form>
+                    </div>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-primary" 
-                            data-toggle="ajax-modal" data-target="#modalLogin"
-                            data-url="@Url.Action("Login", "Account")">Login</button>
-                    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+                    <div class="nav-login">
+                        <button type="button" class="btn btn-outline-light" 
+                                data-toggle="ajax-modal" data-target="#modalLogin"
+                                data-url="@Url.Action("Login", "Account")">Login</button>
+                    </div>
+                    <div class="nav-login">
+                        <a asp-controller="Account" asp-action="Register">Регистрация</a>
+                    </div>
                 }
             </div>
         </nav>

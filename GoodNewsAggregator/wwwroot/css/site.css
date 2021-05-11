@@ -59,8 +59,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background: linear-gradient(to top, #ffa705, white)
 }
 .footer {
   position: absolute;
@@ -73,7 +74,7 @@ body {
 .news-media__image {
     max-width: 100%;
     height: auto;
-    margin: 5px 0px
+    margin: 5px 5px
 }
 
 .news-index__image {
@@ -85,12 +86,54 @@ body {
 iframe[title="YouTube video player"] {
     max-width: 100%;
     height: auto;
-    margin: 5px 0px
+    margin: 5px 5px
 }
 
+/*.container {
+    background-color: darkgray
+}*/
 
+.nav-login {
+    margin: 0px 4px;
+}
 
+.news-header {
+    margin: 10px 0px;
+}
 
+/*.accordionRssSources {
+    background-color: lightgrey;
+}
 
+#accordionRssSources .accordion-button {
+    background-color: lightgrey;
+    border: #f8f9fa solid;
+    border-radius: .25rem;
+    border-width: 1px;
+}
 
+#accordionRssSources .accordion-body {
+    background-color: lightgrey;
+}
 
+#accordionRssSources .accordion-header {
+    background-color: lightgrey;
+}*/
+
+.anchor_news {
+    display: block;
+    text-decoration: none;
+    color: black;
+}
+
+.anchor_news:hover {
+    color: #0366d6;
+}
+
+.anchor_news:visited {
+    color: grey;
+}
+
+.pagination > li > a {
+    background-color: inherit;
+}

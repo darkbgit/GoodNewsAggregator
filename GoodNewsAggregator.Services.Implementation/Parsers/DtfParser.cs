@@ -22,7 +22,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
                 for (int i = 0; i < item.Authors.Count; i++)
                 {
                     author += item.Authors[i].Email;
-                    if (i > 1 && i != item.Authors.Count)
+                    if (i > 0 && i != item.Authors.Count - 1)
                     {
                         author += ", ";
                     }

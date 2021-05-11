@@ -60,16 +60,15 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 
         public string GetCategory(SyndicationItem item)
         {
-            if (item.Categories.Count > 0)
+            if (item.Categories.Count == 0) return null;
+
+            string category = "";
+            for (int i = 0; i < item.Categories.Count; i++)
             {
-                string category = "";
-                for (int i = 0; i < item.Categories.Count; i++)
+                category += item.Categories[i].Name;
+                if (i > 0 && i != item.Categories.Count - 1)
                 {
-                    category += item.Categories[i].Name;
-                    if (i > 1 && i != item.Categories.Count)
-                    {
-                        category += ", ";
-                    }
+                    category += ", ";
                 }
             }
             return null;
@@ -77,20 +76,18 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 
         public string GetAuthor(SyndicationItem item)
         {
-            if (item.Authors.Count > 0)
+            if (item.Authors.Count == 0) return null;
+
+            string author = "";
+            for (int i=0; i<item.Authors.Count; i++)
             {
-                string author = "";
-                for (int i=0; i<item.Authors.Count; i++)
+                author += item.Authors[i].Name;
+                if (i > 0 && i != item.Authors.Count - 1)
                 {
-                    author += item.Authors[i].Name;
-                    if (i > 1 && i != item.Authors.Count)
-                    {
-                        author += ", ";
-                    }
+                    author += ", ";
                 }
-                return author;
             }
-            return null;
+            return author;
         }
 
         public Task<string> GetBody(string url)

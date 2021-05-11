@@ -21,22 +21,7 @@ namespace GoodNewsAggregator.HtmlHelpers
 
             var ul = new TagBuilder("ul");
             ul.AddCssClass("pagination");
-
-            {
-                var li = new TagBuilder("li");
-                li.AddCssClass("page-item");
-                if (pageInfo.PageNumber == 1) li.AddCssClass("disabled");
-
-                var a = new TagBuilder("a");
-                a.MergeAttribute("class", "page-link");
-                a.MergeAttribute("value", "1");
-                a.MergeAttribute("href", pageUrl(1));
-                a.InnerHtml.Append("<<");
-
-                li.InnerHtml.AppendHtml(a);
-
-                ul.InnerHtml.AppendHtml(li);
-            }
+            ul.AddCssClass("justify-content-center");
 
             {
                 var li = new TagBuilder("li");
@@ -47,31 +32,65 @@ namespace GoodNewsAggregator.HtmlHelpers
                 a.MergeAttribute("class", "page-link");
                 a.MergeAttribute("value", (pageInfo.PageNumber - 1).ToString());
                 a.MergeAttribute("href", pageUrl(pageInfo.PageNumber - 1));
-                a.InnerHtml.Append("<");
+                a.InnerHtml.Append("Previous");
 
                 li.InnerHtml.AppendHtml(a);
 
                 ul.InnerHtml.AppendHtml(li);
             }
 
+            //{
+            //    var li = new TagBuilder("li");
+            //    li.AddCssClass("page-item");
+            //    if (pageInfo.PageNumber == 1) li.AddCssClass("disabled");
+
+            //    var a = new TagBuilder("a");
+            //    a.MergeAttribute("class", "page-link");
+            //    a.MergeAttribute("value", "1");
+            //    a.MergeAttribute("href", pageUrl(1));
+            //    a.InnerHtml.Append("1");
+
+            //    li.InnerHtml.AppendHtml(a);
+
+            //    ul.InnerHtml.AppendHtml(li);
+            //}
+
+            if (pageInfo.TotalPages <= 11)
             {
-                for (int i = 0; i < pageInfo.TotalPages; i++)
                 {
-                    var li = new TagBuilder("li");
-                    li.AddCssClass("page-item");
-
-                    if (i + 1 == pageInfo.PageNumber) li.AddCssClass("disabled");
-
-                    var a = new TagBuilder("label");
-                    a.MergeAttribute("class", "page-link");
-                    //a.MergeAttribute("method", "post");
-                    a.MergeAttribute("value", (i + 1).ToString());
-                    //a.MergeAttribute("href", "");
-                    a.InnerHtml.Append((i + 1).ToString());
-
-                    li.InnerHtml.AppendHtml(a);
-
-                    ul.InnerHtml.AppendHtml(li);
+                    for (int i = 0; i < pageInfo.TotalPages + 1; i++)
+                    {
+                        var li = new TagBuilder("li");
+                        li.AddCssClass("page-item");
+                        if (i + 1 == pageInfo.PageNumber) li.AddCssClass("disabled");
+                        var a = new TagBuilder("a");
+                        a.MergeAttribute("class", "page-link");
+                        //a.MergeAttribute("method", "post");
+                        a.MergeAttribute("value", (i + 1).ToString());
+                        //a.MergeAttribute("href", "");
+                        a.InnerHtml.Append((i + 1).ToString());
+                        li.InnerHtml.AppendHtml(a);
+                        ul.InnerHtml.AppendHtml(li);
+                    }
+                }
+            }
+            else
+            {
+                {
+                    for (int i = pageInfo.PageNumber - 3; i < pageInfo.PageNumber + 4; i++)
+                    {
+                        var li = new TagBuilder("li");
+                        li.AddCssClass("page-item");
+                        if (i + 1 == pageInfo.PageNumber) li.AddCssClass("disabled");
+                        var a = new TagBuilder("a");
+                        a.MergeAttribute("class", "page-link");
+                        //a.MergeAttribute("method", "post");
+                        a.MergeAttribute("value", (i + 1).ToString());
+                        //a.MergeAttribute("href", "");
+                        a.InnerHtml.Append((i + 1).ToString());
+                        li.InnerHtml.AppendHtml(a);
+                        ul.InnerHtml.AppendHtml(li);
+                    }
                 }
             }
 

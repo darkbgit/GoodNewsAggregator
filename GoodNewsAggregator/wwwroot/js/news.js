@@ -1,10 +1,23 @@
 ﻿
+$('.form-check-input').on('blur', function() {
+    $('.accordion-collapse.collapse').collapse('hide');
+});
+
+$('.accordion-button').on('blur', function () {
+    setTimeout(collapseAccordion, 100);
+    });
+
+function collapseAccordion() {
+    if (!document.activeElement.classList.contains('form-check-input'))
+        $('.accordion-collapse.collapse').collapse('hide');
+}
+
 $('.form-check-input').on('change', function () {
     updatePageFromSwitch();
 });
 
 $('body').on('click', '.page-item', function () {
-    var page = $(this).children('label').attr('value');
+    var page = $(this).children('a').attr('value');
     //alert(page);
     updatePageFromPagination(page);
 });

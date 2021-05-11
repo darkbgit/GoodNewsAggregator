@@ -114,7 +114,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
                 for (int i=0; i<item.Categories.Count; i++)
                 {
                     category += item.Categories[i].Name;
-                    if (i > 1 && i != item.Categories.Count)
+                    if (i > 0 && i != item.Categories.Count - 1)
                     {
                         category += ", ";
                     }
