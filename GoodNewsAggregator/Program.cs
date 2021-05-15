@@ -1,5 +1,9 @@
+using GoodNewsAggregator.DAL.Core;
+using GoodNewsAggregator.DAL.Core.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -12,7 +16,7 @@ namespace GoodNewsAggregator
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
@@ -21,7 +25,23 @@ namespace GoodNewsAggregator
                 .WriteTo.File(@"C:\ItAcademy\GNA\Log\log.txt",
                     Serilog.Events.LogEventLevel.Information)
                 .CreateLogger();
-            CreateHostBuilder(args).Build().Run();
+            
+            var host = CreateHostBuilder(args).Build();
+
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            try
+            {
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var roleManager = services.GetRequiredService<RoleManager<Role>>();
+                await RoleInitilizer.InitializeAsync(userManager, roleManager);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+            host.Run();
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

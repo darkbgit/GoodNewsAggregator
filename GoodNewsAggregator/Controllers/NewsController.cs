@@ -15,9 +15,11 @@ using Serilog;
 using AutoMapper;
 using GoodNewsAggregator.Models;
 using GoodNewsAggregator.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GoodNewsAggregator.Controllers
 {
+    [Authorize]
     public class NewsController : Controller
     {
         //private readonly GoodNewsAggregatorContext _context;
