@@ -70,7 +70,7 @@ function updatePageFromSwitch(rssIds) {
         url: '/News/Index',
         data: {
             __RequestVerificationToken: token,
-            rssIds: rssIds,
+            rssIds: rssIds
         },
         //dataType: 'json',
         success: function (response) {

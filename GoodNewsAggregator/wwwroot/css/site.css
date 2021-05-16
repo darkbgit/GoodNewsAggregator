@@ -61,7 +61,7 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
-    background: linear-gradient(to top, #ffa705, white)
+    background-color: #e6e7e9;
 }
 .footer {
   position: absolute;
@@ -71,35 +71,11 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-.news-media__image {
-    max-width: 100%;
-    height: auto;
-    margin: 5px 5px
-}
-
-.news-index__image {
-    max-width: 100%;
-    min-width: 90%;
-    height: auto;
-}
-
-iframe[title="YouTube video player"] {
-    max-width: 100%;
-    height: auto;
-    margin: 5px 5px
-}
 
 /*.container {
     background-color: darkgray
 }*/
 
-.nav-login {
-    margin: 0px 4px;
-}
-
-.news-header {
-    margin: 10px 0px;
-}
 
 /*.accordionRssSources {
     background-color: lightgrey;
@@ -120,20 +96,4 @@ iframe[title="YouTube video player"] {
     background-color: lightgrey;
 }*/
 
-.anchor_news {
-    display: block;
-    text-decoration: none;
-    color: black;
-}
 
-.anchor_news:hover {
-    color: #0366d6;
-}
-
-.anchor_news:visited {
-    color: grey;
-}
-
-.pagination > li > a {
-    background-color: inherit;
-}

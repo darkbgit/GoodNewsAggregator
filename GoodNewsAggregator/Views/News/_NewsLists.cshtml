@@ -1,10 +1,13 @@
 ﻿@model IEnumerable<GoodNewsAggregator.Models.ViewModels.News.NewsList>
 
-<div class="row g-0">
 
-    @foreach (var item in Model)
-    {
-        await Html.RenderPartialAsync("ShortNewsPreview", item);
-    }
+    @*<div class="card-group">*@
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
 
-</div>
+                @foreach (var item in Model)
+                {
+                    await Html.RenderPartialAsync("ShortNewsPreview", item);
+                }
+
+        </div>
+    @*</div>*@

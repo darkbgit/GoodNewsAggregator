@@ -1,0 +1,52 @@
+﻿
+
+.news-media__image {
+    max-width: 100%;
+    height: auto;
+    margin: 5px 5px
+}
+
+.news-index__image {
+    max-width: 100%;
+    min-width: 90%;
+    height: auto;
+}
+
+iframe[title="YouTube video player"] {
+    max-width: 100%;
+    height: auto;
+    margin: 5px 5px
+}
+
+.nav-login {
+    margin: 0px 4px;
+}
+
+.news-header {
+    margin: 10px 0px;
+    border: #f8f9fa solid;
+    border-radius: .25rem;
+    border-width: 1px;
+}
+
+.anchor_news {
+    display: block;
+    text-decoration: none;
+    color: black;
+}
+
+.anchor_news:hover {
+    color: #0366d6;
+}
+
+.anchor_news:visited {
+    color: grey;
+}
+
+.pagination > li > a {
+    background-color: inherit;
+}
+
+.pagination {
+    margin: 5px 0px;
+}

@@ -15,6 +15,7 @@ using Serilog;
 using AutoMapper;
 using GoodNewsAggregator.Models;
 using GoodNewsAggregator.Models.ViewModels;
+using GoodNewsAggregator.Utilities;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoodNewsAggregator.Controllers
@@ -64,9 +65,9 @@ namespace GoodNewsAggregator.Controllers
                     .ToList();
             }
 
-            var newsPerPageCount = 25;
 
-            var newsPerPage = news.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
+            var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE)
+                .Take(Constants.NEWS_PER_PAGE);
 
             var newsList = newsPerPage.Select(n => new NewsList()
             {
@@ -92,7 +93,7 @@ namespace GoodNewsAggregator.Controllers
                 Checked = !sourceIds.Any() || sourceIds.Contains(r.Id)
             });
 
-            var pageInfo = new PageInfo(newsPerPageCount, page, news.Count());
+            var pageInfo = new PageInfo(page, news.Count());
 
 
             var newsListWithRss = new NewsListWithRssWithPagination()
@@ -102,10 +103,12 @@ namespace GoodNewsAggregator.Controllers
                 Pagination = pageInfo
             };
 
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                HttpContext.Response.Headers.Add("REQUIRES_AUTH", "1");
-            }
+            //if (!HttpContext.User.Identity.IsAuthenticated)
+            //{
+            //    return Content(
+            //        "<script language='javascript' type='text/javascript'>document.querySelector('button[data-toggle='ajax-modal']').click();</script>");
+            //    //HttpContext.Response.Headers.Add("REQUIRES_AUTH", "1");
+            //}
 
             return View(newsListWithRss);
             
@@ -147,7 +150,7 @@ namespace GoodNewsAggregator.Controllers
                 .ToList();
 
 
-            var newsPerPageCount = 25;
+            var newsPerPageCount = 24;
 
             var newsPerPage = newsDtoList.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
 
@@ -164,7 +167,7 @@ namespace GoodNewsAggregator.Controllers
             }).ToList();
 
 
-            var pageInfo = new PageInfo(newsPerPageCount, page, newsDtoList.Count());
+            var pageInfo = new PageInfo(page, newsDtoList.Count);
 
             //_mapper.Map<NewsList>(news)).ToList();
 

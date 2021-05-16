@@ -23,115 +23,72 @@ namespace GoodNewsAggregator.HtmlHelpers
             ul.AddCssClass("pagination");
             ul.AddCssClass("justify-content-center");
 
-            {
-                var li = new TagBuilder("li");
-                li.AddCssClass("page-item");
-                if (pageInfo.PageNumber == 1) li.AddCssClass("disabled");
+            var isFirstPage = pageInfo.PageNumber == 1;
+            var isLastPage = pageInfo.PageNumber == pageInfo.TotalPages;
 
-                var a = new TagBuilder("a");
-                a.MergeAttribute("class", "page-link");
-                a.MergeAttribute("value", (pageInfo.PageNumber - 1).ToString());
-                a.MergeAttribute("href", pageUrl(pageInfo.PageNumber - 1));
-                a.InnerHtml.Append("Previous");
+            var previousPage = isFirstPage ? 1 : pageInfo.PageNumber - 1;
 
-                li.InnerHtml.AppendHtml(a);
-
-                ul.InnerHtml.AppendHtml(li);
-            }
-
-            //{
-            //    var li = new TagBuilder("li");
-            //    li.AddCssClass("page-item");
-            //    if (pageInfo.PageNumber == 1) li.AddCssClass("disabled");
-
-            //    var a = new TagBuilder("a");
-            //    a.MergeAttribute("class", "page-link");
-            //    a.MergeAttribute("value", "1");
-            //    a.MergeAttribute("href", pageUrl(1));
-            //    a.InnerHtml.Append("1");
-
-            //    li.InnerHtml.AppendHtml(a);
-
-            //    ul.InnerHtml.AppendHtml(li);
-            //}
+            ul.InnerHtml.AppendHtml(GetHtmlButtonCode(previousPage,
+                pageUrl(previousPage),
+                "Previous",
+                isFirstPage));
 
             if (pageInfo.TotalPages <= 11)
             {
+                for (int i = 0; i < pageInfo.TotalPages; i++)
                 {
-                    for (int i = 0; i < pageInfo.TotalPages + 1; i++)
-                    {
-                        var li = new TagBuilder("li");
-                        li.AddCssClass("page-item");
-                        if (i + 1 == pageInfo.PageNumber) li.AddCssClass("disabled");
-                        var a = new TagBuilder("a");
-                        a.MergeAttribute("class", "page-link");
-                        //a.MergeAttribute("method", "post");
-                        a.MergeAttribute("value", (i + 1).ToString());
-                        //a.MergeAttribute("href", "");
-                        a.InnerHtml.Append((i + 1).ToString());
-                        li.InnerHtml.AppendHtml(a);
-                        ul.InnerHtml.AppendHtml(li);
-                    }
+                    ul.InnerHtml.AppendHtml(GetHtmlButtonCode(i + 1,
+                        pageUrl(i + 1),
+                        (i + 1).ToString(),
+                        i + 1 == pageInfo.PageNumber));
                 }
             }
             else
             {
+                for (int i = 0; i < pageInfo.TotalPages; i++)
                 {
-                    for (int i = pageInfo.PageNumber - 3; i < pageInfo.PageNumber + 4; i++)
-                    {
-                        var li = new TagBuilder("li");
-                        li.AddCssClass("page-item");
-                        if (i + 1 == pageInfo.PageNumber) li.AddCssClass("disabled");
-                        var a = new TagBuilder("a");
-                        a.MergeAttribute("class", "page-link");
-                        //a.MergeAttribute("method", "post");
-                        a.MergeAttribute("value", (i + 1).ToString());
-                        //a.MergeAttribute("href", "");
-                        a.InnerHtml.Append((i + 1).ToString());
-                        li.InnerHtml.AppendHtml(a);
-                        ul.InnerHtml.AppendHtml(li);
-                    }
+                    ul.InnerHtml.AppendHtml(GetHtmlButtonCode(i + 1,
+                        pageUrl(i + 1),
+                        (i + 1).ToString(),
+                        i + 1 == pageInfo.PageNumber));
+
+
                 }
             }
 
-            {
-                var li = new TagBuilder("li");
-                li.AddCssClass("page-item");
-                if (pageInfo.PageNumber == pageInfo.TotalPages) li.AddCssClass("disabled");
+            var nextPage = isLastPage ? pageInfo.TotalPages : pageInfo.PageNumber + 1;
 
-                var a = new TagBuilder("a");
-                a.MergeAttribute("class", "page-link");
-                a.MergeAttribute("value", (pageInfo.PageNumber + 1).ToString());
-                a.MergeAttribute("href", pageUrl(pageInfo.PageNumber + 1));
-                a.InnerHtml.Append(">");
-
-                li.InnerHtml.AppendHtml(a);
-
-                ul.InnerHtml.AppendHtml(li);
-            }
-
-            {
-                var li = new TagBuilder("li");
-                li.AddCssClass("page-item");
-                if (pageInfo.PageNumber == pageInfo.TotalPages) li.AddCssClass("disabled");
-
-                var a = new TagBuilder("a");
-                a.MergeAttribute("class", "page-link");
-                a.MergeAttribute("value", pageInfo.TotalPages.ToString());
-                a.MergeAttribute("href", pageUrl(pageInfo.TotalPages));
-                a.InnerHtml.Append(">>");
-
-                li.InnerHtml.AppendHtml(a);
-
-                ul.InnerHtml.AppendHtml(li);
-            }
-
+            ul.InnerHtml.AppendHtml(GetHtmlButtonCode(nextPage,
+                pageUrl(nextPage),
+                "Next",
+                isLastPage));
+            
             nav.InnerHtml.AppendHtml(ul);
 
             var writer = new System.IO.StringWriter();
             nav.WriteTo(writer, HtmlEncoder.Default);
 
             return new HtmlString(writer.ToString());
+        }
+
+        private static IHtmlContent GetHtmlButtonCode(int pageNumber,
+            string pageUrl,
+            string buttonName,
+            bool isDisabled)
+        {
+            var li = new TagBuilder("li");
+            li.AddCssClass("page-item");
+            if (isDisabled) li.AddCssClass("disabled");
+
+            var a = new TagBuilder("a");
+            a.MergeAttribute("class", "page-link");
+            a.MergeAttribute("value", pageNumber.ToString());
+            //a.MergeAttribute("href", pageUrl);
+            a.InnerHtml.Append(buttonName);
+
+            li.InnerHtml.AppendHtml(a);
+
+            return li;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoodNewsAggregator.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace GoodNewsAggregator.Models.ViewModels
     {
         
 
-        public PageInfo(int pageSize, int pageNumber, int totalNews)
+        public PageInfo(int pageNumber, int totalNews, int pageSize = Constants.NEWS_PER_PAGE)
         {
             PageSize = pageSize;
             PageNumber = pageNumber;

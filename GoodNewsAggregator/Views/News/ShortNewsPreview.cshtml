@@ -1,128 +1,108 @@
 ﻿@using Microsoft.Extensions.Hosting
 @model GoodNewsAggregator.Models.ViewModels.News.NewsList
-@*<div class="card col-sm-12 col-md-6 col-lg-4 news-card">*@
-<div class="card news-card">
-    <div class="card-body">
-        <div class="row">
-            <p class="card-text text-end">
-                <small class="text-muted">
-                    @Model.Category
-                </small>
-            </p>
-        </div>
-        <div class="row">
-            @if (Model.ImageUrl != null)
-            {
-                <div class="col-md-4">
-                    <img class="news-index__image" src="@Model.ImageUrl" alt="" />
-                </div>
-                <div class="col-md-8">
-                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
-                        <h4 class="card-title">
-                            @Model.Title
-                        </h4>
-                    </a>
-                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
-                        <p class="card-text">
-                            @Model.ShortNewsFromRssSource
+
+<div class="col">
+    <div class="card h-100 news-card">
+                @if (Model.ImageUrl != null)
+                {
+                    <img class="card-img-top" src="@Model.ImageUrl" alt=""/>
+                }
+                <div class="card-body">
+                    <div class="row">
+                        <p class="card-text text-end">
+                            <small class="text-muted">
+                                @Model.Category
+                            </small>
                         </p>
-                    </a>
-                </div>
-            }
-            else
-            {
-                <div class="col-md-12">
-                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
-                        <h4 class="card-title">
-                            @Model.Title
-                        </h4>
-                    </a>
-                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
-                        <p class="card-text">
-                            @Model.ShortNewsFromRssSource
-                        </p>
-                    </a>
-                </div>
-            }
-        </div>
-
-        @*</div>
-        <div class="card-body">*@
-            <a class="card-link" asp-action="Read" asp-route-id="@Model.Id">Читать новость</a>
-            <a href="@Model.Url" class="card-link">Читать в источнике</a>
-            <p class="card-text">
-                <small class="text-muted">
-                    @{
-                        var dateTimeAgo = DateTime.Now - Model.PublicationDate.Value.ToLocalTime();
-
-                        int GetCase(int value)
-                        {
-                            value %= 100;
-                            if (value > 10 && value < 15)
-                            {
-                                return 2;
-                            }
-                            value %= 10;
-                            if (value == 1)
-                            {
-                                return 0;
-                            }
-                            if (value > 1 && value < 5)
-                            {
-                                return 1;
-                            }
-                            return 2;
-                        }
-
-                        string TimeAgo(TimeSpan dataTimeAgo)
-                        {
-                            const string BACK = " назад";
-                            const string NOW = "сейчас";
-
-                            string[] days = { "день", "дня", "дней" };
-                            string[] hours = { "час", "часа", "часов" };
-                            string[] minutes = { "минута", "минуты", "минут" };
-
-                            string dd = "";
-                            string hh = "";
-                            string mm = "";
-
-
-
-                            if (dateTimeAgo.Days != 0)
-                            {
-                                dd = dateTimeAgo.Days.ToString() + " " + days[GetCase(dateTimeAgo.Days)] + " ";
-                                hh = dateTimeAgo.Hours.ToString() + " " + hours[GetCase(dateTimeAgo.Hours)] + BACK;
-                            }
-                            else if (dateTimeAgo.Hours != 0)
-                            {
-                                hh = dateTimeAgo.Hours.ToString() + " " + hours[GetCase(dateTimeAgo.Hours)] + BACK;
-
-                            }
-                            else
-                            {
-                                mm = dateTimeAgo.Minutes.ToString() + " " + minutes[GetCase(dateTimeAgo.Minutes)] + BACK;
-                            }
-
-                            return dd + hh + mm;
-
-                        }
-
-                        var timeAgo = TimeAgo(dateTimeAgo);
-                    }
-                    @timeAgo
-                    </small>
-                        </p>
-            
                     </div>
+                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
+                        <h4 class="card-title">
+                            @Model.Title
+                        </h4>
+                    </a>
+                    <a asp-action="Read" asp-route-id="@Model.Id" class="anchor_news">
+                        <p class="card-text">
+                            @Model.ShortNewsFromRssSource
+                        </p>
+                    </a>
+                </div>
 
-                @if (User.Identity.IsAuthenticated)
-    {
-        <div class="card-footer">
-            <a class="card-link" asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-            <a class="card-link" asp-action="Details" asp-route-id="@Model.Id">Details</a> |
-            <a class="card-link" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
-        </div>
-    }
+                <div class="card-body d-flex align-items-start flex-column">
+                    <div class="mt-auto">
+                        <a class="card-link" asp-action="Read" asp-route-id="@Model.Id">Читать новость</a>
+                        <a href="@Model.Url" class="card-link">Читать в источнике</a>
+                    </div>
+                    <div>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                @{
+                                    var dateTimeAgo = DateTime.Now - Model.PublicationDate.Value.ToLocalTime();
+
+                                    int GetCase(int value)
+                                    {
+                                        value %= 100;
+                                        if (value > 10 && value < 15)
+                                        {
+                                            return 2;
+                                        }
+                                        value %= 10;
+                                        if (value == 1)
+                                        {
+                                            return 0;
+                                        }
+                                        if (value > 1 && value < 5)
+                                        {
+                                            return 1;
+                                        }
+                                        return 2;
+                                    }
+
+                                    string TimeAgo(TimeSpan dataTimeAgo)
+                                    {
+                                        const string BACK = " назад";
+                                        const string NOW = "сейчас";
+
+                                        string[] days = {"день", "дня", "дней"};
+                                        string[] hours = {"час", "часа", "часов"};
+                                        string[] minutes = {"минута", "минуты", "минут"};
+
+                                        string dd = "";
+                                        string hh = "";
+                                        string mm = "";
+
+                                        if (dateTimeAgo.Days != 0)
+                                        {
+                                            dd = dateTimeAgo.Days.ToString() + " " + days[GetCase(dateTimeAgo.Days)] + " ";
+                                            hh = dateTimeAgo.Hours.ToString() + " " + hours[GetCase(dateTimeAgo.Hours)] + BACK;
+                                        }
+                                        else if (dateTimeAgo.Hours != 0)
+                                        {
+                                            hh = dateTimeAgo.Hours.ToString() + " " + hours[GetCase(dateTimeAgo.Hours)] + BACK;
+                                        }
+                                        else
+                                        {
+                                            mm = dateTimeAgo.Minutes.ToString() + " " + minutes[GetCase(dateTimeAgo.Minutes)] + BACK;
+                                        }
+                                        return dd + hh + mm;
+                                    }
+
+                                    var timeAgo = TimeAgo(dateTimeAgo);
+                                }
+                                @timeAgo
+                            </small>
+                        </p>
+                    </div>
+                </div>
+
+        @if (User.IsInRole("admin"))
+        {
+            <div class="card-footer">
+                <a class="card-link" asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+                <a class="card-link" asp-action="Details" asp-route-id="@Model.Id">Details</a> |
+                <a class="card-link" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+            </div>
+        }
+    </div>
 </div>
+
 

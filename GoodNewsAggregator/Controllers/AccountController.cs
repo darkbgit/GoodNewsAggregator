@@ -71,6 +71,7 @@ namespace GoodNewsAggregator.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
+
             var model = new LoginViewModel
             {
                 ReturnUrl = returnUrl
