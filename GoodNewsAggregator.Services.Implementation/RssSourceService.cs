@@ -7,28 +7,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace GoodNewsAggregator.Services.Implementation
 {
     public class RssSourceService : IRssSourceService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public RssSourceService(IUnitOfWork unitOfWork)
+        public RssSourceService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<RssSourceDto>> GetAllRssSources()
         {
             return await _unitOfWork.RssSources.FindBy(source =>
             !string.IsNullOrEmpty(source.Name))
-                .Select(source => new RssSourceDto()
-                {
-                    Id = source.Id,
-                    Name = source.Name,
-                    Url = source.Url
-                }).ToListAsync();
+                .Select(source => _mapper.Map<RssSourceDto>(source))
+                //    new RssSourceDto()
+                //{
+                //    Id = source.Id,
+                //    Name = source.Name,
+                //    Url = source.Url
+                .ToListAsync();
         }
     }
 }

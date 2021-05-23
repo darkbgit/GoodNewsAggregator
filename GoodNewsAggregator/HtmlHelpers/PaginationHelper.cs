@@ -69,7 +69,7 @@ namespace GoodNewsAggregator.HtmlHelpers
                         i = pageInfo.PageNumber - PAGES_FROM_CURRENT_PAGE - 1;
                     }
 
-                    if ((leftDots||pageInfo.PageNumber < 7) && !rightDots && i > pageInfo.PageNumber + PAGES_FROM_CURRENT_PAGE - 1 && pageInfo.PageNumber != pageInfo.TotalPages - (PAGES_FROM_CURRENT_PAGE + NUMBER_OF_LAST_PAGES + 1))
+                    if ((leftDots||pageInfo.PageNumber < 7) && !rightDots && i > pageInfo.PageNumber + PAGES_FROM_CURRENT_PAGE - 1 && pageInfo.PageNumber < pageInfo.TotalPages - (PAGES_FROM_CURRENT_PAGE + NUMBER_OF_LAST_PAGES))
                     {
                         ul.InnerHtml.AppendHtml(GetHtmlButtonCode(0,
                             pageUrl(0),

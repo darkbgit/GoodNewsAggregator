@@ -96,7 +96,7 @@ namespace GoodNewsAggregator.Controllers
                     }
                     else
                     {
-                        return Json(new {result = "Redirect", url = Url.Action("Index", "Home")});
+                        return Json(new {result = "Redirect", url = Url.Action("Index", "News")});
                         //return RedirectToAction("Index", "Home");
                     }
                 else

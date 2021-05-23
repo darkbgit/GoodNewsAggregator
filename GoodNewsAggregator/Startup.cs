@@ -19,6 +19,7 @@ using GoodNewsAggregator.DAL.Repositories.Implementation.Repositories;
 using GoodNewsAggregator.DAL.Repositories.Interfaces;
 using GoodNewsAggregator.Services.Implementation;
 using AutoMapper;
+using GoodNewsAggregator.Mapping;
 using GoodNewsAggregator.Services.Implementation.Mapping;
 using GoodNewsAggregator.Services.Implementation.Parsers;
 
@@ -76,12 +77,13 @@ namespace GoodNewsAggregator
 
             //services.AddAutoMapper(typeof(Startup));
 
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-            IMapper mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            //var mapperConfig = new MapperConfiguration(mc =>
+            //{
+            //    mc.AddProfile(new MappingProfile());
+            //});
+            //var mapper = mapperConfig.CreateMapper();
+            //services.AddSingleton(mapper);
+            services.AddAutoMapper(typeof(MappingProfile), typeof(MappingProfile2));
 
             services.AddControllersWithViews();
         }

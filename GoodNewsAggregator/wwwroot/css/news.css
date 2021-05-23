@@ -47,6 +47,14 @@ iframe[title="YouTube video player"] {
     background-color: inherit;
 }
 
+.pagination > li >a:hover {
+    cursor: pointer;
+}
+
+.pagination > li {
+    margin: 0px 1px;
+}
+
 .pagination {
     margin: 5px 0px;
 }

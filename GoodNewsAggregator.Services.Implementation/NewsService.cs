@@ -55,6 +55,39 @@ namespace GoodNewsAggregator.Services.Implementation
  
         }
 
+        public async Task<Tuple<IEnumerable<NewsDto>, int>> GetNewsPerPage(Guid[]? rssIds, int pageNumber,
+            int newsPerPage,
+            int orderBy = 1)
+        {
+            //IQueryable<News> news = Enumerable.Empty<News>().AsQueryable();
+            IQueryable<News> news;
+            IEnumerable<NewsDto> newsPerPageList;
+            int count;
+            if (rssIds == null)
+            {
+                news = _unitOfWork.News.FindBy(n =>
+                    !string.IsNullOrEmpty(n.Url));
+                count = await news.CountAsync();
+                newsPerPageList = await news.OrderByDescending(n => n.PublicationDate)
+                    .Skip((pageNumber - 1) * newsPerPage)
+                    .Take(newsPerPage)
+                    .Select(n => _mapper.Map<NewsDto>(n))
+                    .ToListAsync();
+            }
+            else
+            {
+                news = _unitOfWork.News.FindBy(n =>
+                    rssIds.Contains(n.RssSourceId));
+                count = await news.CountAsync();
+                newsPerPageList = await news.OrderByDescending(n => n.PublicationDate)
+                    .Skip((pageNumber - 1) * newsPerPage)
+                    .Take(newsPerPage)
+                    .Select(n => _mapper.Map<NewsDto>(n))
+                    .ToListAsync();
+            }
+            return new Tuple<IEnumerable<NewsDto>, int>(newsPerPageList, count);
+        }
+
         public Task Add(NewsDto news)
         {
             throw new NotImplementedException();
@@ -109,7 +142,7 @@ namespace GoodNewsAggregator.Services.Implementation
         public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)
         {
 
-            var parser = _parsers.Where(p => p.Name.Equals(rssSource.Name)).Single();
+            var parser = _parsers.Single(p => p.Name.Equals(rssSource.Name));
 
             //var news = await parser?.ParseRss(rssSource);
 

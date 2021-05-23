@@ -8,18 +8,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoodNewsAggregator.Services.Implementation.Mapping
+namespace GoodNewsAggregator.Mapping
 {
-    public class MappingProfile : Profile
+    public class MappingProfile2 : Profile
     {
-        public MappingProfile()
+        public MappingProfile2()
         {
-            CreateMap<News, NewsDto>();
-            CreateMap<NewsDto, News>();
 
             CreateMap<NewsDto, OneNews>();
 
             CreateMap<NewsDto, NewsList>();
+
+
         }
     }
 }

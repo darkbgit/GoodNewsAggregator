@@ -10,14 +10,16 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Services.Implementation.Mapping
 {
-    //public class MappingProfile : Profile
-    //{
-    //    public MappingProfile()
-    //    {
-    //        CreateMap<News, NewsDto>();
-    //        CreateMap<NewsDto, News>();
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            CreateMap<News, NewsDto>();
+            CreateMap<NewsDto, News>();
 
-    //        //CreateMap<NewsDto, NewsList>();
-    //    }
-    //}
+            CreateMap<RssSource, RssSourceDto>();
+            CreateMap<RssSourceDto, RssSource>();
+            //CreateMap<OneNews, NewsDto>();
+        }
+    }
 }

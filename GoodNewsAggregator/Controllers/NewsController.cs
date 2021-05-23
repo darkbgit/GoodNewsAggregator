@@ -52,34 +52,32 @@ namespace GoodNewsAggregator.Controllers
             {
                 foreach (var sourceId in sourceIds)
                 {
-                    var sourceNews = (await _newsService.GetNewsBySourceId(sourceId))
-                        .OrderByDescending(n => n.PublicationDate)
-                        .ToList();
+                    var sourceNews = await _newsService.GetNewsBySourceId(sourceId);
                     news = news.Concat(sourceNews);
                 }
             }
             else
             {
-                news = (await _newsService.GetNewsBySourceId(null))
-                    .OrderByDescending(n=>n.PublicationDate)
-                    .ToList();
+                news = await _newsService.GetNewsBySourceId(null);
             }
 
+            news = news.OrderByDescending(n => n.PublicationDate).ToList();
 
             var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE)
                 .Take(Constants.NEWS_PER_PAGE);
 
-            var newsList = newsPerPage.Select(n => new NewsList()
-            {
-                Id = n.Id,
-                Title = n.Title,
-                Url = n.Url,
-                ShortNewsFromRssSource = n.ShortNewsFromRssSource,
-                ImageUrl = n.ImageUrl,
-                PublicationDate = n.PublicationDate,
-                Author = n.Author,
-                Category = n.Category
-            }).ToList();
+            var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
+            //new NewsList()
+            //{
+            //    Id = n.Id,
+            //    Title = n.Title,
+            //    Url = n.Url,
+            //    ShortNewsFromRssSource = n.ShortNewsFromRssSource,
+            //    ImageUrl = n.ImageUrl,
+            //    PublicationDate = n.PublicationDate,
+            //    Author = n.Author,
+            //    Category = n.Category
+            //}).ToList();
 
             //_mapper.Map<NewsList>(news)).ToList();
 
@@ -111,20 +109,6 @@ namespace GoodNewsAggregator.Controllers
             //}
 
             return View(newsListWithRss);
-            
-            
-            
-            //new NewsList()
-            
-            
-            //{
-            //    Id = n.Id,
-            //    Title = n.Title,
-            //    Url = n.Url,
-            //    ShortNewsFromRssSource = n.ShortNewsFromRssSource,
-            //    ImageUrl = n.ImageUrl,
-            //    PublicationDate = n.PublicationDate
-            //}).ToList());
         }
 
 
@@ -135,41 +119,41 @@ namespace GoodNewsAggregator.Controllers
             //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
             //Request.Headers.TryGetValue("rssIds", sourceIds).ToList();
 
-            IEnumerable<NewsDto> news = new List<NewsDto>();
+            //IQueryable<NewsDto> news = Enumerable.Empty<NewsDto>().AsQueryable();
+
+            //foreach (var sourceId in rssIds)
+            //{
+            //    var sourceNews = (await _newsService.GetNewsBySourceId(sourceId));
+            //    news = news.Concat(sourceNews);
+            //}
+
+            //var count = await news.CountAsync();
+            //var newsPerPage =  await news
+            //    .OrderByDescending(n => n.PublicationDate)
+            //    .Skip((page - 1) * Constants.NEWS_PER_PAGE)
+            //    .Take(Constants.NEWS_PER_PAGE)
+            //    .ToListAsync();
 
 
-            foreach (var sourceId in rssIds)
-            {
-                var sourceNews = (await _newsService.GetNewsBySourceId(sourceId))
-                    .ToList();
-                news = news.Concat(sourceNews);
-            }
-
-            var newsDtoList = news
-                .OrderByDescending(n => n.PublicationDate)
-                .ToList();
-
-
-            var newsPerPageCount = 24;
-
-            var newsPerPage = newsDtoList.Skip((page - 1) * newsPerPageCount).Take(newsPerPageCount);
-
-            var newsList = newsPerPage.Select(n => new NewsList()
-            {
-                Id = n.Id,
-                Title = n.Title,
-                Url = n.Url,
-                ShortNewsFromRssSource = n.ShortNewsFromRssSource,
-                ImageUrl = n.ImageUrl,
-                PublicationDate = n.PublicationDate,
-                Author = n.Author,
-                Category = n.Category
-            }).ToList();
+            //var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE).Take(Constants.NEWS_PER_PAGE);
+            var (newsPerPage, count) = await  _newsService.GetNewsPerPage(rssIds, page, Constants.NEWS_PER_PAGE);
+            var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
+            
+            
+            //    new NewsList()
+            //{
+            //    Id = n.Id,
+            //    Title = n.Title,
+            //    Url = n.Url,
+            //    ShortNewsFromRssSource = n.ShortNewsFromRssSource,
+            //    ImageUrl = n.ImageUrl,
+            //    PublicationDate = n.PublicationDate,
+            //    Author = n.Author,
+            //    Category = n.Category
+            //}).ToList();
 
 
-            var pageInfo = new PageInfo(page, newsDtoList.Count);
-
-            //_mapper.Map<NewsList>(news)).ToList();
+            var pageInfo = new PageInfo(page, count);
 
             var newsListsWithPagination = new NewsListWithPagination()
             {
@@ -402,7 +386,7 @@ namespace GoodNewsAggregator.Controllers
 
             try 
             { 
-            await _newsService.AddRange(newInfos);
+                await _newsService.AddRange(newInfos);
             }
             catch (Exception e)
             {

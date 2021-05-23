@@ -10,8 +10,10 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
         Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id);
         Task<NewsDto> GetNewsById(Guid id);
         Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource);
+        Task<Tuple<IEnumerable<NewsDto> , int>> GetNewsPerPage(Guid[]? rssIds, int pageNumber, int newsPerPage,
+            int orderBy = 1);
 
-        
+
         Task Add(NewsDto news);
         Task AddRange(IEnumerable<NewsDto> news);
 

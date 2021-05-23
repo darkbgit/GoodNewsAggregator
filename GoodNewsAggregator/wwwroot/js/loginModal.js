@@ -18,7 +18,7 @@
         var form = $(this).parents('.modal').find('form');
         var actionUrl = form.attr('action');
         var dataToSend = form.serialize();
-        dataToSend += '&ReturnUrl=' + pageUrl;
+        if (pageUrl !== "\/") dataToSend += '&ReturnUrl=' + pageUrl;
 
         $.post(actionUrl, dataToSend).done(function (data) {
 

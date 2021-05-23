@@ -36,4 +36,8 @@
     <ProjectReference Include="..\GoodNewsAggregator.Services.Implementation\GoodNewsAggregator.Services.Implementation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
 </Project>
