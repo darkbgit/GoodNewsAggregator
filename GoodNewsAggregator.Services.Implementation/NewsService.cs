@@ -165,7 +165,8 @@ namespace GoodNewsAggregator.Services.Implementation
                             ImageUrl = parser.GetImageUrl(syndicationItem),
                             ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
                             Title = syndicationItem.Title.Text,
-                            PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime()
+                            PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
+
                         };
                         news.Add(newsDto);
                     }
@@ -178,10 +179,11 @@ namespace GoodNewsAggregator.Services.Implementation
                 .ToListAsync();
 
             var newsList = news.ToList();
+
             var newNews = newsList.Where(n => !currentNewsUrls.Any(url => url.Equals(n.Url)));
             foreach (var item in newNews)
             {
-                item.Body = "";//await parser.GetBody(item.Url) ?? "";
+                item.Body = await parser.GetBody(item.Url) ?? "";
             };
 
 

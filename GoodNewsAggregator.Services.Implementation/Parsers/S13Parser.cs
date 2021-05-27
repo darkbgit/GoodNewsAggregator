@@ -31,10 +31,11 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
                 for (int i = 0; i < item.Categories.Count; i++)
                 {
                     category += item.Categories[i].Name;
-                    if (i > 0 && i != item.Categories.Count - 1)
+                    if (i == item.Categories.Count - 1)
                     {
-                        category += ", ";
+                        continue;
                     }
+                    category += ", ";
                 }
                 return category;
             }

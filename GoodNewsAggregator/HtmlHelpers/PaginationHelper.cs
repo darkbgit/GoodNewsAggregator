@@ -35,10 +35,13 @@ namespace GoodNewsAggregator.HtmlHelpers
             var previousPage = isFirstPage ? 1 : pageInfo.PageNumber - 1;
             var nextPage = isLastPage ? pageInfo.TotalPages : pageInfo.PageNumber + 1;
 
-            ul.InnerHtml.AppendHtml(GetHtmlButtonCode(previousPage,
-                pageUrl(previousPage),
-                "Previous",
-                isFirstPage));
+            if (pageInfo.PageNumber > 1)
+            {
+                ul.InnerHtml.AppendHtml(GetHtmlButtonCode(previousPage,
+                    pageUrl(previousPage),
+                    "Previous",
+                    isFirstPage));
+            }
 
             if (pageInfo.TotalPages <= NUMBER_OF_FIRST_PAGES + 
                                         PAGES_FROM_CURRENT_PAGE * 2 +
@@ -58,7 +61,6 @@ namespace GoodNewsAggregator.HtmlHelpers
                 bool rightDots = false;
                 for (int i = 0; i < pageInfo.TotalPages; i++)
                 {
-                    
                     if (i > 1 && pageInfo.PageNumber - PAGES_FROM_CURRENT_PAGE > 2 && !leftDots && pageInfo.PageNumber != NUMBER_OF_FIRST_PAGES + PAGES_FROM_CURRENT_PAGE + 1)
                     {
                         ul.InnerHtml.AppendHtml(GetHtmlButtonCode(0,
@@ -84,11 +86,15 @@ namespace GoodNewsAggregator.HtmlHelpers
                         i + 1 == pageInfo.PageNumber));
                 }
             }
-        
-            ul.InnerHtml.AppendHtml(GetHtmlButtonCode(nextPage,
-                pageUrl(nextPage),
-                "Next",
-                isLastPage));
+
+            if (pageInfo.PageNumber > 1 && pageInfo.PageNumber < pageInfo.TotalPages)
+            {
+
+                ul.InnerHtml.AppendHtml(GetHtmlButtonCode(nextPage,
+                    pageUrl(nextPage),
+                    "Next",
+                    isLastPage));
+            }
             
             nav.InnerHtml.AppendHtml(ul);
 

@@ -367,6 +367,7 @@ namespace GoodNewsAggregator.Controllers
                 {
                     var newsList = await _newsService
                         .GetNewsInfoFromRssSource(rssSource);
+
                     //if (rssSourse.Name.Equals("Onliner"))
                     //{
                     //    foreach (var newsDto in newsList)
