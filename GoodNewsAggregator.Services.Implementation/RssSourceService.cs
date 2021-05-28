@@ -26,12 +26,8 @@ namespace GoodNewsAggregator.Services.Implementation
         {
             return await _unitOfWork.RssSources.FindBy(source =>
             !string.IsNullOrEmpty(source.Name))
+                .OrderBy(r => r.Name)
                 .Select(source => _mapper.Map<RssSourceDto>(source))
-                //    new RssSourceDto()
-                //{
-                //    Id = source.Id,
-                //    Name = source.Name,
-                //    Url = source.Url
                 .ToListAsync();
         }
     }
