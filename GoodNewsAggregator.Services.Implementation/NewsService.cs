@@ -58,56 +58,52 @@ namespace GoodNewsAggregator.Services.Implementation
         public async Task<Tuple<IEnumerable<NewsDto>, int>> GetNewsPerPage(Guid[] rssIds,
             int pageNumber,
             int newsPerPage,
-            int orderByRating,
-            int orderByDate)
+            string sortOrder)
         {
             //IQueryable<News> news = Enumerable.Empty<News>().AsQueryable();
-            IQueryable<News> news;
-            IEnumerable<NewsDto> newsPerPageList;
+            IEnumerable<News> news;
+            IEnumerable<News> newsEnumerable;
+            IEnumerable<NewsDto> newsDtoList;
             int count;
-            if (rssIds == null)
+            if (!rssIds.Any())
             {
                 news = _unitOfWork.News.FindBy(n =>
                     !string.IsNullOrEmpty(n.Url));
-                count = await news.CountAsync();
-                newsPerPageList = await news.OrderByDescending(n => n.PublicationDate)
+                count = news.Count();
+                newsDtoList = news.OrderByDescending(n => n.PublicationDate)
                     .Skip((pageNumber - 1) * newsPerPage)
                     .Take(newsPerPage)
                     .Select(n => _mapper.Map<NewsDto>(n))
-                    .ToListAsync();
+                    .ToList();
             }
             else
             {
                 news = _unitOfWork.News.FindBy(n =>
                     rssIds.Contains(n.RssSourceId));
-                count = await news.CountAsync();
+                count = news.Count();
 
-                switch (orderByDate)
+                switch (sortOrder)
                 {
-                    case 2:
-                        news = news.OrderByDescending(n => n.PublicationDate);
-                        break;
-                    case 1:
+                    case "Date":
                         news = news.OrderBy(n => n.PublicationDate);
+                        break;
+                    //case "Rating":
+                    //    news = news.OrderBy(n => n.PublicationDate).ToList();
+                    //    break;
+                    //case "rating_desc":
+                    //    news = news.OrderBy(n => n.PublicationDate).ToList();
+                    //    break;
+                    default:
+                        news = news.OrderByDescending(n => n.PublicationDate);
                         break;
                 }
 
-                //switch (orderByRating)
-                //{
-                //    case 2:
-                //        news = news.OrderByDescending(n => n.PublicationDate);
-                //        break;
-                //    case 1:
-                //        news = news.OrderBy(n => n.PublicationDate);
-                //        break;
-                //}
-
-                newsPerPageList = await news.Skip((pageNumber - 1) * newsPerPage)
+                newsDtoList = news.Skip((pageNumber - 1) * newsPerPage)
                     .Take(newsPerPage)
                     .Select(n => _mapper.Map<NewsDto>(n))
-                    .ToListAsync();
+                    .ToList();
             }
-            return new Tuple<IEnumerable<NewsDto>, int>(newsPerPageList, count);
+            return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
         }
 
         public Task Add(NewsDto news)

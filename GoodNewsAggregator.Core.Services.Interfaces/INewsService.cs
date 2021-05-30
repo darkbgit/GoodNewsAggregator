@@ -13,8 +13,7 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
         Task<Tuple<IEnumerable<NewsDto> , int>> GetNewsPerPage(Guid[] rssIds,
             int pageNumber,
             int newsPerPage,
-            int orderByRating,
-            int orderByDate);
+            string sortOrder);
 
 
         Task Add(NewsDto news);

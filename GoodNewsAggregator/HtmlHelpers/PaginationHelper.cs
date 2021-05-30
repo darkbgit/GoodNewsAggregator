@@ -87,7 +87,7 @@ namespace GoodNewsAggregator.HtmlHelpers
                 }
             }
 
-            if (pageInfo.PageNumber > 1 && pageInfo.PageNumber < pageInfo.TotalPages)
+            if (pageInfo.PageNumber < pageInfo.TotalPages)
             {
 
                 ul.InnerHtml.AppendHtml(GetHtmlButtonCode(nextPage,

@@ -58,3 +58,8 @@ iframe[title="YouTube video player"] {
 .pagination {
     margin: 5px 0px;
 }
+
+.sort-news:hover {
+    cursor: pointer;
+    font-weight: bold;
+}

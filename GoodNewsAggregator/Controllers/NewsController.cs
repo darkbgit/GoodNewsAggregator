@@ -45,51 +45,49 @@ namespace GoodNewsAggregator.Controllers
 
         // GET: News
         [HttpGet]
-        public async Task<IActionResult> Index(Guid?[] sourceIds,
-            int page = 1,
-            NewsOrderBy orderByRating = NewsOrderBy.No,
-            NewsOrderBy orderByDate = NewsOrderBy.Down)
+        public async Task<IActionResult> Index(Guid[] rssIds, int page = 1)
         {
             IEnumerable<NewsDto> news = new List<NewsDto>();
 
-            if (sourceIds.Length > 0)
-            {
-                foreach (var sourceId in sourceIds)
-                {
-                    var sourceNews = await _newsService.GetNewsBySourceId(sourceId);
-                    news = news.Concat(sourceNews);
-                }
-            }
-            else
-            {
-                news = await _newsService.GetNewsBySourceId(null);
-            }
-
-            switch (orderByDate)
-            {
-                case NewsOrderBy.Down:
-                    news = news.OrderByDescending(n => n.PublicationDate).ToList();
-                    break;
-                case NewsOrderBy.Up:
-                    news = news.OrderBy(n => n.PublicationDate).ToList();
-                    break;
-            }
-
-
-            //switch (orderByRating)
+            //if (sourceIds.Length > 0)
             //{
-            //    case NewsOrderBy.Down:
-            //        news = news.OrderByDescending(n => n.PublicationDate).ToList();
+            //    foreach (var sourceId in sourceIds)
+            //    {
+            //        var sourceNews = await _newsService.GetNewsBySourceId(sourceId);
+            //        news = news.Concat(sourceNews);
+            //    }
+            //}
+            //else
+            //{
+            //    news = await _newsService.GetNewsBySourceId(null);
+            //}
+
+            //switch (sortOrder)
+            //{
+            //    case "Date":
+            //        news = news.OrderBy(n => n.PublicationDate);
             //        break;
-            //    case NewsOrderBy.Up:
-            //        news = news.OrderBy(n => n.PublicationDate).ToList();
+            //    //case "Rating":
+            //    //    news = news.OrderBy(n => n.PublicationDate).ToList();
+            //    //    break;
+            //    //case "rating_desc":
+            //    //    news = news.OrderBy(n => n.PublicationDate).ToList();
+            //    //    break;
+            //    default:
+            //        news = news.OrderByDescending(n => n.PublicationDate);
             //        break;
             //}
 
 
+            //var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE)
+            //    .Take(Constants.NEWS_PER_PAGE);
 
-            var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE)
-                .Take(Constants.NEWS_PER_PAGE);
+            //var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
+
+            var (newsPerPage, count) = await _newsService.GetNewsPerPage(rssIds,
+                page,
+                Constants.NEWS_PER_PAGE,
+                "");
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
@@ -100,7 +98,7 @@ namespace GoodNewsAggregator.Controllers
                 Id = r.Id,
                 Name = r.Name,
                 Url = r.Url,
-                Checked = !sourceIds.Any() || sourceIds.Contains(r.Id)
+                Checked = !rssIds.Any() || rssIds.Contains(r.Id)
             });
 
             var pageInfo = new PageInfo(page, news.Count());
@@ -127,9 +125,8 @@ namespace GoodNewsAggregator.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(Guid[] rssIds,
-            int page = 1,
-            NewsOrderBy orderByRating = NewsOrderBy.No,
-            NewsOrderBy orderByDate = NewsOrderBy.Down)
+            string sortOrder,
+            int page = 1)
         {
             //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
             //Request.Headers.TryGetValue("rssIds", sourceIds).ToList();
@@ -154,8 +151,7 @@ namespace GoodNewsAggregator.Controllers
             var (newsPerPage, count) = await  _newsService.GetNewsPerPage(rssIds,
                 page,
                 Constants.NEWS_PER_PAGE,
-                (int)orderByRating,
-                (int)orderByDate);
+                sortOrder);
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
             
