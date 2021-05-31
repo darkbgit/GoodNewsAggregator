@@ -4,27 +4,27 @@ const arrowCircleDown =
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16"><path fill-rule="evenodd" d = "M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" /></svg >';
 
 
-let rssCheckBoxItems = document.querySelectorAll('.form-check-input');
+//let rssCheckBoxItems = document.querySelectorAll('.form-check-input');
 
-[].forEach.call(rssCheckBoxItems,
-    function(item) {
-        item.onchange = updatePageFromSwitch;
-        item.onblur = rssOnBlurTimer;
-    });
+//[].forEach.call(rssCheckBoxItems,
+//    function(item) {
+//        item.onchange = updatePageFromSwitch;
+//        item.onblur = rssOnBlurTimer;
+//    });
 
-function rssOnBlur() {
-    if (!document.activeElement.classList.contains('form-check-input')) {
-        let collapseEl = document.querySelector('.accordion-collapse.collapse'); //.collapse('hide');
-        return new bootstrap.Collapse(collapseEl);
-    }
-}
+//function rssOnBlur() {
+//    if (!document.activeElement.classList.contains('form-check-input')) {
+//        let collapseEl = document.querySelector('.accordion-collapse.collapse'); //.collapse('hide');
+//        return new bootstrap.Collapse(collapseEl);
+//    }
+//}
 
-function rssOnBlurTimer() {
-    setTimeout(rssOnBlur, 100);
-}
+//function rssOnBlurTimer() {
+//    setTimeout(rssOnBlur, 100);
+//}
 
 
-document.querySelector('.accordion-button').onblur = rssOnBlurTimer;
+/*document.querySelector('.accordion-button').onblur = rssOnBlurTimer;*/
 
 
 
@@ -68,35 +68,35 @@ function gettoken() {
 function getCheckedRssIds() {
     let rssIds = [];
 
-    document.querySelectorAll('rss-source').each(function () {
-        if ($(this).innerHTML == 1) rssIds.push($(this).val());
+    $('.rss-source').each(function () {
+        if ($(this).val() == 'true') rssIds.push($(this).attr('id'));
     });
     return rssIds;
 };
 
-function updatePageFromSwitch() {
-    let form = $('#__AjaxAntiForgeryForm');
-    let token = $('input[name="__RequestVerificationToken"]', form).val();
-    let rssIds = getCheckedRssIds();
-    let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
-    let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
+//function updatePageFromSwitch() {
+//    let form = $('#__AjaxAntiForgeryForm');
+//    let token = $('input[name="__RequestVerificationToken"]', form).val();
+//    let rssIds = getCheckedRssIds();
+//    let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
+//    let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
 
-    $.ajax({
-        type: 'POST',
-        url: '/News/Index',
-        data: {
-            __RequestVerificationToken: token,
-            rssIds: rssIds,
-            orderByDate: orderByDate,
-            orderByRating: orderByRating
-        },
-        //dataType: 'json',
-        success: function (response) {
-            console.log('success!');
-            $('#outputField').html(response);
-        }
-    });
-};
+//    $.ajax({
+//        type: 'POST',
+//        url: '/News/Index',
+//        data: {
+//            __RequestVerificationToken: token,
+//            rssIds: rssIds,
+//            orderByDate: orderByDate,
+//            orderByRating: orderByRating
+//        },
+//        //dataType: 'json',
+//        success: function (response) {
+//            console.log('success!');
+//            $('#outputField').html(response);
+//        }
+//    });
+//};
 
 function updatePageFromPagination(page) {
     let form = $('#__AjaxAntiForgeryForm');

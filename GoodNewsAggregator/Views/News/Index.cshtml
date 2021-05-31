@@ -16,7 +16,7 @@
 </div>
 
 <div class="row">
-<partial name="_RssList" model="Model.RssList" />
+@*<partial name="_RssList" model="Model.RssList" />*@
 
 @if (User.Identity.IsAuthenticated)
 {
@@ -31,10 +31,10 @@
 </div>
 
 <div id="modal-placeholder-rss"></div>
-<div>
+<div id="rssSources">
     @foreach (var rss in Model.RssList)
     {
-        <input class="rss-source" type="hidden" value="@rss.Id" @rss.Checked />
+        <input class="rss-source" @*type="hidden"*@ id="@rss.Id" value="@rss.Checked" />
     }
 </div>
 
@@ -50,7 +50,7 @@
                 </div>
         </div>
     <div class="col"></div>
-        <div class="col-auto" id="sortOder" value="date_desc">
+        <div class="col-auto" id="sortOrder" value="date_desc">
             <div class="row">
                 <span class="col-auto">
                     Сортировка

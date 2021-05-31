@@ -65,18 +65,18 @@ namespace GoodNewsAggregator.Services.Implementation
             IEnumerable<News> newsEnumerable;
             IEnumerable<NewsDto> newsDtoList;
             int count;
-            if (!rssIds.Any())
-            {
-                news = _unitOfWork.News.FindBy(n =>
-                    !string.IsNullOrEmpty(n.Url));
-                count = news.Count();
-                newsDtoList = news.OrderByDescending(n => n.PublicationDate)
-                    .Skip((pageNumber - 1) * newsPerPage)
-                    .Take(newsPerPage)
-                    .Select(n => _mapper.Map<NewsDto>(n))
-                    .ToList();
-            }
-            else
+            //if (!rssIds.Any())
+            //{
+            //    news = _unitOfWork.News.FindBy(n =>
+            //        !string.IsNullOrEmpty(n.Url));
+            //    count = news.Count();
+            //    newsDtoList = news.OrderByDescending(n => n.PublicationDate)
+            //        .Skip((pageNumber - 1) * newsPerPage)
+            //        .Take(newsPerPage)
+            //        .Select(n => _mapper.Map<NewsDto>(n))
+            //        .ToList();
+            //}
+            //else
             {
                 news = _unitOfWork.News.FindBy(n =>
                     rssIds.Contains(n.RssSourceId));

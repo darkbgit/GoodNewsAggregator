@@ -84,14 +84,14 @@ namespace GoodNewsAggregator.Controllers
 
             //var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
-            var (newsPerPage, count) = await _newsService.GetNewsPerPage(rssIds,
-                page,
-                Constants.NEWS_PER_PAGE,
-                "");
-
-            var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
+            
 
             var rssSources = (await _rssSourceService.GetAllRssSources()).ToList();
+
+            if (!rssIds.Any())
+            {
+                rssIds = rssSources.Select(r => r.Id).ToArray();
+            }
 
             var rssList = rssSources.Select(r => new RssList()
             {
@@ -100,6 +100,15 @@ namespace GoodNewsAggregator.Controllers
                 Url = r.Url,
                 Checked = !rssIds.Any() || rssIds.Contains(r.Id)
             });
+
+
+
+            var (newsPerPage, count) = await _newsService.GetNewsPerPage(rssIds,
+                page,
+                Constants.NEWS_PER_PAGE,
+                "");
+
+            var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
             var pageInfo = new PageInfo(page, news.Count());
 

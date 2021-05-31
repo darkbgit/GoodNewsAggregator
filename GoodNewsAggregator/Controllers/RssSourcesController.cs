@@ -83,7 +83,7 @@ namespace GoodNewsAggregator.Controllers
                 Checked = !rssIds.Any() || rssIds.Contains(r.Id)
             });
 
-            return View(rssList);
+            return PartialView(rssList);
         }
     }
 }

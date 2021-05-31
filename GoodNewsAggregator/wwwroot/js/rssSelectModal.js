@@ -1,72 +1,25 @@
 ﻿$(function () {
     let placeholder = $('#modal-placeholder-rss');
-    //let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
-
-    var pageUrl;
+    let rssIds;
     $.ajaxSetup({ cache: false });
     $('div[data-toggle="ajax-modal"]').click(function (e) {
         e.preventDefault();
-        pageUrl = window.href;
-        var url = $(this).data('url');
-        $.get(url).done(function (data) {
-            placeholder.html(data);
-            placeholder.find('.modal').modal('show');
-        });
-    });
-
-    placeholder.on('change', '.form-check-label', function (e) {
-        e.preventDefault();
-        pageUrl = window.location.pathname;
-        var form = $(this).parents('.modal').find('form');
-        var actionUrl = form.attr('action');
-        var dataToSend = form.serialize();
-        if (pageUrl !== "\/") dataToSend += '&ReturnUrl=' + pageUrl;
-
-        $.post(actionUrl, dataToSend).done(function (data) {
-
-            if (data.result == 'Redirect') {
-                window.location.href = data.url;
-            } else {
-                var newBody = $('.modal-body', data);
-
-
-                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
-                if (isValid) {
-                    placeholder.find('.modal').modal('hide');
-                } else {
-                    placeholder.find('.modal-body').replaceWith(newBody);
-                }
+        let url = $(this).data('url');
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {
+                rssIds: rssIds
+            },
+            beforeSend: function() {
+                rssIds = getCheckedRssIds(); 
+            },
+            success: function(data) {
+                placeholder.html(data);
+                let rssModal = new bootstrap.Modal(document.getElementById('modalRss'));
+                //placeholder.find('.modal').modal('show');
+                rssModal.show();
             }
-
-
-        });
-    });
-
-    placeholder.on('click', '[data-login="modal"]', function (e) {
-        e.preventDefault();
-        pageUrl = window.location.pathname;
-        var form = $(this).parents('.modal').find('form');
-        var actionUrl = form.attr('action');
-        var dataToSend = form.serialize();
-        if (pageUrl !== "\/") dataToSend += '&ReturnUrl=' + pageUrl;
-
-        $.post(actionUrl, dataToSend).done(function (data) {
-
-            if (data.result == 'Redirect') {
-                window.location.href = data.url;
-            } else {
-                var newBody = $('.modal-body', data);
-
-
-                var isValid = newBody.find('[name="IsValid"]').val() == 'True';
-                if (isValid) {
-                    placeholder.find('.modal').modal('hide');
-                } else {
-                    placeholder.find('.modal-body').replaceWith(newBody);
-                }
-            }
-
-
         });
     });
 
@@ -79,13 +32,13 @@
 //        item.onchange = updatePageFromSwitch;
 //    });
 
-function gettoken() {
-    var token = '@Html.AntiForgeryToken()';
-    token = $(token).val();
-    return token;
-}
+//function gettoken() {
+//    var token = '@Html.AntiForgeryToken()';
+//    token = $(token).val();
+//    return token;
+//}
 
-function getCheckedRssIds() {
+function getCheckedRssIdsFromModal() {
     let rssIds = [];
 
     $('.form-check-input:checked').each(function () {
@@ -94,12 +47,13 @@ function getCheckedRssIds() {
     return rssIds;
 };
 
-function updatePageFromSwitch() {
+function updatePageFromSwitch(par) {
     let form = $('#__AjaxAntiForgeryForm');
     let token = $('input[name="__RequestVerificationToken"]', form).val();
-    let rssIds = getCheckedRssIds();
-    let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
-    let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
+    let rssIds = getCheckedRssIdsFromModal();
+    let sortOrder = document.querySelector('#sortOrder').getAttribute('value');
+    let rssId = $(par).val();
+    let isChecked = par.checked;
 
     $.ajax({
         type: 'POST',
@@ -107,13 +61,13 @@ function updatePageFromSwitch() {
         data: {
             __RequestVerificationToken: token,
             rssIds: rssIds,
-            orderByDate: orderByDate,
-            orderByRating: orderByRating
+            sortOrder: sortOrder
         },
         //dataType: 'json',
         success: function (response) {
             console.log('success!');
             $('#outputField').html(response);
+            document.getElementById(rssId).setAttribute('value', isChecked ? true : false);
         }
     });
 };
