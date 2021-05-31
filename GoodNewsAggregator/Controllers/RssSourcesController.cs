@@ -7,16 +7,21 @@ using GoodNewsAggregator.DAL.Core;
 using GoodNewsAggregator.DAL.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using GoodNewsAggregator.Core.Services.Interfaces;
+using GoodNewsAggregator.Models.ViewModels;
 
 namespace GoodNewsAggregator.Controllers
 {
     public class RssSourcesController : Controller
     {
         private readonly GoodNewsAggregatorContext _context;
+        private readonly IRssSourceService _rssSourceService;
 
-        public RssSourcesController(GoodNewsAggregatorContext context)
+        public RssSourcesController(GoodNewsAggregatorContext context,
+            IRssSourceService rssSourceService)
         {
             _context = context;
+            _rssSourceService = rssSourceService;
         }
 
         public async Task<IActionResult> Index()
@@ -63,6 +68,22 @@ namespace GoodNewsAggregator.Controllers
             }
 
             return View(source);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Select(Guid[] rssIds)
+        {
+            var rssSources = (await _rssSourceService.GetAllRssSources()).ToList();
+
+            var rssList = rssSources.Select(r => new RssList()
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Url = r.Url,
+                Checked = !rssIds.Any() || rssIds.Contains(r.Id)
+            });
+
+            return View(rssList);
         }
     }
 }

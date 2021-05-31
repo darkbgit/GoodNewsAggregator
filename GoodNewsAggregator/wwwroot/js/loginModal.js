@@ -1,17 +1,19 @@
 ﻿$(function () {
     var placeholder = $('#modal-placeholder');
+    let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
+
     var pageUrl;
     $.ajaxSetup({ cache: false });
     $('button[data-toggle="ajax-modal"]').click(function (e) {
-        //e.preventDefault();
-        pageUrl = window.href;
-        var url = $(this).data('url');
+    e.preventDefault();
+    pageUrl = window.href;
+    var url = $(this).data('url');
         $.get(url).done(function (data) {
             placeholder.html(data);
             placeholder.find('.modal').modal('show');
         });
     });
-
+    
     placeholder.on('click', '[data-login="modal"]', function (e) {
         e.preventDefault();
         pageUrl = window.location.pathname;

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<GoodNewsAggregator.Models.ViewModels.RssList>
+
+@{
+    ViewData["Title"] = "View";
+}
+
+
+<div class="modal fade" id="modalRss" tabindex="-1" aria-labelledby="rssModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rssModalLabel">Выбирите RSS источники</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" id="rssForm" name="rssForm" method="post" asp-controller="News" asp-action="Index">
+                <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+
+                <div class="modal-body">
+                    <div class="row">
+                        @foreach (var source in Model)
+                        {
+                            <div class="form-check form-switch">
+                                <label class="form-check-label" for="flexCheckBox">
+                                    @source.Name
+                                </label>
+                                <input class="form-check-input" type="checkbox"
+                                       id="flexCheckBox" value="@source.Id"
+                                       onchange="updatePageFromSwitch()" checked="@source.Checked" />
+                            </div>
+                        }
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <span>Колличество источников:  "@Model.Count()"</span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/loginModal.js"></script>
+
+
+
+
+

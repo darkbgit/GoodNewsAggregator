@@ -68,8 +68,8 @@ function gettoken() {
 function getCheckedRssIds() {
     let rssIds = [];
 
-    $('.form-check-input:checked').each(function () {
-        rssIds.push($(this).val());
+    document.querySelectorAll('rss-source').each(function () {
+        if ($(this).innerHTML == 1) rssIds.push($(this).val());
     });
     return rssIds;
 };
