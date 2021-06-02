@@ -34,12 +34,12 @@
 <div id="rssSources">
     @foreach (var rss in Model.RssList)
     {
-        <input class="rss-source" @*type="hidden"*@ id="@rss.Id" value="@rss.Checked" />
+        <input class="rss-source" type="hidden" id="@rss.Id" asp-for="RssList" value="@rss.Checked" />
     }
 </div>
 
 <div class="row news-header">
-
+    
         <div class="col-auto">
             <div clas="sort-news" data-toggle="ajax-modal" data-target="#modalRss"
                                 data-url="@Url.Action("Select", "RssSources")">Источники

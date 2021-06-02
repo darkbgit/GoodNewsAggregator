@@ -11,7 +11,7 @@ namespace GoodNewsAggregator.Models.ViewModels.News
         public IEnumerable<NewsList> NewsLists { get; set; }
 
         public IEnumerable<RssList> RssList { get; set; }
-
+        
         public PageInfo Pagination { get; set; }
     }
 }

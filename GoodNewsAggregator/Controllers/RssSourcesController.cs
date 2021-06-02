@@ -70,7 +70,7 @@ namespace GoodNewsAggregator.Controllers
             return View(source);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Select(Guid[] rssIds)
         {
             var rssSources = (await _rssSourceService.GetAllRssSources()).ToList();

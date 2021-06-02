@@ -1,20 +1,18 @@
 ﻿$(function () {
     let placeholder = $('#modal-placeholder-rss');
-    let rssIds;
-    $.ajaxSetup({ cache: false });
+    
+    //$.ajaxSetup({ cache: false });
     $('div[data-toggle="ajax-modal"]').click(function (e) {
-        e.preventDefault();
+        //e.preventDefault();
+        let rssIds = getCheckedRssIds();
         let url = $(this).data('url');
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: url,
             data: {
                 rssIds: rssIds
             },
-            beforeSend: function() {
-                rssIds = getCheckedRssIds(); 
-            },
-            success: function(data) {
+                success: function(data) {
                 placeholder.html(data);
                 let rssModal = new bootstrap.Modal(document.getElementById('modalRss'));
                 //placeholder.find('.modal').modal('show');

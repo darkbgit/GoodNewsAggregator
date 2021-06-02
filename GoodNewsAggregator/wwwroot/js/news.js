@@ -69,7 +69,10 @@ function getCheckedRssIds() {
     let rssIds = [];
 
     $('.rss-source').each(function () {
-        if ($(this).val() == 'true') rssIds.push($(this).attr('id'));
+        let value = $(this).val().toLowerCase();
+        if ($(this).val().toLowerCase() === 'true') {
+            rssIds.push($(this).attr('id'));
+        }
     });
     return rssIds;
 };
@@ -102,8 +105,7 @@ function updatePageFromPagination(page) {
     let form = $('#__AjaxAntiForgeryForm');
     let token = $('input[name="__RequestVerificationToken"]', form).val();
     let rssIds = getCheckedRssIds();
-    let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
-    let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
+    let sortOrder = document.querySelector('#sortOder').getAttribute('value');
 
     $.ajax({
         type: 'POST',
@@ -112,8 +114,7 @@ function updatePageFromPagination(page) {
             __RequestVerificationToken: token,
             rssIds: rssIds,
             page: page,
-            orderByDate: orderByDate,
-            orderByRating: orderByRating
+            sortOrder: sortOrder
         },
         //dataType: 'json',
         success: function (response) {
