@@ -48,6 +48,7 @@ namespace GoodNewsAggregator
             
             services.AddTransient<IRepository<News>, NewsRepository>();
             services.AddTransient<IRepository<RssSource>, RssSourceRepository>();
+            services.AddTransient<IRepository<User>, UserRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

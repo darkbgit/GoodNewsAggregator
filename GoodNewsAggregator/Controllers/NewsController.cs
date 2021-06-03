@@ -47,7 +47,7 @@ namespace GoodNewsAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid[] rssIds, int page = 1)
         {
-            IEnumerable<NewsDto> news = new List<NewsDto>();
+            //IEnumerable<NewsDto> news = new List<NewsDto>();
 
             //if (sourceIds.Length > 0)
             //{
@@ -110,7 +110,7 @@ namespace GoodNewsAggregator.Controllers
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
-            var pageInfo = new PageInfo(page, news.Count());
+            var pageInfo = new PageInfo(page, count);
 
 
             var newsListWithRss = new NewsListWithRssWithPagination()

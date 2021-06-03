@@ -41,7 +41,7 @@
                         <li class="page-item"><a class="page-link" href="@Model.NextUrl">&gt;&gt;</a></li>
                         <li class="page-item"><a class="page-link" href="@Model.LastUrl">&gt;</a></li>
                     }*@
-                @Html.PageLinks(Model, i => Url.Action("Index", new { page = i }))
+               @Html.PageLinks(Model, i => Url.Action("Index", new { page = i }))
                 
 
     </div>

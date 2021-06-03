@@ -27,12 +27,8 @@ const arrowCircleDown =
 /*document.querySelector('.accordion-button').onblur = rssOnBlurTimer;*/
 
 
-
-
-//document.querySelector
 $('body').on('click', '.page-item', function () {
     var page = $(this).children('a').attr('value');
-    //alert(page);
     updatePageFromPagination(page);
 });
 
@@ -77,35 +73,11 @@ function getCheckedRssIds() {
     return rssIds;
 };
 
-//function updatePageFromSwitch() {
-//    let form = $('#__AjaxAntiForgeryForm');
-//    let token = $('input[name="__RequestVerificationToken"]', form).val();
-//    let rssIds = getCheckedRssIds();
-//    let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
-//    let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
-
-//    $.ajax({
-//        type: 'POST',
-//        url: '/News/Index',
-//        data: {
-//            __RequestVerificationToken: token,
-//            rssIds: rssIds,
-//            orderByDate: orderByDate,
-//            orderByRating: orderByRating
-//        },
-//        //dataType: 'json',
-//        success: function (response) {
-//            console.log('success!');
-//            $('#outputField').html(response);
-//        }
-//    });
-//};
-
 function updatePageFromPagination(page) {
     let form = $('#__AjaxAntiForgeryForm');
     let token = $('input[name="__RequestVerificationToken"]', form).val();
     let rssIds = getCheckedRssIds();
-    let sortOrder = document.querySelector('#sortOder').getAttribute('value');
+    let sortOrder = document.querySelector('#sortOrder').getAttribute('value');
 
     $.ajax({
         type: 'POST',

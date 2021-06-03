@@ -37,8 +37,6 @@
                     placeholder.find('.modal-body').replaceWith(newBody);
                 }
             }
-
-
         });
     });
 });
