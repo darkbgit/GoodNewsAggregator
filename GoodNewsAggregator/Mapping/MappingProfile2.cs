@@ -31,6 +31,8 @@ namespace GoodNewsAggregator.Mapping
             CreateMap<EditUserViewModel, User>();
 
             CreateMap<User, UserViewModel>();
+
+            CreateMap<User, ChangePasswordViewModel>();
             
 
         }
