@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoodNewsAggregator.Controllers
 {
@@ -27,8 +28,25 @@ namespace GoodNewsAggregator.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = _userManager.Users.Select(u => _mapper.Map<UserViewModel>(u)).ToList();
+            var users = await _userManager.Users.ToListAsync();
+            var model =  users
+                //.Select(u => _mapper.Map<UserViewModel>(u))                
+                .Select(u => new UserViewModel()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Year = u.Year,
+                    Roles = GetUserRoles(u).Result
+                })
+                .OrderBy(u=>u.Email)
+                .ToList();
+            
             return View(model);
+        }
+
+        private async Task<List<string>> GetUserRoles(User user)
+        {
+            return new List<string>(await _userManager.GetRolesAsync(user));
         }
 
         public IActionResult Create() => View();

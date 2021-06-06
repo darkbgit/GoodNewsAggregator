@@ -13,12 +13,16 @@
         <th>
             @Html.DisplayNameFor(model => model.Year)
         </th>
+        <th>
+            @Html.DisplayNameFor(model=>model.Roles)
+        </th>
     </tr>
     @foreach (var user in Model)
      {
         <tr>
             <td>@user.Email</td>
             <td>@user.Year</td>
+            <td>@string.Join(" , ", user.Roles.ToList())</td>
             <td>
                 <form asp-action="Delete" asp-route-id="@user.Id" method="post">
                     <a class="btn btn-outline-secondary" asp-action="Edit" asp-controller="Users" asp-route-id="@user.Id">Изменить</a>

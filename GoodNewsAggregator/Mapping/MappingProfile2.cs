@@ -33,7 +33,9 @@ namespace GoodNewsAggregator.Mapping
             CreateMap<User, UserViewModel>();
 
             CreateMap<User, ChangePasswordViewModel>();
-            
+
+            CreateMap<User, UserCabinetViewModel>();
+
 
         }
     }

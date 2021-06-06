@@ -34,7 +34,12 @@ namespace GoodNewsAggregator.Controllers
         }
 
 
-        public IActionResult Index() => View();
+        public async Task<IActionResult> UserCabinet(string name)
+        {
+            var user = await _userManager.FindByNameAsync(name);
+            var model = _mapper.Map<UserCabinetViewModel>(user);
+            return View(model);
+        }
 
         [HttpGet]
         public IActionResult Register() => View();
@@ -58,9 +63,22 @@ namespace GoodNewsAggregator.Controllers
 
                 if(result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
                     Log.Information($"User {user.UserName} register");
-                    return RedirectToAction("Index", "News");
+
+                    var roleResult = await _userManager.AddToRoleAsync(user, "user");
+                    if (roleResult.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, false);
+                        Log.Information($"User {user.UserName} added role \"user\"");
+                        return RedirectToAction("Index", "News");
+                    }
+                    else
+                    {
+                        foreach (var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
                 }
                 else
                 {

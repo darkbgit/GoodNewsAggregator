@@ -1,0 +1,44 @@
+﻿@model GoodNewsAggregator.Models.ViewModels.Account.UserCabinetViewModel
+@{
+    ViewData["Title"] = "Личный кабинет пользователя";
+}
+
+<h2>Привет @User.Identity?.Name</h2>
+
+<table class="table">
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.UserName)
+        </td>
+        <td>@Model.UserName</td>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.Email)
+        </td>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.Year)
+        </td>
+        <td>@Model.Year</td>
+    </tr>
+    <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </td>
+        <td>@Model.PhoneNumber</td>
+    </tr>
+</table>
+
+
+
+
+<form asp-action="ChangePassword" asp-route-id="@Model.UserId" method="post">
+    <button type="submit" class="btn btn-outline-secondary">Изменить пароль</button>
+</form>
+
+
+
+

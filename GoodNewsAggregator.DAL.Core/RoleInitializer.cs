@@ -20,6 +20,10 @@ namespace GoodNewsAggregator.DAL.Core
             {
                 await roleManager.CreateAsync(new Role( "admin" ));
             }
+            if (await roleManager.FindByNameAsync("moderator") == null)
+            {
+                await roleManager.CreateAsync(new Role("moderator"));
+            }
             if (await roleManager.FindByNameAsync("user") == null)
             {
                 await roleManager.CreateAsync(new Role("user"));

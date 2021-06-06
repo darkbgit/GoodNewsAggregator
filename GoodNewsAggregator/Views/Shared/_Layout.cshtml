@@ -33,12 +33,23 @@
                 </div>*@
             <div id="modal-placeholder"></div>
 
+
+            @{
+                System.Diagnostics.Debug.Assert(User.Identity != null, "User.Identity != null");
+            }
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="d-flex justify-content-end">
                     <div class="nav-login d-flex align-items-center">
                         <span>Привет</span>
-                        <a class="text-black-50" asp-action="Index" asp-controller="Account" asp-route-id="">@User.Identity.Name</a>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a class="text-black-50" asp-action="AdminCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>
+                        }
+                        else
+                        {
+                            <a class="text-black-50" asp-action="UserCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>
+                        }
                     </div>
                     <div class="nav-login">
                         <form method="post" asp-controller="Account" asp-action="Logout">
