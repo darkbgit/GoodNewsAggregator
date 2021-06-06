@@ -43,14 +43,22 @@ namespace GoodNewsAggregator.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    //var currentUser = _userManager.FindByIdAsync(user.I)
+                    var roleResult = await _userManager.AddToRoleAsync(user, "user");
+                    if (roleResult.Succeeded)
+                    {
+                        return RedirectToAction("Index");
+                    }
+
+                    foreach (var error in roleResult.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
 
             }

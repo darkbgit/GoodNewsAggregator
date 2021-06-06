@@ -7,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.DAL.Core.Entities
 {
-    public class Role : IdentityRole<Guid>, IBaseEntity
+    public sealed class Role : IdentityRole<Guid>, IBaseEntity
     {
+        public Role(string name)
+            : base(name)
+        {
+            Id = Guid.NewGuid();
+        }
 
     }
 }

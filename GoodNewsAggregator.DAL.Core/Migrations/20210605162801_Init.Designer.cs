@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoodNewsAggregator.DAL.Core.Migrations
 {
     [DbContext(typeof(GoodNewsAggregatorContext))]
-    [Migration("20210506122245_InitRss")]
-    partial class InitRss
+    [Migration("20210605162801_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -185,6 +185,9 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

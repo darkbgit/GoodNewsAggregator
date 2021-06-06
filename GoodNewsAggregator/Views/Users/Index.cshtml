@@ -21,8 +21,9 @@
             <td>@user.Year</td>
             <td>
                 <form asp-action="Delete" asp-route-id="@user.Id" method="post">
-                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@user.Id">Изменить</a>
-                    <a class="btn btn-outline-secondary" asp-action="ChangePassword" asp-route-id="@user.Id">Сменить пароль</a>
+                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-controller="Users" asp-route-id="@user.Id">Изменить</a>
+                    <a class="btn btn-outline-secondary" asp-action="ChangePassword" asp-controller="Users" asp-route-id="@user.Id">Сменить пароль</a>
+                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-controller="Roles" asp-route-userId="@user.Id">Права доступа</a>
                     <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
                 </form>
             </td>

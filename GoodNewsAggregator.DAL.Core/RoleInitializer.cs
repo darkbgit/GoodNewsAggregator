@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.DAL.Core
 {
-    public class RoleInitilizer
+    public class RoleInitializer
     {
-        public static async Task InitializeAsync(UserManager<User> userManeger,
+        public static async Task InitializeAsync(UserManager<User> userManager,
             RoleManager<Role> roleManager)
         {
             string adminEmail = "admin@admin.com";
@@ -18,20 +18,20 @@ namespace GoodNewsAggregator.DAL.Core
 
             if (await roleManager.FindByNameAsync("admin") == null)
             {
-                await roleManager.CreateAsync(new Role { Id = Guid.NewGuid(), Name = "admin" });
+                await roleManager.CreateAsync(new Role( "admin" ));
             }
             if (await roleManager.FindByNameAsync("user") == null)
             {
-                await roleManager.CreateAsync(new Role { Id = Guid.NewGuid(), Name = "user" });
+                await roleManager.CreateAsync(new Role("user"));
             }
 
-            if (await userManeger.FindByNameAsync(adminEmail) == null)
+            if (await userManager.FindByNameAsync(adminEmail) == null)
             {
                 User admin = new User { Email = adminEmail, UserName = adminEmail };
-                IdentityResult result = await userManeger.CreateAsync(admin, password);
+                IdentityResult result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
-                    await userManeger.AddToRoleAsync(admin, "admin");
+                    await userManager.AddToRoleAsync(admin, "admin");
                 }
             }
         }

@@ -21,7 +21,7 @@ using GoodNewsAggregator.Utilities.Enums;
 
 namespace GoodNewsAggregator.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class NewsController : Controller
     {
         //private readonly GoodNewsAggregatorContext _context;

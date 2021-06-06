@@ -100,7 +100,7 @@ function orderByDateClick () {
     let form = document.querySelector('#__AjaxAntiForgeryForm');
     let token = $('input[name="__RequestVerificationToken"]', form).val();
     let rssIds = getCheckedRssIds();
-    let sortOrder = document.querySelector('#sortOder').getAttribute('value');
+    let sortOrder = document.querySelector('#sortOrder').getAttribute('value');
     let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
     let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
     let sortOrderNew;
@@ -140,7 +140,7 @@ function orderByRatingClick() {
     let form = document.querySelector('#__AjaxAntiForgeryForm');
     let token = $('input[name="__RequestVerificationToken"]', form).val();
     let rssIds = getCheckedRssIds();
-    let sortOrder = document.querySelector('#sortOder').getAttribute('value');
+    let sortOrder = document.querySelector('#sortOrder').getAttribute('value');
     let orderByDate = document.querySelector('#orderByDate').getAttribute('value');
     let orderByRating = document.querySelector('#orderByRating').getAttribute('value');
     let sortOrderNew;
@@ -167,7 +167,7 @@ function orderByRatingClick() {
         success: function (response) {
             console.log('success!');
             $('#outputField').html(response);
-            document.querySelector('#sortOder').setAttribute('value', sortOrderNew);
+            document.querySelector('#sortOrder').setAttribute('value', sortOrderNew);
             document.querySelector('#orderByDate').setAttribute('value', orderByDateNew);
             document.querySelector('#orderByDate').innerHTML = '';
             document.querySelector('#orderByRating').setAttribute('value', orderByRatingNew);

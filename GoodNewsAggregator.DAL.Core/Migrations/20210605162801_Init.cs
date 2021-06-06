@@ -26,6 +26,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -271,6 +272,52 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 name: "IX_News_RssSourceId",
                 table: "News",
                 column: "RssSourceId");
+
+            migrationBuilder.InsertData(
+                table: "RssSources",
+                columns: new[] { "Id", "Name", "Url" },
+                values: new object[]
+                {
+                    Guid.NewGuid(),
+                    "Onliner",
+                    "https://www.onliner.by/feed"
+                });
+            //migrationBuilder.InsertData(
+            //    table: "RssSources",
+            //    columns: new[] { "Id", "Name", "Url" },
+            //    values: new object[]
+            //    {
+            //        Guid.NewGuid(),
+            //        "Tut.by",
+            //        "https://news.tut.by/rss/all.rss"
+            //    });
+            migrationBuilder.InsertData(
+                table: "RssSources",
+                columns: new[] { "Id", "Name", "Url" },
+                values: new object[]
+                {
+                    Guid.NewGuid(),
+                    "S13",
+                    "http://s13.ru/rss"
+                });
+            migrationBuilder.InsertData(
+                table: "RssSources",
+                columns: new[] { "Id", "Name", "Url" },
+                values: new object[]
+                {
+                    Guid.NewGuid(),
+                    "TJournal",
+                    "https://tjournal.ru/rss"
+                });
+            migrationBuilder.InsertData(
+                table: "RssSources",
+                columns: new[] { "Id", "Name", "Url" },
+                values: new object[]
+                {
+                    Guid.NewGuid(),
+                    "DTF",
+                    "https://dtf.ru/rss"
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -20,19 +20,21 @@ namespace GoodNewsAggregator.Controllers
 
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManeger;
+        private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
 
-        public AccountController(UserManager<User> userManeger,
+        public AccountController(UserManager<User> userManager,
             SignInManager<User> signInManager,
             IMapper mapper)
         {
-            _userManeger = userManeger;
+            _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
         }
 
+
+        public IActionResult Index() => View();
 
         [HttpGet]
         public IActionResult Register() => View();
@@ -52,7 +54,7 @@ namespace GoodNewsAggregator.Controllers
                 //    Year = model.Year
                 //};
 
-                var result = await _userManeger.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 if(result.Succeeded)
                 {

@@ -3,21 +3,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GoodNewsAggregator</title>
+    <title>@ViewData["Title"] - Новостной аггрегатор</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/news.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GoodNewsAggregator</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="News" asp-action="Index">Новостной аггрегатор</a>
+            @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>*@
+
+            @*<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -29,52 +30,56 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                </div>
-                <div id="modal-placeholder"></div>
+                </div>*@
+            <div id="modal-placeholder"></div>
 
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div class="nav-login">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="d-flex justify-content-end">
+                    <div class="nav-login d-flex align-items-center">
                         <span>Привет</span>
-                        <span class="text-black-50">@User.Identity.Name</span>
+                        <a class="text-black-50" asp-action="Index" asp-controller="Account" asp-route-id="">@User.Identity.Name</a>
                     </div>
                     <div class="nav-login">
                         <form method="post" asp-controller="Account" asp-action="Logout">
-                        <button class="btn btn-outline-light" type="submit"
-                                id="loginForm">Logout</button>
+                            <button class="btn btn-outline-light" type="submit"
+                                    id="loginForm">Logout</button>
                         </form>
                     </div>
-                }
-                else
-                {
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-end">
                     <div class="nav-login">
-                        <button type="button" class="btn btn-outline-light" 
+                        <button type="button" class="btn btn-outline-light"
                                 data-toggle="ajax-modal" data-target="#modalLogin"
                                 data-url="@Url.Action("Login", "Account")">Login</button>
                     </div>
-                    <div class="nav-login">
+                    <div class="nav-login d-flex align-items-center">
                         <a asp-controller="Account" asp-action="Register">Регистрация</a>
                     </div>
-                }
-            </div>
-        </nav>
-
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - GoodNewsAggregator - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+            }
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/loginModal.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    </nav>
+</header>
+
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2021 - Новостной аггрегатор - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/loginModal.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

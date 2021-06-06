@@ -34,7 +34,7 @@ namespace GoodNewsAggregator
             {
                 var userManager = services.GetRequiredService<UserManager<User>>();
                 var roleManager = services.GetRequiredService<RoleManager<Role>>();
-                await RoleInitilizer.InitializeAsync(userManager, roleManager);
+                await RoleInitializer.InitializeAsync(userManager, roleManager);
             }
             catch (Exception ex)
             {
