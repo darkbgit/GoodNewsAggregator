@@ -5,35 +5,73 @@
 
 <h2>Привет @User.Identity?.Name</h2>
 
-<table class="table">
-    <tr>
-        <td>
-            @Html.DisplayNameFor(model => model.UserName)
-        </td>
-        <td>@Model.UserName</td>
-    </tr>
-    <tr>
-        <td>
-            @Html.DisplayNameFor(model => model.Email)
-        </td>
-        <td>@Model.Email</td>
-    </tr>
-    <tr>
-        <td>
-            @Html.DisplayNameFor(model => model.Year)
-        </td>
-        <td>@Model.Year</td>
-    </tr>
-    <tr>
-        <td>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </td>
-        <td>@Model.PhoneNumber</td>
-    </tr>
-</table>
 
+<form asp-action="UpdateUser" asp-controller="Account" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label asp-for="UserName" class="control-label"></label>
+        <input asp-for="UserName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Year" class="control-label"></label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MinimalRating" class="control-label"></label>
+        <select asp-for="MinimalRating" class="form-control" asp-items="ViewBag.RssSourseId"></select>
+        <span asp-validation-for="MinimalRating" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Обновить данные" class="btn btn-outline-secondary" />
+    </div>
+    <table class="table">
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.UserName)
+            </td>
+            <td>@Model.UserName</td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Email)
+            </td>
+            <td>@Model.Email</td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Year)
+            </td>
+            <td>@Model.Year</td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </td>
+            <td>@Model.PhoneNumber</td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => model.MinimalRating)
+            </td>
+            <td>@Model.MinimalRating</td>
+        </tr>
+    </table>
 
+</form>
 
+<a class="btn btn-outline-secondary" asp-action="UpdateUser" asp-controller="Account" asp-route-id="@Model.UserId">
+    Изменить пароль</a>
 
 <form asp-action="ChangePassword" asp-route-id="@Model.UserId" method="post">
     <button type="submit" class="btn btn-outline-secondary">Изменить пароль</button>

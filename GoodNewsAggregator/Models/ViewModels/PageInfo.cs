@@ -20,9 +20,6 @@ namespace GoodNewsAggregator.Models.ViewModels
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
         public int TotalNews { get; set; }
-        public int TotalPages
-        {
-            get => (int)Math.Ceiling((decimal)TotalNews / PageSize);
-        }
+        public int TotalPages => (int)Math.Ceiling((decimal)TotalNews / PageSize);
     }
 }

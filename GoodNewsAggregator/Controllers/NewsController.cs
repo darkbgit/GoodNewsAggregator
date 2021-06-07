@@ -113,7 +113,7 @@ namespace GoodNewsAggregator.Controllers
             var pageInfo = new PageInfo(page, count);
 
 
-            var newsListWithRss = new NewsListWithRssWithPagination()
+            var newsListWithRssWithPagination = new NewsListWithRssWithPagination()
             {
                 NewsLists = newsList,
                 RssList = rssList,
@@ -127,7 +127,7 @@ namespace GoodNewsAggregator.Controllers
             //    //HttpContext.Response.Headers.Add("REQUIRES_AUTH", "1");
             //}
 
-            return View(newsListWithRss);
+            return View(newsListWithRssWithPagination);
         }
 
 

@@ -15,20 +15,6 @@
     <h1>Новости</h1>
 </div>
 
-<div class="row">
-@*<partial name="_RssList" model="Model.RssList" />*@
-
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="col-md-4 align-self-center" id="aggregateDiv">
-        <button class="btn btn-outline-secondary" id="aggregate">
-            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
-            Aggregate
-        </button>
-    </div>
-}
-
-</div>
 
 <div id="modal-placeholder-rss"></div>
 <div id="rssSources">

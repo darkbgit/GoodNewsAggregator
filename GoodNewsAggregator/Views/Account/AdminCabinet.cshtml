@@ -1,0 +1,18 @@
+﻿@model GoodNewsAggregator.Models.ViewModels.Account.UserCabinetViewModel
+@{
+    ViewData["Title"] = "Личный кабинет администратора";
+}
+
+<h2>Привет @User.Identity?.Name</h2>
+
+
+    <a class="btn btn-outline-secondary" id="aggregate">
+        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner"></span>
+        Собрать новости
+    </a>
+
+<a class="btn btn-outline-secondary" asp-action="Index" asp-controller="Users">Пользователи</a>
+<a class="btn btn-outline-secondary" asp-action="Index" asp-controller="Roles">Роли</a>
+<a class="btn btn-outline-secondary" asp-action="Create" asp-controller="News">Создать новость</a>
+
+<script type="text/javascript" src="js/aggregate.js"></script>

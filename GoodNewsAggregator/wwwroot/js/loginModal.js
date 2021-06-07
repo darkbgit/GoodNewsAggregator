@@ -1,6 +1,6 @@
 ﻿$(function () {
     var placeholder = $('#modal-placeholder');
-    let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
+    //let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
 
     var pageUrl;
     $.ajaxSetup({ cache: false });
@@ -10,7 +10,9 @@
     var url = $(this).data('url');
         $.get(url).done(function (data) {
             placeholder.html(data);
-            placeholder.find('.modal').modal('show');
+            //placeholder.find('.modal').modal('show');
+            let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
+            myModal.show();
         });
     });
     

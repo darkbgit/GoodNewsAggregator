@@ -15,7 +15,8 @@ namespace GoodNewsAggregator.DAL.Core.Entities
 
         //public string? PasswordHash { get; set; }
 
-        //public double MinimalRating { get; set; }
+        public double MinimalRating { get; set; }
+        
         public int Year { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }

@@ -36,9 +36,23 @@ namespace GoodNewsAggregator.Controllers
 
         public async Task<IActionResult> UserCabinet(string name)
         {
-            var user = await _userManager.FindByNameAsync(name);
-            var model = _mapper.Map<UserCabinetViewModel>(user);
-            return View(model);
+            if (User.Identity?.Name == name)
+            {
+                var user = await _userManager.FindByNameAsync(name);
+                var model = _mapper.Map<UserCabinetViewModel>(user);
+                return View(model);
+            }
+            return NotFound();
+        }
+
+        public IActionResult AdminCabinet(string name)
+        {
+            if (User.Identity?.Name == name)
+            {
+                return View();
+            }
+
+            return NotFound();
         }
 
         [HttpGet]
@@ -141,6 +155,18 @@ namespace GoodNewsAggregator.Controllers
             await _signInManager.SignOutAsync();
             Log.Information("User logged out");
             return RedirectToAction("Index", "News");
+        }
+
+        public IActionResult UpdateUser() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UpdateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+
         }
     }
 }

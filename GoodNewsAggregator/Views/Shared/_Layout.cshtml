@@ -41,7 +41,7 @@
             {
                 <div class="d-flex justify-content-end">
                     <div class="nav-login d-flex align-items-center">
-                        <span>Привет</span>
+                        <span>Привет </span>
                         @if (User.IsInRole("admin"))
                         {
                             <a class="text-black-50" asp-action="AdminCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>

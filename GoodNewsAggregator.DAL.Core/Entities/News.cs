@@ -18,6 +18,7 @@ namespace GoodNewsAggregator.DAL.Core.Entities
         public DateTime? PublicationDate { get; set; }
         public string? Category { get; set; }
         public string? Author { get; set; }
+        public double Rating { get; set; }
 
         public Guid RssSourceId { get; set; }
         public virtual RssSource RssSource { get; set; }
