@@ -89,33 +89,24 @@ namespace GoodNewsAggregator.Controllers
         public async Task<IActionResult> Edit(Guid userId, List<string> roles)
         {
             User user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user != null)
+            if (user == null) return NotFound();
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var addedRoles = roles.Except(userRoles).ToList();
+            var removedRoles = userRoles.Except(roles).ToList();
+
+            if (addedRoles.Any())
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
-
-                var addedRoles = roles.Except(userRoles).ToList();
-                var removedRoles = userRoles.Except(roles).ToList();
-
-                if (addedRoles.Any())
-                {
-                    await _userManager.AddToRolesAsync(user, addedRoles);
-                }
-
-                if (removedRoles.Any())
-                {
-                    await _userManager.RemoveFromRolesAsync(user, removedRoles);
-                }
-
-                return RedirectToAction("Index", "Users");
+                await _userManager.AddToRolesAsync(user, addedRoles);
             }
 
-            return NotFound();
+            if (removedRoles.Any())
+            {
+                await _userManager.RemoveFromRolesAsync(user, removedRoles);
+            }
+
+            return RedirectToAction("Index", "Users");
         }
-
-
-
     }
-
-   
-}
+ }

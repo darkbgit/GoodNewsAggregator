@@ -35,6 +35,16 @@ namespace GoodNewsAggregator.Mapping
             CreateMap<User, ChangePasswordViewModel>();
 
             CreateMap<User, UserCabinetViewModel>();
+            CreateMap<UserCabinetViewModel, User>();
+
+            CreateMap<User, EditNewsViewModel>();
+
+            CreateMap<EditNewsViewModel, NewsDto>();
+            CreateMap<NewsDto, EditNewsViewModel>();
+
+            CreateMap<NewsWithRssNameDto, NewsWithCommentsViewModel>();
+
+
 
 
         }

@@ -106,9 +106,12 @@ namespace GoodNewsAggregator.Services.Implementation
             return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
         }
 
-        public Task Add(NewsDto news)
+        public async Task Add(NewsDto news)
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<News>(news);
+
+            await _unitOfWork.News.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task AddRange(IEnumerable<NewsDto> news)
@@ -119,47 +122,29 @@ namespace GoodNewsAggregator.Services.Implementation
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public Task<int> Edit(NewsDto news)
+        public async Task<int> Update(NewsDto news)
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<News>(news);
+            _unitOfWork.News.Update(entity);
+            var result = await _unitOfWork.SaveChangesAsync();
+            return result;
         }
 
-        public Task<int> Delete(NewsDto news)
+        public async Task<int> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            await _unitOfWork.News.Remove(id);
+            var result = await _unitOfWork.SaveChangesAsync();
+            return result;
         }
-
-        //public async Task<IEnumerable<NewsDto>> AggregateNewsFromRssSourse()
-        //{
-        //    try
-        //    {
-        //        var stopwatch = new Stopwatch();
-        //        stopwatch.Start();
-        //        var rssSourses =  _unitOfWork.RssSources.GetAll().ToList();
-        //        var newInfos = new List<NewsDto>();
-
-        //        foreach (var rssSource in rssSourses)
-        //        {
-        //            var newList = await _unitOfWork.News.
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        throw;
-        //    }
-        //}
 
         public async Task<NewsDto> GetNewsById(Guid id)
         {
             var entity = await _unitOfWork.News.GetById(id);
-
             return _mapper.Map<NewsDto>(entity);
         }
 
         public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)
         {
-
             var parser = _parsers.Single(p => p.Name.Equals(rssSource.Name));
 
             //var news = await parser?.ParseRss(rssSource);
@@ -171,28 +156,23 @@ namespace GoodNewsAggregator.Services.Implementation
                 reader.Close();
                 if (feed.Items.Any())
                 {
-                    foreach (var syndicationItem in feed.Items)
+                    news.AddRange(feed.Items.Select(syndicationItem => new NewsDto
                     {
-                        var newsDto = new NewsDto
-                        {
-                            Id = Guid.NewGuid(),
-                            RssSourceId = rssSource.Id,
-                            Author = parser.GetAuthor(syndicationItem),
-                            Category = parser.GetCategory(syndicationItem),
-                            Url = parser.GetUrl(syndicationItem),
-                            ImageUrl = parser.GetImageUrl(syndicationItem),
-                            ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
-                            Title = syndicationItem.Title.Text,
-                            PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
-
-                        };
-                        news.Add(newsDto);
-                    }
+                        Id = Guid.NewGuid(),
+                        RssSourceId = rssSource.Id,
+                        Author = parser.GetAuthor(syndicationItem),
+                        Category = parser.GetCategory(syndicationItem),
+                        Url = parser.GetUrl(syndicationItem),
+                        ImageUrl = parser.GetImageUrl(syndicationItem),
+                        ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
+                        Title = syndicationItem.Title.Text,
+                        PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
+                    }));
                 }
             }
 
             var currentNewsUrls = await _unitOfWork.News
-                .Get()
+                .GetAll()
                 .Select(n => n.Url)
                 .ToListAsync();
 
@@ -222,6 +202,15 @@ namespace GoodNewsAggregator.Services.Implementation
         {
             var match = Regex.Match(shortNews, "(?:<img src=\")(.*?)(?:\")");
             return match.Groups[1].Value;
+        }
+
+        public async Task<NewsWithRssNameDto> GetNewsWithRssSourceNameById(Guid id)
+        { 
+            var result = await _unitOfWork.News
+                .FindBy(n => n.Id.Equals(id),
+                    n => n.RssSource)
+                .FirstOrDefaultAsync();
+            return _mapper.Map<NewsWithRssNameDto>(result);
         }
     }
 }

@@ -12,13 +12,13 @@ namespace GoodNewsAggregator.DAL.Repositories.Interfaces
         Task<T> GetById(Guid id);
         IQueryable<T> FindBy(Expression<Func<T, bool>> predicate,
             params Expression<Func<T, object>>[] includes);
-        IQueryable<T> Get();
+        IQueryable<T> GetAll();
 
         Task Add(T element);
         Task AddRange(IEnumerable<T> elements);
 
-        Task Update(T element);
+        void Update(T element);
         Task Remove(Guid id);
-        Task RemoveRange(IEnumerable<T> elements);
+        void RemoveRange(IEnumerable<T> elements);
     }
 }

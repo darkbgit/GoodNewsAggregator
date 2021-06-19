@@ -14,9 +14,8 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 {
     public class OnlinerParser : IWebPageParser
     {
-        public string Name { get { return "Onliner"; } }
-
- 
+        public string Name => "Onliner";
+        
         public async Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss)
         {
             var news = new List<NewsDto>();
@@ -64,34 +63,30 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 
         public string GetCategory(SyndicationItem item)
         {
-            if (item.Categories.Count > 0)
+            if (item.Categories.Count == 0) return null;
+            
+            string category = "";
+            for (int i=0; i<item.Categories.Count; i++)
             {
-                string category = "";
-                for (int i=0; i<item.Categories.Count; i++)
+                category += item.Categories[i].Name;
+                if (i > 0 && i != item.Categories.Count - 1)
                 {
-                    category += item.Categories[i].Name;
-                    if (i > 0 && i != item.Categories.Count - 1)
-                    {
-                        category += ", ";
-                    }
+                    category += ", ";
                 }
-                return category;
             }
-            return null;
+            return category;
         }
 
         public string GetAuthor(SyndicationItem item)
         {
-            if (item.Authors.Count > 0)
+            if (item.Authors.Count <= 0) return null;
+            
+            string author = "";
+            foreach (var a in item.Authors)
             {
-                string author = "";
-                foreach (var a in item.Authors)
-                {
-                    author += a.Name;
-                }
-                return author;
+                author += a.Name;
             }
-            return null;
+            return author;
         }
 
         public async Task<string> GetBody(string url)
@@ -145,11 +140,10 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
         {
             var link = item.Links.FirstOrDefault(sl =>
                                     sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri;
-            if (link == null)
-            {
-                var match = Regex.Match(item.Summary.Text, "(?:<img src=\")(.*?)(?:\")");
-                link = match.Groups[1].Value;
-            }
+            if (link != null) return link;
+
+            var match = Regex.Match(item.Summary.Text, "(?:<img src=\")(.*?)(?:\")");
+            link = match.Groups[1].Value;
             return link;
         }
 

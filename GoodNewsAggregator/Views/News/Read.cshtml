@@ -1,4 +1,4 @@
-﻿@model GoodNewsAggregator.Models.ViewModels.News.OneNews
+﻿@model GoodNewsAggregator.Models.ViewModels.News.NewsWithCommentsViewModel
 
 @{
     ViewData["Title"] = Model.Title;
@@ -10,6 +10,24 @@
     @Html.Raw(Model.Body)
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    }
+    <a asp-action="Index">Вернуться к списку</a>
 </div>
+
+<div class="row col-sm-12">
+    <button id="comments-display" class="btn btn-outline-secondary">Загрузить комментарии</button>
+    @*@foreach (var comment in Model.Comments)
+    {
+        @await Html.PartialAsync("_Comment", comment)
+    }*@
+
+</div>
+
+
+@section Scripts
+{
+    <script src="~/js/comments.js"></script>
+}

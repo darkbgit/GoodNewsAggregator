@@ -10,6 +10,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation
         IRepository<News> News { get; }
         IRepository<RssSource> RssSources { get; }
         IRepository<User> Users { get; }
+        IRepository<Comment> Comments { get; }
 
         Task<int> SaveChangesAsync();
     }

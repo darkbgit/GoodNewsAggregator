@@ -14,8 +14,6 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
 
         Task<string> GetBody(string url);
 
-        Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss);
-
         string GetAuthor(SyndicationItem item);
 
         string GetCategory(SyndicationItem item);

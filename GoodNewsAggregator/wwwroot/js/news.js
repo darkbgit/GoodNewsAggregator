@@ -104,7 +104,7 @@ function orderByDateClick () {
         success: function (response) {
             console.log('success!');
             $('#outputField').html(response);
-            document.querySelector('#sortOder').setAttribute('value', sortOrderNew);
+            document.querySelector('#sortOrder').setAttribute('value', sortOrderNew);
             document.querySelector('#orderByDate').setAttribute('value', orderByDateNew);
             document.querySelector('#orderByDate').innerHTML = orderByDateNew == 0 ? arrowCircleUp : arrowCircleDown;
             document.querySelector('#orderByRating').setAttribute('value', orderByRatingNew);

@@ -28,18 +28,20 @@ namespace GoodNewsAggregator.Controllers
 
         private readonly INewsService _newsService;
         private readonly IRssSourceService _rssSourceService;
+        private readonly ICommentService _commentService;
         private readonly IWebPageParser _onlinerParser;
         private readonly IMapper _mapper;
 
         public NewsController(IRssSourceService rssSourceService,
             INewsService newsService,
             IWebPageParser onlinerParser,
-            IMapper mapper)
+            IMapper mapper, ICommentService commentService)
         {
             _rssSourceService = rssSourceService;
             _newsService = newsService;
             _onlinerParser = onlinerParser;
             _mapper = mapper;
+            _commentService = commentService;
         }
 
 
@@ -47,44 +49,6 @@ namespace GoodNewsAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid[] rssIds, int page = 1)
         {
-            //IEnumerable<NewsDto> news = new List<NewsDto>();
-
-            //if (sourceIds.Length > 0)
-            //{
-            //    foreach (var sourceId in sourceIds)
-            //    {
-            //        var sourceNews = await _newsService.GetNewsBySourceId(sourceId);
-            //        news = news.Concat(sourceNews);
-            //    }
-            //}
-            //else
-            //{
-            //    news = await _newsService.GetNewsBySourceId(null);
-            //}
-
-            //switch (sortOrder)
-            //{
-            //    case "Date":
-            //        news = news.OrderBy(n => n.PublicationDate);
-            //        break;
-            //    //case "Rating":
-            //    //    news = news.OrderBy(n => n.PublicationDate).ToList();
-            //    //    break;
-            //    //case "rating_desc":
-            //    //    news = news.OrderBy(n => n.PublicationDate).ToList();
-            //    //    break;
-            //    default:
-            //        news = news.OrderByDescending(n => n.PublicationDate);
-            //        break;
-            //}
-
-
-            //var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE)
-            //    .Take(Constants.NEWS_PER_PAGE);
-
-            //var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
-
-            
 
             var rssSources = (await _rssSourceService.GetAllRssSources()).ToList();
 
@@ -101,8 +65,6 @@ namespace GoodNewsAggregator.Controllers
                 Checked = !rssIds.Any() || rssIds.Contains(r.Id)
             });
 
-
-
             var (newsPerPage, count) = await _newsService.GetNewsPerPage(rssIds,
                 page,
                 Constants.NEWS_PER_PAGE,
@@ -111,7 +73,6 @@ namespace GoodNewsAggregator.Controllers
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
             var pageInfo = new PageInfo(page, count);
-
 
             var newsListWithRssWithPagination = new NewsListWithRssWithPagination()
             {
@@ -191,39 +152,6 @@ namespace GoodNewsAggregator.Controllers
             return PartialView("_NewsListsWithPagination", newsListsWithPagination);
         }
 
-        // GET: News/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _newsService
-                .GetNewsById(id.Value);
-                
-            if (news == null)
-            {
-                return NotFound();
-            }
-
-            var oneNews = _mapper.Map<OneNews>(news);
-
-            //    new OneNews()
-            //{
-            //    Id = news.Id,
-            //    Title = news.Title,
-            //    Url = news.Url,
-            //    Body = news.Body,
-            //    ImageUrl = news.ImageUrl,
-            //    PublicationDate = news.PublicationDate,
-            //    RssSourceId = news.RssSourceId
-            //};
-
-            
-
-            return View(oneNews);
-        }
 
         // GET: News/Details/5
         public async Task<IActionResult> Read(Guid? id)
@@ -233,149 +161,116 @@ namespace GoodNewsAggregator.Controllers
                 return NotFound();
             }
 
-            var news = await _newsService
-                .GetNewsById(id.Value);
+            var newsWithRss = await _newsService
+                .GetNewsWithRssSourceNameById(id.Value);
 
-            if (news == null)
+            if (newsWithRss == null)
             {
                 return NotFound();
             }
 
-            var oneNews = _mapper.Map<OneNews>(news);
-            //new OneNews()
-            //{
-            //    Id = news.Id,
-            //    Title = news.Title,
-            //    Url = news.Url,
-            //    Body = news.Body,
-            //    ImageUrl = news.ImageUrl,
-            //    PublicationDate = news.PublicationDate,
-            //    RssSourceId = news.RssSourceId
-            //};
+            var model = _mapper.Map<NewsWithCommentsViewModel>(newsWithRss);
+            model.Comments = await _commentService.GetByNewsId(newsWithRss.Id);
 
-            return View(oneNews);
+            return View(model);
         }
 
-        //// GET: News/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id");
-        //    return View();
-        //}
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Create()
+        {
+            ViewData["RssSourceName"] = new SelectList(await _rssSourceService.GetAllRssSources(), "Id", "Name");
+            return View();
+        }
 
-        //// POST: News/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,Title,Url,Body,ShortNewsFromRssSource,RssSourceId")] News news)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        news.Id = Guid.NewGuid();
-        //        _context.Add(news);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
-        //    return View(news);
-        //}
+        // POST: News/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Create(News news)
+        {
+            if (ModelState.IsValid)
+            {
+                var newsDto = _mapper.Map<NewsDto>(news);
+                newsDto.Id = Guid.NewGuid();
+                newsDto.PublicationDate = DateTime.Now.ToUniversalTime();
+                try
+                {
+                    await _newsService.Add(newsDto);
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error("News can\'t be added");
+                }
+                
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["RssSourceName"] = new SelectList( await _rssSourceService.GetAllRssSources(), "Id", "Name", news.RssSourceId);
+            return View();
+        }
 
-        //// GET: News/Edit/5
-        //public async Task<IActionResult> Edit(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: News/Edit/5
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var news = await _context.News.FindAsync(id);
-        //    if (news == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
-        //    return View(news);
-        //}
+            var news = await _newsService.GetNewsById((Guid)id);
+            if (news == null)
+            {
+                return NotFound();
+            }
+            ViewData["RssSourceName"] = new SelectList(await _rssSourceService.GetAllRssSources(), "Id", "Name", news.RssSourceId);
+            var model = _mapper.Map<EditNewsViewModel>(news);
+            return View(model);
+        }
 
-        //// POST: News/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Url,Body,ShortNewsFromRssSource,RssSourceId")] News news)
-        //{
-        //    if (id != news.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        // POST: News/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Edit(EditNewsViewModel news)
+        {
+            if (ModelState.IsValid)
+            {
+                var newsDto = _mapper.Map<NewsDto>(news);
+                try
+                {
+                    _ = await _newsService.Update(newsDto);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Log.Logger.Error("News can\'t be updated");
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["RssSourceName"] = new SelectList(await _rssSourceService.GetAllRssSources(), "Id", "Name", news.RssSourceId);
+            return View(news);
+        }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(news);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!NewsExists(news.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["RssSourceId"] = new SelectList(_context.RssSources, "Id", "Id", news.RssSourceId);
-        //    return View(news);
-        //}
 
-        //// GET: News/Delete/5
-        //public async Task<IActionResult> Delete(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var news = await _context.News
-        //        .Include(n => n.RssSource)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (news == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return View(news);
-        //}
-
-        //// POST: News/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(Guid id)
-        //{
-        //    var news = await _context.News.FindAsync(id);
-        //    _context.News.Remove(news);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _newsService.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
 
         //private bool NewsExists(Guid id)
         //{
         //    return _context.News.Any(e => e.Id == id);
         //}
 
-        public IActionResult Aggregate()
-        {
-            return View();
-        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Aggregate(CreateNewsViewModel source)
         {
             //try

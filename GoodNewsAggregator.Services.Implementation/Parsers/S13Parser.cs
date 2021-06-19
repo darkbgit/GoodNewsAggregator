@@ -11,7 +11,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 {
     public class S13Parser : IWebPageParser
     {
-        public string Name { get { return "S13"; } }
+        public string Name => "S13";
 
         public string GetAuthor(SyndicationItem item)
         {
@@ -25,21 +25,19 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 
         public string GetCategory(SyndicationItem item)
         {
-            if (item.Categories.Count > 0)
+            if (item.Categories.Count <= 0) return null;
+
+            string category = "";
+            for (int i = 0; i < item.Categories.Count; i++)
             {
-                string category = "";
-                for (int i = 0; i < item.Categories.Count; i++)
+                category += item.Categories[i].Name;
+                if (i == item.Categories.Count - 1)
                 {
-                    category += item.Categories[i].Name;
-                    if (i == item.Categories.Count - 1)
-                    {
-                        continue;
-                    }
-                    category += ", ";
+                    continue;
                 }
-                return category;
+                category += ", ";
             }
-            return null;
+            return category;
         }
 
         public string GetImageUrl(SyndicationItem item)
@@ -55,11 +53,6 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
         public string GetUrl(SyndicationItem item)
         {
             return item.Id;
-        }
-
-        public Task<string> Parse(string url)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss)

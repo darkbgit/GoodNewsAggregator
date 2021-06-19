@@ -1,19 +1,10 @@
-﻿using GoodNewsAggregator.DAL.Core.Entities;
+﻿using AutoMapper;
+using GoodNewsAggregator.DAL.Core.Entities;
 using GoodNewsAggregator.Models.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace GoodNewsAggregator.Controllers
 {
@@ -160,13 +151,32 @@ namespace GoodNewsAggregator.Controllers
         public IActionResult UpdateUser() => View();
 
         [HttpPost]
-        public async Task<IActionResult> UpdateUser(UpdateUserViewModel model)
+        public async Task<IActionResult> UpdateUser(UserCabinetViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByIdAsync(model.Id.ToString());
+                if (user != null)
+                {
+                    _ = _mapper.Map<UserCabinetViewModel, User>(model, user);
 
+                    var result = await _userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        return View("UserCabinet", model);
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                }
             }
+            return View("UserCabinet", model);
 
         }
+
+        
     }
 }

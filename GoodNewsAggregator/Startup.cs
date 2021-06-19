@@ -51,11 +51,13 @@ namespace GoodNewsAggregator
             services.AddTransient<IRepository<News>, NewsRepository>();
             services.AddTransient<IRepository<RssSource>, RssSourceRepository>();
             services.AddTransient<IRepository<User>, UserRepository>();
+            services.AddTransient<IRepository<Comment>, CommentsRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IRssSourceService, RssSourceService>();
+            services.AddScoped<ICommentService, CommentService>();
 
             
 

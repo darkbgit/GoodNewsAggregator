@@ -9,28 +9,34 @@
     <link rel="stylesheet" href="~/css/news.css" />
 </head>
 <body>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new {id = "__AjaxAntiForgeryForm"}))
+{
+    @Html.AntiForgeryToken()
+}
+
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
         <div class="container">
             <a class="navbar-brand" asp-area="" asp-controller="News" asp-action="Index">Новостной аггрегатор</a>
             @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>*@
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>*@
 
             @*<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="News" asp-action="Index">News</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>*@
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="News" asp-action="Index">News</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    </div>*@
             <div id="modal-placeholder"></div>
 
 
@@ -41,7 +47,7 @@
             {
                 <div class="d-flex justify-content-end">
                     <div class="nav-login d-flex align-items-center">
-                        <span>Привет </span>
+                        <span class="helloUser">Привет</span>
                         @if (User.IsInRole("admin"))
                         {
                             <a class="text-black-50" asp-action="AdminCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>
@@ -54,7 +60,9 @@
                     <div class="nav-login">
                         <form method="post" asp-controller="Account" asp-action="Logout">
                             <button class="btn btn-outline-light" type="submit"
-                                    id="loginForm">Logout</button>
+                                    id="loginForm">
+                                Logout
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -65,7 +73,9 @@
                     <div class="nav-login">
                         <button type="button" class="btn btn-outline-light"
                                 data-toggle="ajax-modal" data-target="#modalLogin"
-                                data-url="@Url.Action("Login", "Account")">Login</button>
+                                data-url="@Url.Action("Login", "Account")">
+                            Login
+                        </button>
                     </div>
                     <div class="nav-login d-flex align-items-center">
                         <a asp-controller="Account" asp-action="Register">Регистрация</a>

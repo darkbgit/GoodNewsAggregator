@@ -12,12 +12,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 {
     public class TutByParser : IWebPageParser
     {
-        public string Name { get { return "Tut.by"; } }
-
-        public Task<string> Parse(string url)
-        {
-            throw new System.NotImplementedException();
-        }
+        public string Name => "Tut.by";
 
         public async Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss)
         {

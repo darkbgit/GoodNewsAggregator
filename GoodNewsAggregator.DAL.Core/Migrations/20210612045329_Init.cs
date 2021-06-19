@@ -26,6 +26,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MinimalRating = table.Column<double>(type: "float", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -179,6 +180,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     PublicationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rating = table.Column<double>(type: "float", nullable: false),
                     RssSourceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -318,6 +320,7 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     "DTF",
                     "https://dtf.ru/rss"
                 });
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

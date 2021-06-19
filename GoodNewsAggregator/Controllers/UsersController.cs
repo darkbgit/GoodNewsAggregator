@@ -36,6 +36,7 @@ namespace GoodNewsAggregator.Controllers
                     Id = u.Id,
                     Email = u.Email,
                     Year = u.Year,
+                    MinimalRating = u.MinimalRating,
                     Roles = GetUserRoles(u).Result
                 })
                 .OrderBy(u=>u.Email)
@@ -114,12 +115,9 @@ namespace GoodNewsAggregator.Controllers
                     {
                         return RedirectToAction("Index");
                     }
-                    else
+                    foreach (var error in result.Errors)
                     {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
             }
@@ -159,18 +157,18 @@ namespace GoodNewsAggregator.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id.ToString());
                 if (user != null)
                 {
-                    var _passwordValidator =
+                    var passwordValidator =
                         HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>))
                         as IPasswordValidator<User>;
-                    var _passwordHasher =
+                    var passwordHasher =
                         HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>))
                         as IPasswordHasher<User>;
 
                     IdentityResult result =
-                        await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+                        await passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
+                        user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
                         await _userManager.UpdateAsync(user);
                         return RedirectToAction("Index");
                     }

@@ -12,24 +12,22 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
 {
     public class TJournalParser : IWebPageParser
     {
-        public string Name { get { return "TJournal"; } }
+        public string Name => "TJournal";
 
         public string GetAuthor(SyndicationItem item)
         {
-            if (item.Authors.Count > 0)
+            if (item.Authors.Count <= 0) return null;
+
+            string author = "";
+            for (int i = 0; i < item.Authors.Count; i++)
             {
-                string author = "";
-                for (int i = 0; i < item.Authors.Count; i++)
+                author += item.Authors[i].Email;
+                if (i > 0 && i != item.Authors.Count - 1)
                 {
-                    author += item.Authors[i].Email;
-                    if (i > 0 && i != item.Authors.Count - 1)
-                    {
-                        author += ", ";
-                    }
+                    author += ", ";
                 }
-                return author;
             }
-            return null;
+            return author;
         }
 
         public Task<string> GetBody(string url)
@@ -57,11 +55,6 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
         {
             return item.Links.FirstOrDefault(sl => sl.RelationshipType.Equals("alternate"))?.Uri
                                     .AbsoluteUri;
-        }
-
-        public Task<string> Parse(string url)
-        {
-            throw new System.NotImplementedException();
         }
 
         public async Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss)

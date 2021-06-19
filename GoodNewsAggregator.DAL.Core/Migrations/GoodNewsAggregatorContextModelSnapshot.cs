@@ -67,6 +67,9 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
                     b.Property<DateTime?>("PublicationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("Rating")
+                        .HasColumnType("float");
+
                     b.Property<Guid>("RssSourceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -156,6 +159,9 @@ namespace GoodNewsAggregator.DAL.Core.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<double>("MinimalRating")
+                        .HasColumnType("float");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)

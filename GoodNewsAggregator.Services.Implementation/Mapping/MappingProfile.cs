@@ -20,6 +20,12 @@ namespace GoodNewsAggregator.Services.Implementation.Mapping
             CreateMap<RssSource, RssSourceDto>();
             CreateMap<RssSourceDto, RssSource>();
             //CreateMap<OneNews, NewsDto>();
+
+            CreateMap<Comment, CommentDto>();
+            CreateMap<CommentDto, Comment>();
+
+            CreateMap<News, NewsWithRssNameDto>();
+
         }
     }
 }
