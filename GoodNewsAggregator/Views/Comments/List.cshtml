@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@model GoodNewsAggregator.Models.ViewModels.Comments.CommentsListViewModel
+
+@{
+    Layout = null;
+}
+
+<div class="container comments-block">
+    <h3>Комментарии</h3>
+    <div id="comments-container">
+        @foreach (var comment in Model.Comments)
+        {
+            @await Html.PartialAsync("_Comment", comment)
+        }
+    </div>
+    <hr/>
+    
+    @await Html.PartialAsync("_CreateComment")
+</div>

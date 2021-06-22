@@ -1,0 +1,13 @@
+﻿<div class="row">
+    <input type="hidden" id="newsId" name="newsId" value="@Model.NewsId"/>
+    <div class="col-sm-12">
+        <label for="commentText">Напишите коментарий:</label>
+        <textarea name="commentText" class="form-control" id="commentText" rows="3"
+                      data-val="true" data-val-required="Введите коментарий"></textarea>
+        <span class="field-validation-valid" data-valmsg-for="commentText"
+              data-valmsg-replace="true"></span>
+    </div>
+        
+    <button id="create-comment-btn" class="btn btn-outline-secondary col-sm-12 write-comment-btn">Отправить коментарий</button>
+</div>
+

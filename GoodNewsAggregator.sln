@@ -16,15 +16,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoodNewsAggregator.Core", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{F951D319-D94E-499E-BC15-43950C2AF8E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.DAL.Repositories.Interfaces", "GoodNewsAggregator.DAL.Repositories.Interfaces\GoodNewsAggregator.DAL.Repositories.Interfaces.csproj", "{BB9A57E1-989F-4D40-BE1D-B8A0DDF808A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.DAL.Repositories.Interfaces", "GoodNewsAggregator.DAL.Repositories.Interfaces\GoodNewsAggregator.DAL.Repositories.Interfaces.csproj", "{BB9A57E1-989F-4D40-BE1D-B8A0DDF808A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.DAL.Repositories.Implementation", "GoodNewsAggregator.DAL.Repositories.Implementation\GoodNewsAggregator.DAL.Repositories.Implementation.csproj", "{0E964ED4-5CE7-451A-A40D-EF415928F535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.DAL.Repositories.Implementation", "GoodNewsAggregator.DAL.Repositories.Implementation\GoodNewsAggregator.DAL.Repositories.Implementation.csproj", "{0E964ED4-5CE7-451A-A40D-EF415928F535}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.Core.DTOs", "GoodNewsAggregator.Core.DTOs\GoodNewsAggregator.Core.DTOs.csproj", "{53D936D9-9313-4F56-9C7A-C9783DBDEE4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Core.DTOs", "GoodNewsAggregator.Core.DTOs\GoodNewsAggregator.Core.DTOs.csproj", "{53D936D9-9313-4F56-9C7A-C9783DBDEE4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.Core.Services.Interfaces", "GoodNewsAggregator.Core.Services.Interfaces\GoodNewsAggregator.Core.Services.Interfaces.csproj", "{B19F4F89-95B9-46D2-A6B8-46C439DCD698}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Core.Services.Interfaces", "GoodNewsAggregator.Core.Services.Interfaces\GoodNewsAggregator.Core.Services.Interfaces.csproj", "{B19F4F89-95B9-46D2-A6B8-46C439DCD698}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.Services.Implementation", "GoodNewsAggregator.Services.Implementation\GoodNewsAggregator.Services.Implementation.csproj", "{379F781B-C41D-4783-9159-29C1F4937547}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Services.Implementation", "GoodNewsAggregator.Services.Implementation\GoodNewsAggregator.Services.Implementation.csproj", "{379F781B-C41D-4783-9159-29C1F4937547}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.WebAPI", "GoodNewsAggregator.WebAPI\GoodNewsAggregator.WebAPI.csproj", "{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +62,10 @@ Global
 		{379F781B-C41D-4783-9159-29C1F4937547}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{379F781B-C41D-4783-9159-29C1F4937547}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{379F781B-C41D-4783-9159-29C1F4937547}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

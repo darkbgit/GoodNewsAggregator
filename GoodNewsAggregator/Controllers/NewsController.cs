@@ -170,7 +170,7 @@ namespace GoodNewsAggregator.Controllers
             }
 
             var model = _mapper.Map<NewsWithCommentsViewModel>(newsWithRss);
-            model.Comments = await _commentService.GetByNewsId(newsWithRss.Id);
+            model.TotalComments = await _commentService.GetNumberOfCommentsByNewsId(newsWithRss.Id);
 
             return View(model);
         }

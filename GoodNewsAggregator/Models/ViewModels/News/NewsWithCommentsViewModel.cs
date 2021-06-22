@@ -19,6 +19,7 @@ namespace GoodNewsAggregator.Models.ViewModels.News
         public Guid? RssSourceId { get; set; }
         public string RssSourceName { get; set; }
 
-        public IEnumerable<CommentDto> Comments { get; set; }
+        public int TotalComments { get; set; }
+        //public IEnumerable<CommentDto> Comments { get; set; }
     }
 }

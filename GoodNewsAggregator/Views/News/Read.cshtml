@@ -18,7 +18,15 @@
 </div>
 
 <div class="row col-sm-12">
-    <button id="comments-display" class="btn btn-outline-secondary">Загрузить комментарии</button>
+    <div class="container">
+        <button id="comments-display" class="btn btn-outline-secondary">Показать комментарии
+            <span id="badge-total-com" class="badge bg-info">@Model.TotalComments</span>
+            </button>
+        <div id="comments-container" class="row">
+
+        </div>
+    </div>
+
     @*@foreach (var comment in Model.Comments)
     {
         @await Html.PartialAsync("_Comment", comment)

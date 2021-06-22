@@ -1,0 +1,14 @@
+﻿@model GoodNewsAggregator.Core.DTOs.CommentDto
+
+<div class="card comment-card mb-1">
+    <div class="flex-row comment-card-user">
+        <span class="card-text user-data-com">@Model.UserName</span>
+        <span class="text-muted user-data-com">
+            <small>@Model.PublicationDate.ToLocalTime().ToString("g")</small>
+        </span>
+    </div>
+
+    <div class="card-body">
+        <p class="card-text">@Model.Text</p>
+    </div>
+</div>

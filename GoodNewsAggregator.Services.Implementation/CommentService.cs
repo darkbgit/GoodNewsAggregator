@@ -30,11 +30,20 @@ namespace GoodNewsAggregator.Services.Implementation
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task<int> GetNumberOfCommentsByNewsId(Guid id)
+        {
+            return await _unitOfWork.Comments
+                .FindBy(comment => comment.NewsId.Equals(id))
+                .CountAsync();
+        }
+
         public async Task<IEnumerable<CommentDto>> GetByNewsId(Guid id)
         {
             return await _unitOfWork.Comments
                 .FindBy(comment => comment.NewsId.Equals(id))
-                .Select(comment => _mapper.Map<CommentDto>(comment)).ToListAsync();
+                .OrderBy(comment => comment.PublicationDate)
+                .Select(comment => _mapper.Map<CommentDto>(comment))
+                .ToListAsync();
         }
     }
 }

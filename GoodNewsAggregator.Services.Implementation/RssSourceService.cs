@@ -30,5 +30,10 @@ namespace GoodNewsAggregator.Services.Implementation
                 .Select(source => _mapper.Map<RssSourceDto>(source))
                 .ToListAsync();
         }
+
+        public async Task<RssSourceDto> GetRssSourceById(Guid id)
+        {
+            return _mapper.Map<RssSourceDto>(await _unitOfWork.RssSources.GetById(id));
+        }
     }
 }

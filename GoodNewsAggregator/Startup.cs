@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using GoodNewsAggregator.Core.Services.Interfaces;
 using GoodNewsAggregator.DAL.Core.Entities;
@@ -22,6 +23,7 @@ using AutoMapper;
 using GoodNewsAggregator.Mapping;
 using GoodNewsAggregator.Services.Implementation.Mapping;
 using GoodNewsAggregator.Services.Implementation.Parsers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace GoodNewsAggregator
 {
@@ -59,14 +61,24 @@ namespace GoodNewsAggregator
             services.AddScoped<IRssSourceService, RssSourceService>();
             services.AddScoped<ICommentService, CommentService>();
 
-            
-
             services.AddTransient<IWebPageParser, OnlinerParser>();
             services.AddTransient<IWebPageParser, TutByParser>();
             services.AddTransient<IWebPageParser, DtfParser>();
             services.AddTransient<IWebPageParser, S13Parser>();
             services.AddTransient<IWebPageParser, TJournalParser>();
 
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = ctx =>
+                    {
+                        ctx.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                        return Task.FromResult(0);
+                    }
+                };
+            });
+                
             //services.AddTransient<ParserResolver>(ServiceProvider => name =>
             //{
             //    switch (name)

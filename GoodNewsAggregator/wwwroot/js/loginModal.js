@@ -11,7 +11,7 @@
         $.get(url).done(function (data) {
             placeholder.html(data);
             //placeholder.find('.modal').modal('show');
-            let myModal = new bootstrap.Modal(document.getElementById('modalLogin'));
+            const myModal = new window.bootstrap.Modal(document.getElementById('modalLogin'));
             myModal.show();
         });
     });
@@ -42,3 +42,32 @@
         });
     });
 });
+
+//function loginClick(e) {
+//    e.preventDefault();
+//    pageUrl = window.href;
+//    var url = $(this).data('url');
+//    $.get(url).done(function (data) {
+//            placeholder.html(data);
+//            const myModal = new window.bootstrap.Modal(document.getElementById('modalLogin'));
+//            myModal.show();
+//        });
+//    });
+//};
+
+
+//let loginRequest = new XMLHttpRequest();
+
+//loginRequest.open('GET', 'Account/UserInfo', true);
+
+//loginRequest.onload = function () {
+//    if (loginRequest.status >= 200 && loginRequest.status < 400) {
+//        let response = loginRequest.responseText;
+//        document.querySelector('#navbar-login').innerHTML = response;
+//        document.querySelector('button[data-toggle="ajax-modal"]').addEventListener('click',
+//            function() {
+//            }, false);
+//    }
+//}
+
+//loginRequest.send();

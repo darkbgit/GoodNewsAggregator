@@ -1,0 +1,16 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="d-flex justify-content-end">
+    <div class="nav-login">
+        <button type="button" class="btn btn-outline-light"
+                data-toggle="ajax-modal" data-target="#modalLogin"
+                data-url="@Url.Action("Login", "Account" )">
+            Login
+        </button>
+    </div>
+    <div class="nav-login d-flex align-items-center">
+        <a asp-controller="Account" asp-action="Register">Регистрация</a>
+    </div>
+</div>

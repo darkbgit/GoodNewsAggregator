@@ -101,5 +101,25 @@ body {
 }
 
 .helloUser {
-    margin: 0px 5px 0px 0px;
+    margin-right: 5px;
+}
+
+.comments-block {
+    margin-top: 20px;
+}
+
+.write-comment-btn {
+    margin-top: 10px;
+}
+
+.user-data-com {
+    display: inline-block;
+}
+
+.comment-card {
+    background-color: inherit;
+}
+
+.comment-card-user {
+    margin-left: 10px;
 }

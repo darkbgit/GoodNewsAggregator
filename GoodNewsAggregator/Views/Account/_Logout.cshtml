@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="d-flex justify-content-end">
+    <div class="nav-login d-flex align-items-center">
+        <span class="helloUser">Привет</span>
+        @if (User.IsInRole("admin"))
+        {
+            <a class="text-black-50" asp-action="AdminCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>
+        }
+        else
+        {
+            <a class="text-black-50" asp-action="UserCabinet" asp-controller="Account" asp-route-name="@User.Identity.Name">@User.Identity?.Name</a>
+        }
+    </div>
+    <div class="nav-login">
+        <form method="post" asp-controller="Account" asp-action="Logout">
+            <button class="btn btn-outline-light" type="submit"
+                    id="loginForm">
+                Logout
+            </button>
+        </form>
+    </div>
+</div>

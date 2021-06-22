@@ -12,5 +12,7 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
         Task<IEnumerable<CommentDto>> GetByNewsId(Guid id);
 
         Task Add(CommentDto comment);
+
+        Task<int> GetNumberOfCommentsByNewsId(Guid id);
     }
 }

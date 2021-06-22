@@ -14,7 +14,7 @@
             },
                 success: function(data) {
                 placeholder.html(data);
-                let rssModal = new bootstrap.Modal(document.getElementById('modalRss'));
+                let rssModal = new window.bootstrap.Modal(document.getElementById('modalRss'));
                 //placeholder.find('.modal').modal('show');
                 rssModal.show();
             }
