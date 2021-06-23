@@ -26,7 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Core.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Services.Implementation", "GoodNewsAggregator.Services.Implementation\GoodNewsAggregator.Services.Implementation.csproj", "{379F781B-C41D-4783-9159-29C1F4937547}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.WebAPI", "GoodNewsAggregator.WebAPI\GoodNewsAggregator.WebAPI.csproj", "{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.WebAPI", "GoodNewsAggregator.WebAPI\GoodNewsAggregator.WebAPI.csproj", "{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.DAL.CQRS", "GoodNewsAggregator.DAL.CQRS\GoodNewsAggregator.DAL.CQRS.csproj", "{3A78F977-FF74-48D2-AB2F-B80A17905627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBD9A108-D65D-4B39-BBF9-9070B9159CBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A78F977-FF74-48D2-AB2F-B80A17905627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A78F977-FF74-48D2-AB2F-B80A17905627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A78F977-FF74-48D2-AB2F-B80A17905627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A78F977-FF74-48D2-AB2F-B80A17905627}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{53D936D9-9313-4F56-9C7A-C9783DBDEE4D} = {7C640BB4-D510-45B1-959C-7A5A4001F556}
 		{B19F4F89-95B9-46D2-A6B8-46C439DCD698} = {7C640BB4-D510-45B1-959C-7A5A4001F556}
 		{379F781B-C41D-4783-9159-29C1F4937547} = {F951D319-D94E-499E-BC15-43950C2AF8E9}
+		{3A78F977-FF74-48D2-AB2F-B80A17905627} = {AD9DF6E0-90C2-4CDE-ACBA-0C1203ED8611}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EB66FB8-E836-467A-8A37-06E7E3338030}

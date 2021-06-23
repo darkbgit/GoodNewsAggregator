@@ -9,16 +9,19 @@ namespace GoodNewsAggregator.DAL.Repositories.Interfaces
 {
     public interface IRepository<T> : IDisposable where T : class, IBaseEntity
     {
-        Task<T> GetById(Guid id);
+        
         IQueryable<T> FindBy(Expression<Func<T, bool>> predicate,
             params Expression<Func<T, object>>[] includes);
+
+        Task<T> Get(Guid id);
         IQueryable<T> GetAll();
+        
+        Task Add (T entity);
+        Task AddRange(IEnumerable<T> entities);
 
-        Task Add(T element);
-        Task AddRange(IEnumerable<T> elements);
+        Task Update(T entity);
 
-        void Update(T element);
         Task Remove(Guid id);
-        void RemoveRange(IEnumerable<T> elements);
+        Task RemoveRange(IEnumerable<T> entities);
     }
 }

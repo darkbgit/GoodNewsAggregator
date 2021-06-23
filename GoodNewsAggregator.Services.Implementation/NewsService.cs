@@ -52,7 +52,6 @@ namespace GoodNewsAggregator.Services.Implementation
                     .ToListAsync();
 
             return news.Select(n => _mapper.Map<NewsDto>(n)).ToList();
- 
         }
 
         public async Task<Tuple<IEnumerable<NewsDto>, int>> GetNewsPerPage(Guid[] rssIds,
@@ -106,26 +105,26 @@ namespace GoodNewsAggregator.Services.Implementation
             return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
         }
 
-        public async Task Add(NewsDto news)
+        public async Task<int> Add(NewsDto news)
         {
             var entity = _mapper.Map<News>(news);
 
             await _unitOfWork.News.Add(entity);
-            await _unitOfWork.SaveChangesAsync();
+            return await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddRange(IEnumerable<NewsDto> news)
+        public async Task<int> AddRange(IEnumerable<NewsDto> news)
         {
             var entities = news.Select(ent => _mapper.Map<News>(ent)).ToList();
 
             await _unitOfWork.News.AddRange(entities);
-            await _unitOfWork.SaveChangesAsync();
+            return await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<int> Update(NewsDto news)
         {
             var entity = _mapper.Map<News>(news);
-            _unitOfWork.News.Update(entity);
+            await _unitOfWork.News.Update(entity);
             var result = await _unitOfWork.SaveChangesAsync();
             return result;
         }
@@ -139,8 +138,18 @@ namespace GoodNewsAggregator.Services.Implementation
 
         public async Task<NewsDto> GetNewsById(Guid id)
         {
-            var entity = await _unitOfWork.News.GetById(id);
+            var entity = await _unitOfWork.News.Get(id);
             return _mapper.Map<NewsDto>(entity);
+        }
+
+        public Task<IEnumerable<NewsDto>> GetAllNews()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Aggregate()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)

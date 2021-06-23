@@ -281,21 +281,13 @@ namespace GoodNewsAggregator.Controllers
                     .GetAllRssSources();
                 var newInfos = new List<NewsDto>();
 
-                foreach (var rssSource in rssSources)
-                {
+            foreach (var rssSource in rssSources)
+            {
                 try
                 {
                     var newsList = await _newsService
-                        .GetNewsInfoFromRssSource(rssSource);
+                    .GetNewsInfoFromRssSource(rssSource);
 
-                    //if (rssSourse.Name.Equals("Onliner"))
-                    //{
-                    //    foreach (var newsDto in newsList)
-                    //    {
-                    //        var newsBody = await _onlinerParser.Parse(newsDto.Url);
-                    //        newsDto.Body = newsBody;
-                    //    }
-                    //}
 
                     newInfos.AddRange(newsList);
                 }
@@ -303,7 +295,9 @@ namespace GoodNewsAggregator.Controllers
                 {
                     Log.Error(e, $"Aggregation error {e.Message}");
                 }
+
             }
+
 
             try 
             { 

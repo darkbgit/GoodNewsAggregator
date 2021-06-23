@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodNewsAggregator.DAL.CQRS.Commands.NewsC;
 
 namespace GoodNewsAggregator.Services.Implementation.Mapping
 {
@@ -26,6 +27,12 @@ namespace GoodNewsAggregator.Services.Implementation.Mapping
 
             CreateMap<News, NewsWithRssNameDto>();
 
+            CreateMap<AddNewsCommand, News>();
+            CreateMap<UpdateNewsCommand, News>();
+
+            CreateMap<NewsDto, AddNewsCommand>();
+            CreateMap<NewsDto, UpdateNewsCommand>();
+            
         }
     }
 }

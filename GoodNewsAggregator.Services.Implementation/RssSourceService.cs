@@ -33,7 +33,15 @@ namespace GoodNewsAggregator.Services.Implementation
 
         public async Task<RssSourceDto> GetRssSourceById(Guid id)
         {
-            return _mapper.Map<RssSourceDto>(await _unitOfWork.RssSources.GetById(id));
+            return _mapper.Map<RssSourceDto>(await _unitOfWork.RssSources.Get(id));
+        }
+
+        public async Task<IEnumerable<RssSourceDto>> GetRssSourcesByNameAndUrl(string name, string url)
+        {
+            return await _unitOfWork.RssSources
+                .FindBy(source => source.Name.Contains(name) && source.Url.Contains(url))
+                .Select(source => _mapper.Map<RssSourceDto>(source))
+                .ToListAsync();
         }
     }
 }

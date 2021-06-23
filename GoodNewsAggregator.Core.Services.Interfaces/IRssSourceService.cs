@@ -12,5 +12,7 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
         Task<IEnumerable<RssSourceDto>> GetAllRssSources();
 
         Task<RssSourceDto> GetRssSourceById(Guid id);
+
+        Task<IEnumerable<RssSourceDto>> GetRssSourcesByNameAndUrl(string name, string url);
     }
 }

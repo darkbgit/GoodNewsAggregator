@@ -36,16 +36,16 @@ namespace GoodNewsAggregator.WebAPI.Controllers
             return Ok(source);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RssSourceDto request)
-        {
-            var source = await _sourceService.GetAllRssSources();
+        //[HttpPost]
+        //public async Task<IActionResult<int> Create([FromBody] RssSourceDto request)
+        //{
+        //    var source = await _sourceService.();
 
-            return Ok(source);
-        }
+        //    return Ok(source);
+        //}
 
         [HttpPut]
-        public async Task<IActionResult> Put()
+        public async Task<IActionResult> Put(int id, [FromBody] RssSourceDto value)
         {
             var source = await _sourceService.GetAllRssSources();
 
@@ -53,7 +53,7 @@ namespace GoodNewsAggregator.WebAPI.Controllers
         }
 
         [HttpPatch]
-        public async Task<IActionResult> Patch()
+        public async Task<IActionResult> Patch(int id, [FromBody] string value)
         {
             var source = await _sourceService.GetAllRssSources();
 
