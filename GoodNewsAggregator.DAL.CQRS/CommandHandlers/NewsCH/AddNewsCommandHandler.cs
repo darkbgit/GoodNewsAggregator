@@ -23,9 +23,9 @@ namespace GoodNewsAggregator.DAL.CQRS.CommandHandlers.NewsCH
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(AddNewsCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(AddNewsCommand command, CancellationToken cancellationToken)
         {
-            var news = _mapper.Map<News>(request);
+            var news = _mapper.Map<News>(command);
             await _dbContext.News.AddAsync(news, cancellationToken);
             return await _dbContext.SaveChangesAsync(cancellationToken);
         }

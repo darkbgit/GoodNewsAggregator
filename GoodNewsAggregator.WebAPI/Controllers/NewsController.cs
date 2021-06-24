@@ -28,6 +28,7 @@ namespace GoodNewsAggregator.WebAPI.Controllers
             return await _newsService.GetNewsById(id);
         }
 
+
         [HttpGet]
         public async Task<IEnumerable<NewsDto>> Get()
         {

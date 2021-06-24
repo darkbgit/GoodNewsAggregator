@@ -9,27 +9,25 @@ using GoodNewsAggregator.DAL.Core;
 using GoodNewsAggregator.DAL.Core.Entities;
 using GoodNewsAggregator.DAL.CQRS.Commands.NewsC;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GoodNewsAggregator.DAL.CQRS.CommandHandlers.NewsCH
 {
-    public class DeleteNewsCommandHandler : IRequestHandler<DeleteNewsCommand, int>
+    public class UpdateRangeNewsCommandHandler : IRequestHandler<UpdateRangeNewsCommand, int>
     {
         private readonly GoodNewsAggregatorContext _dbContext;
         private readonly IMapper _mapper;
 
-        public DeleteNewsCommandHandler(GoodNewsAggregatorContext dbContext, IMapper mapper)
+        public UpdateRangeNewsCommandHandler(GoodNewsAggregatorContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public async Task<int> Handle(DeleteNewsCommand command, CancellationToken cancellationToken)
+
+        public async Task<int> Handle(UpdateRangeNewsCommand command, CancellationToken cancellationToken)
         {
-            var news = await _dbContext.News
-                .Where(n => n.Id.Equals(command.Id))
-                .FirstOrDefaultAsync(cancellationToken);
-            if (news == null) return default;
-            _dbContext.News.Remove(news);
+            var news = command.News
+                .Select(n => _mapper.Map<News>(n));
+            _dbContext.News.UpdateRange(news);
             return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }

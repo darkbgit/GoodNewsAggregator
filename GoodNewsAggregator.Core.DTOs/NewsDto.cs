@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoodNewsAggregator.DAL.Core.Enums;
+using System;
 
 namespace GoodNewsAggregator.Core.DTOs
 {
@@ -13,6 +14,8 @@ namespace GoodNewsAggregator.Core.DTOs
         public DateTime? PublicationDate { get; set; }
         public string Category { get; set; }
         public string Author { get; set; }
+        public double Rating { get; set; }
+        public NewsStatus Status { get; set; }
 
         public Guid RssSourceId { get; set; }
     }

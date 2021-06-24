@@ -3,8 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.ServiceModel.Syndication;
 using System.Runtime.InteropServices;
+using System.Text;
+
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
@@ -17,10 +21,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Serilog;
 using AutoMapper;
+using GoodNewsAggregator.DAL.Core.Enums;
 using GoodNewsAggregator.DAL.CQRS.Commands.NewsC;
 using GoodNewsAggregator.DAL.CQRS.Queries.NewsQ;
 using GoodNewsAggregator.DAL.CQRS.Queries.RssSourceQ;
 using MediatR;
+using Newtonsoft.Json;
 
 namespace GoodNewsAggregator.Services.Implementation
 {
@@ -112,8 +118,164 @@ namespace GoodNewsAggregator.Services.Implementation
 
         public async Task Aggregate()
         {
+            var news = new ConcurrentBag<NewsDto>();
             var rssSources = await _mediator.Send(new GetAllRssSourceQuery());
+            var currentNewsUrls = await _mediator.Send(new GetAllExistingNewsUrlsQuery());
 
+            Parallel.ForEach(rssSources, (rssSource) =>
+            {
+                var parser = _parsers.Single(p => p.Name.Equals(rssSource.Name));
+
+                using var reader = XmlReader.Create(rssSource.Url);
+                var feed = SyndicationFeed.Load(reader);
+                reader.Close();
+
+                if (feed.Items.Any())
+                {
+                    foreach (var syndicationItem in feed.Items
+                        .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i))))
+                    {
+                        try
+                        {
+                            news.Add(new NewsDto
+                            {
+                                Id = Guid.NewGuid(),
+                                RssSourceId = rssSource.Id,
+                                Author = parser.GetAuthor(syndicationItem),
+                                Category = parser.GetCategory(syndicationItem),
+                                Url = parser.GetUrl(syndicationItem),
+                                ImageUrl = parser.GetImageUrl(syndicationItem),
+                                ShortNewsFromRssSource =
+                                    Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
+                                Title = syndicationItem.Title.Text,
+                                PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
+                                Status = NewsStatus.RssCompleted
+                            });
+                        }
+                        catch (Exception)
+                        {
+                            Log.Error("News information cant received from rss source");
+                        }
+                    }
+                }
+
+            });
+
+            Parallel.ForEach(news, async (n) =>
+            {
+                try
+                {
+                    n.Body = await GetNewsBodyInfoFromSite(n.Url);
+                    n.Status = NewsStatus.BodyCompleted;
+                }
+                catch (Exception)
+                {
+                    Log.Error($"News {n.Url} cant parse body");
+                }
+                
+            });
+
+            Parallel.ForEach(news, async (n) =>
+            {
+                try
+                {
+                    n.Body = await GetNewsBodyInfoFromSite(n.Url);
+                    n.Status = NewsStatus.BodyCompleted;
+                }
+                catch (Exception)
+                {
+                    Log.Error($"News {n.Url} cant take rating");
+                }
+
+            });
+
+            await AddRange(news);
+
+            var newsWithoutBody = new ConcurrentBag<NewsWithRssNameDto>(await _mediator
+                .Send(new GetAllExistingNewsWithoutBodyQuery()));
+
+            Parallel.ForEach(newsWithoutBody, async (n) =>
+            {
+                var parser = _parsers.Single(p => p.Name.Equals(n.RssSourceName));
+                n.Body = await parser.GetBody(n.Url);
+                n.Status = NewsStatus.BodyCompleted;
+            });
+
+            var newsWithoutRating = new ConcurrentBag<NewsDto>(await _mediator
+                .Send(new GetAllExistingNewsWithoutRatingQuery()));
+
+            Parallel.ForEach(newsWithoutRating, async n =>
+            {
+                n.Rating = await RateNews(n.Id);
+                n.Status = NewsStatus.RatingCompleted;
+            });
+
+            var updatedNews = newsWithoutBody.Select(
+                n => new NewsDto()
+                {
+                    Id = n.Id,
+                    Body = n.Body
+                })
+                .Concat(newsWithoutRating
+                    .Select(n => new NewsDto()
+                    {
+                        Id = n.Id,
+                        Rating = n.Rating
+                    }));
+
+            await UpdateRange(news);
+        }
+
+        public async Task<double> RateNews(Guid id)
+        {
+            var pureNewsText = await _mediator.Send(new GetPureNewsTextByIdQuery {Id = id});
+            
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=ae1707f570616cfd09cb49a7e1ecd91cd495aad9")
+            {
+                Content = new StringContent("[{\"text\":\"" + pureNewsText + "\"}]",
+                    Encoding.UTF8,
+                    "application/json")
+            };
+
+            var response = await httpClient.SendAsync(request);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            if (responseString == null) return 0;
+
+            string afinn =(await System.IO.File.ReadAllTextAsync(@"AFINN-ru.json", Encoding.UTF8))
+                .Replace("\n", " ");
+            var values = JsonConvert.DeserializeObject<IDictionary<string, int?>>(afinn);
+
+            dynamic stuff = JsonConvert.DeserializeObject(responseString);
+
+            var val = stuff?.annotations.lemma;
+
+            if (val == null || values == null) return default;
+
+            var sum = 0;
+            var count = 0;
+            foreach (var item in val)
+            {
+                if (item.value.Value == "" || !values.ContainsKey(item.value.Value)) continue;
+                count++;
+                sum += values[item.value.Value];
+            }
+
+            var rating = (double)sum / count;
+
+            return rating;
+        }
+
+        public async Task<string> GetPureNewsText(Guid id)
+        {
+            return await _mediator.Send(new GetPureNewsTextByIdQuery { Id = id });
         }
 
         public async Task<int> Add(NewsDto news)
@@ -124,13 +286,18 @@ namespace GoodNewsAggregator.Services.Implementation
 
         public async Task<int> AddRange(IEnumerable<NewsDto> news)
         {
-            throw new NotImplementedException();
+            return await _mediator.Send(new AddRangeNewsCommand { News = news });
         }
 
         public async Task<int> Update(NewsDto news)
         {
             var command = _mapper.Map<UpdateNewsCommand>(news);
             return await _mediator.Send(command);
+        }
+
+        public async Task<int> UpdateRange(IEnumerable<NewsDto> news)
+        {
+            return await _mediator.Send(new UpdateRangeNewsCommand { News = news });
         }
 
         public async Task<int> Delete(Guid id)
@@ -157,49 +324,47 @@ namespace GoodNewsAggregator.Services.Implementation
 
             var news = new ConcurrentBag<NewsDto>();
 
-            using (var reader = XmlReader.Create(rssSource.Url))
-            {
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-                if (feed.Items.Any())
-                {
-                    var currentNewsUrls = await _mediator.Send(new GetAllExistingNewsUrlsQuery());
+            using var reader = XmlReader.Create(rssSource.Url);
+            var feed = SyndicationFeed.Load(reader);
+            reader.Close();
 
-                    foreach (var syndicationItem in feed.Items)
+            if (!feed.Items.Any()) return news;
+                
+            var currentNewsUrls = await _mediator.Send(new GetAllExistingNewsUrlsQuery());
+
+            foreach (var syndicationItem in feed.Items
+                .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i))))
+            {
+                try
+                {
+                    news.Add( new NewsDto
                     {
-                        var newsDto = new NewsDto
-                        {
-                            Id = Guid.NewGuid(),
-                            RssSourceId = rssSource.Id,
-                            Author = parser.GetAuthor(syndicationItem),
-                            Category = parser.GetCategory(syndicationItem),
-                            Url = parser.GetUrl(syndicationItem),
-                            ImageUrl = parser.GetImageUrl(syndicationItem),
-                            ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
-                            Title = syndicationItem.Title.Text,
-                            PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime()
-                        };
-                        if (!currentNewsUrls.Contains(newsDto.Url))
-                        {
-                            news.Add(newsDto);
-                        }
-                    }
+                        Id = Guid.NewGuid(),
+                        RssSourceId = rssSource.Id,
+                        Author = parser.GetAuthor(syndicationItem),
+                        Category = parser.GetCategory(syndicationItem),
+                        Url = parser.GetUrl(syndicationItem),
+                        ImageUrl = parser.GetImageUrl(syndicationItem),
+                        ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
+                        Title = syndicationItem.Title.Text,
+                        PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
+                        Status = NewsStatus.RssCompleted
+                    });
                 }
+                catch (Exception)
+                {
+                    Log.Error("News information cant received from rss source");
+                }
+                        
             }
 
-            
-         
+            return news;
+        }
 
-            var newsList = news.ToList();
+        private async Task<string> GetNewsBodyInfoFromSite(string url)
+        {
 
-            var newNews = newsList.Where(n => !currentNewsUrls.Any(url => url.Equals(n.Url)));
-            foreach (var item in newNews)
-            {
-                item.Body = "";// await parser.GetBody(item.Url) ?? "";
-            };
-
-
-            return newNews;
+            return null;
         }
 
         public static string GetPureShortNewsFromRssSource(string shortNews)

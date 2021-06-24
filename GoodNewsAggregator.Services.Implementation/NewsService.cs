@@ -105,6 +105,16 @@ namespace GoodNewsAggregator.Services.Implementation
             return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
         }
 
+        public Task<double> RateNews(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetPureNewsText(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> Add(NewsDto news)
         {
             var entity = _mapper.Map<News>(news);

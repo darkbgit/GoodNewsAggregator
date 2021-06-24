@@ -17,6 +17,7 @@ namespace GoodNewsAggregator.DAL.CQRS.Commands.NewsC
         public string? ImageUrl { get; set; }
         public DateTime? PublicationDate { get; set; }
         public string Category { get; set; }
+        public double Rating { get; set; }
         public string Author { get; set; }
 
         public Guid RssSourceId { get; set; }

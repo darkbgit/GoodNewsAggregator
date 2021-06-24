@@ -18,6 +18,9 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
             string sortOrder);
 
         Task Aggregate();
+        Task<double> RateNews(Guid id);
+
+        Task<string> GetPureNewsText(Guid id);
 
         Task<int> Add(NewsDto news);
         Task<int> AddRange(IEnumerable<NewsDto> news);

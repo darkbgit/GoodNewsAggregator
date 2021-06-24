@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodNewsAggregator.DAL.Core.Enums;
 
 namespace GoodNewsAggregator.DAL.Core.Entities
 {
@@ -19,6 +20,7 @@ namespace GoodNewsAggregator.DAL.Core.Entities
         public string? Category { get; set; }
         public string? Author { get; set; }
         public double Rating { get; set; }
+        public NewsStatus Status { get; set; }
 
         public Guid RssSourceId { get; set; }
         public virtual RssSource RssSource { get; set; }

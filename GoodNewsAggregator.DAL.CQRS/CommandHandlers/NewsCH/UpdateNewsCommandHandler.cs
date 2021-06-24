@@ -9,6 +9,7 @@ using GoodNewsAggregator.DAL.Core;
 using GoodNewsAggregator.DAL.Core.Entities;
 using GoodNewsAggregator.DAL.CQRS.Commands.NewsC;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoodNewsAggregator.DAL.CQRS.CommandHandlers.NewsCH
 {
@@ -23,10 +24,13 @@ namespace GoodNewsAggregator.DAL.CQRS.CommandHandlers.NewsCH
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(UpdateNewsCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(UpdateNewsCommand command, CancellationToken cancellationToken)
         {
-            var news = _mapper.Map<News>(request);
-            _dbContext.News.Update(news);
+            var news = await _dbContext.News
+                .Where(n => n.Id.Equals(command.Id))
+                .FirstOrDefaultAsync(cancellationToken);
+            if (news == null) return default;
+            _dbContext.News.Update(_mapper.Map(command, news));
             return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
