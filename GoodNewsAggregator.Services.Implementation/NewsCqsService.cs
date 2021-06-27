@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using GoodNewsAggregator.Core.DTOs;
@@ -26,6 +28,7 @@ using GoodNewsAggregator.DAL.CQRS.Commands.NewsC;
 using GoodNewsAggregator.DAL.CQRS.Queries.NewsQ;
 using GoodNewsAggregator.DAL.CQRS.Queries.RssSourceQ;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace GoodNewsAggregator.Services.Implementation
@@ -154,79 +157,59 @@ namespace GoodNewsAggregator.Services.Implementation
                         }
                         catch (Exception)
                         {
-                            Log.Error("News information cant received from rss source");
+                            Log.Error($"News information cant received from rss source {rssSource.Name}");
                         }
                     }
                 }
 
             });
 
-            Parallel.ForEach(news, async (n) =>
-            {
-                try
-                {
-                    n.Body = await GetNewsBodyInfoFromSite(n.Url);
-                    n.Status = NewsStatus.BodyCompleted;
-                }
-                catch (Exception)
-                {
-                    Log.Error($"News {n.Url} cant parse body");
-                }
-                
-            });
+            if (news.Any()) await AddRange(news);
+        }
 
-            Parallel.ForEach(news, async (n) =>
-            {
-                try
-                {
-                    n.Body = await GetNewsBodyInfoFromSite(n.Url);
-                    n.Status = NewsStatus.BodyCompleted;
-                }
-                catch (Exception)
-                {
-                    Log.Error($"News {n.Url} cant take rating");
-                }
-
-            });
-
-            await AddRange(news);
-
+        public async Task GetBodies()
+        {
             var newsWithoutBody = new ConcurrentBag<NewsWithRssNameDto>(await _mediator
                 .Send(new GetAllExistingNewsWithoutBodyQuery()));
 
             Parallel.ForEach(newsWithoutBody, async (n) =>
             {
-                var parser = _parsers.Single(p => p.Name.Equals(n.RssSourceName));
-                n.Body = await parser.GetBody(n.Url);
-                n.Status = NewsStatus.BodyCompleted;
+                try
+                {
+                    var parser = _parsers.Single(p => p.Name.Equals(n.RssSourceName));
+                    n.Body = await parser.GetBody(n.Url);
+                    n.Status = NewsStatus.BodyCompleted;
+                }
+                catch 
+                {
+                    Log.Error($"Cant take body from news url {n.Url}");
+                }
+                
             });
 
+            var updatedNews = newsWithoutBody
+                .Select(n => new NewsDto
+                {
+                    Id = n.Id,
+                    Body = n.Body
+                });
+
+            if (newsWithoutBody.Any()) await UpdateRange(updatedNews);
+        }
+
+        public async Task Rate30News()
+        {
             var newsWithoutRating = new ConcurrentBag<NewsDto>(await _mediator
                 .Send(new GetAllExistingNewsWithoutRatingQuery()));
 
-            Parallel.ForEach(newsWithoutRating, async n =>
+            Parallel.ForEach(newsWithoutRating, async (n) =>
             {
                 n.Rating = await RateNews(n.Id);
                 n.Status = NewsStatus.RatingCompleted;
             });
-
-            var updatedNews = newsWithoutBody.Select(
-                n => new NewsDto()
-                {
-                    Id = n.Id,
-                    Body = n.Body
-                })
-                .Concat(newsWithoutRating
-                    .Select(n => new NewsDto()
-                    {
-                        Id = n.Id,
-                        Rating = n.Rating
-                    }));
-
-            await UpdateRange(news);
         }
 
-        public async Task<double> RateNews(Guid id)
+        private async Task<double> RateNews(Guid id)
         {
             var pureNewsText = await _mediator.Send(new GetPureNewsTextByIdQuery {Id = id});
             
@@ -359,12 +342,6 @@ namespace GoodNewsAggregator.Services.Implementation
             }
 
             return news;
-        }
-
-        private async Task<string> GetNewsBodyInfoFromSite(string url)
-        {
-
-            return null;
         }
 
         public static string GetPureShortNewsFromRssSource(string shortNews)

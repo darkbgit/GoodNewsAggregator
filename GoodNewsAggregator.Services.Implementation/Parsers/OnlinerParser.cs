@@ -16,46 +16,6 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
     {
         public string Name => "Onliner";
         
-        public async Task<IEnumerable<NewsDto>> ParseRss(RssSourceDto rss)
-        {
-            var news = new List<NewsDto>();
-            using (var reader = XmlReader.Create(rss.Url))
-            {
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-                if (feed.Items.Any())
-                {
-                    foreach (var syndicationItem in feed.Items)
-                    {
-                        var newsDto = new NewsDto
-                        {
-                            Id = Guid.NewGuid(),
-                            RssSourceId = rss.Id,
-                            Author = syndicationItem.Authors?[0]?.Email,
-                            Url =
-                                syndicationItem.Links.FirstOrDefault(sl => sl.RelationshipType.Equals("alternate"))?.Uri
-                                    .AbsoluteUri,
-                            ImageUrl =
-                                syndicationItem.Links.FirstOrDefault(sl =>
-                                    sl.RelationshipType.Equals("enclosure"))?.Uri.AbsoluteUri,
-                            ShortNewsFromRssSource = syndicationItem.Summary.Text.Trim(),
-
-                            //newsDto.Url = syndicationItem.Id;
-                            Title = syndicationItem.Title.Text,
-                            //ShortNewsFromRssSource = syndicationItem.Summary.Text
-                            //newsDto.ShortNewsFromRssSource =
-                            //    GetPureShortNewsFromRssSource(syndicationItem.Summary.Text);
-                            //newsDto.ImageUrl = GetNewsImageUrlFromRssSource(syndicationItem.Summary.Text);
-                            PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime()
-                        };
-                        news.Add(newsDto);
-                    }
-                }
-            }
-
-            return news;
-        }
-
         public string GetSummary(SyndicationItem item)
         {
             return Regex.Replace(item.Summary.Text.Trim(), @"<.*?>", "");
@@ -92,7 +52,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
         public async Task<string> GetBody(string url)
         {
             var web = new HtmlWeb();
-            var doc = web.LoadFromWebAsync(url).Result;
+            var doc = await web.LoadFromWebAsync(url);
 
 
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='news-text']");

@@ -18,7 +18,10 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
             string sortOrder);
 
         Task Aggregate();
-        Task<double> RateNews(Guid id);
+        Task GetBodies();
+        Task Rate30News();
+
+
 
         Task<string> GetPureNewsText(Guid id);
 

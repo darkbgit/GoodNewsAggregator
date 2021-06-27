@@ -28,6 +28,8 @@ namespace GoodNewsAggregator.DAL.CQRS.QueryHandlers.NewsQH
         {
             return await _dbContext.News
                 .Where(n => n.Status == NewsStatus.BodyCompleted)
+                .OrderBy(n => n.PublicationDate)
+                .Take(30)
                 .Select(n => new NewsDto
                 {
                     Id = n.Id,

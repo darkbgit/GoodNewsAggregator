@@ -98,26 +98,7 @@ namespace GoodNewsAggregator.Controllers
             string sortOrder,
             int page = 1)
         {
-            //Guid[] sourceIds = Request.Headers.ContainsKey("rssIds").ToString();
-            //Request.Headers.TryGetValue("rssIds", sourceIds).ToList();
 
-            //IQueryable<NewsDto> news = Enumerable.Empty<NewsDto>().AsQueryable();
-
-            //foreach (var sourceId in rssIds)
-            //{
-            //    var sourceNews = (await _newsService.GetNewsBySourceId(sourceId));
-            //    news = news.Concat(sourceNews);
-            //}
-
-            //var count = await news.CountAsync();
-            //var newsPerPage =  await news
-            //    .OrderByDescending(n => n.PublicationDate)
-            //    .Skip((page - 1) * Constants.NEWS_PER_PAGE)
-            //    .Take(Constants.NEWS_PER_PAGE)
-            //    .ToListAsync();
-
-
-            //var newsPerPage = news.Skip((page - 1) * Constants.NEWS_PER_PAGE).Take(Constants.NEWS_PER_PAGE);
             var (newsPerPage, count) = await  _newsService.GetNewsPerPage(rssIds,
                 page,
                 Constants.NEWS_PER_PAGE,
@@ -125,20 +106,6 @@ namespace GoodNewsAggregator.Controllers
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
             
-            
-            //    new NewsList()
-            //{
-            //    Id = n.Id,
-            //    Title = n.Title,
-            //    Url = n.Url,
-            //    ShortNewsFromRssSource = n.ShortNewsFromRssSource,
-            //    ImageUrl = n.ImageUrl,
-            //    PublicationDate = n.PublicationDate,
-            //    Author = n.Author,
-            //    Category = n.Category
-            //}).ToList();
-
-
             var pageInfo = new PageInfo(page, count);
 
             var newsListsWithPagination = new NewsListWithPagination()
@@ -146,8 +113,6 @@ namespace GoodNewsAggregator.Controllers
                 NewsLists = newsList,
                 Pagination = pageInfo
             };
-
-
 
             return PartialView("_NewsListsWithPagination", newsListsWithPagination);
         }
@@ -181,7 +146,8 @@ namespace GoodNewsAggregator.Controllers
             ViewData["RssSourceName"] = new SelectList(await _rssSourceService.GetAllRssSources(), "Id", "Name");
             return View();
         }
-
+        
+        
         // POST: News/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

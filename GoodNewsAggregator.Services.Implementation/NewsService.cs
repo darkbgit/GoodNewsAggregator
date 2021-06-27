@@ -59,53 +59,41 @@ namespace GoodNewsAggregator.Services.Implementation
             int newsPerPage,
             string sortOrder)
         {
-            //IQueryable<News> news = Enumerable.Empty<News>().AsQueryable();
-            IEnumerable<News> news;
-            IEnumerable<News> newsEnumerable;
-            IEnumerable<NewsDto> newsDtoList;
-            int count;
-            //if (!rssIds.Any())
-            //{
-            //    news = _unitOfWork.News.FindBy(n =>
-            //        !string.IsNullOrEmpty(n.Url));
-            //    count = news.Count();
-            //    newsDtoList = news.OrderByDescending(n => n.PublicationDate)
-            //        .Skip((pageNumber - 1) * newsPerPage)
-            //        .Take(newsPerPage)
-            //        .Select(n => _mapper.Map<NewsDto>(n))
-            //        .ToList();
-            //}
-            //else
-            {
-                news = _unitOfWork.News.FindBy(n =>
+
+            var news = _unitOfWork.News.FindBy(n =>
                     rssIds.Contains(n.RssSourceId));
-                count = news.Count();
+            var count = news.Count();
 
-                switch (sortOrder)
-                {
-                    case "Date":
-                        news = news.OrderBy(n => n.PublicationDate);
-                        break;
-                    //case "Rating":
-                    //    news = news.OrderBy(n => n.PublicationDate).ToList();
-                    //    break;
-                    //case "rating_desc":
-                    //    news = news.OrderBy(n => n.PublicationDate).ToList();
-                    //    break;
-                    default:
-                        news = news.OrderByDescending(n => n.PublicationDate);
-                        break;
-                }
-
-                newsDtoList = news.Skip((pageNumber - 1) * newsPerPage)
-                    .Take(newsPerPage)
-                    .Select(n => _mapper.Map<NewsDto>(n))
-                    .ToList();
+            switch (sortOrder)
+            {
+                case "Date":
+                    news = news.OrderBy(n => n.PublicationDate);
+                    break;
+                case "Rating":
+                    news = news.OrderBy(n => n.Rating);
+                    break;
+                case "rating_desc":
+                    news = news.OrderByDescending(n => n.Rating);
+                    break;
+                default:
+                    news = news.OrderByDescending(n => n.PublicationDate);
+                    break;
             }
+
+            var newsDtoList = await news.Skip((pageNumber - 1) * newsPerPage)
+                .Take(newsPerPage)
+                .Select(n => _mapper.Map<NewsDto>(n))
+                .ToListAsync();
+
             return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
         }
 
         public Task<double> RateNews(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Rate30News()
         {
             throw new NotImplementedException();
         }
@@ -158,6 +146,11 @@ namespace GoodNewsAggregator.Services.Implementation
         }
 
         public Task Aggregate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task GetBodies()
         {
             throw new NotImplementedException();
         }
