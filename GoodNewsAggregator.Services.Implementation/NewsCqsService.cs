@@ -9,7 +9,6 @@ using System.Net.Http.Headers;
 using System.ServiceModel.Syndication;
 using System.Runtime.InteropServices;
 using System.Text;
-
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,75 +47,37 @@ namespace GoodNewsAggregator.Services.Implementation
             _mediator = mediator;
         }
 
-        public async Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id)
+        public async Task<IEnumerable<NewsDto>> GetNewsByRssSourceIds(Guid[] ids)
         {
-            throw new NotImplementedException();
-            //if (!id.HasValue)
-            //{
-            //    Log.Warning(nameof(id) + " in " + ToString() + " was null");
-            //}
-
-            //var news = id.HasValue
-            //    ? await _unitOfWork.News.FindBy(n
-            //            => n.RssSourceId.Equals(id.GetValueOrDefault()))
-            //        .ToListAsync()
-            //    : await _unitOfWork.News.FindBy(n => n.Id != null)
-            //        .ToListAsync();
-
-            //return news.Select(n => _mapper.Map<NewsDto>(n)).ToList();
-
+            IEnumerable<NewsDto> news = new List<NewsDto>();
+            if (ids.Any())
+            {
+                foreach (var id in ids)
+                {
+                    news = news.Concat(await _mediator.Send(new GetNewsByRssSourceIdQuery() {Id = id}));
+                }
+            }
+            else
+            {
+                news = await _mediator.Send(new GetAllNewsQuery());
+            }
+            return news;
         }
 
         public async Task<Tuple<IEnumerable<NewsDto>, int>> GetNewsPerPage(Guid[] rssIds,
             int pageNumber,
             int newsPerPage,
-            string sortOrder)
+            string sortOrder,
+            double? minimalRating = null)
         {
-            throw new NotImplementedException();
-            ////IQueryable<News> news = Enumerable.Empty<News>().AsQueryable();
-            //IEnumerable<News> news;
-            //IEnumerable<News> newsEnumerable;
-            //IEnumerable<NewsDto> newsDtoList;
-            //int count;
-            ////if (!rssIds.Any())
-            ////{
-            ////    news = _unitOfWork.News.FindBy(n =>
-            ////        !string.IsNullOrEmpty(n.Url));
-            ////    count = news.Count();
-            ////    newsDtoList = news.OrderByDescending(n => n.PublicationDate)
-            ////        .Skip((pageNumber - 1) * newsPerPage)
-            ////        .Take(newsPerPage)
-            ////        .Select(n => _mapper.Map<NewsDto>(n))
-            ////        .ToList();
-            ////}
-            ////else
-            //{
-            //    news = _unitOfWork.News.FindBy(n =>
-            //        rssIds.Contains(n.RssSourceId));
-            //    count = news.Count();
-
-            //    switch (sortOrder)
-            //    {
-            //        case "Date":
-            //            news = news.OrderBy(n => n.PublicationDate);
-            //            break;
-            //        //case "Rating":
-            //        //    news = news.OrderBy(n => n.PublicationDate).ToList();
-            //        //    break;
-            //        //case "rating_desc":
-            //        //    news = news.OrderBy(n => n.PublicationDate).ToList();
-            //        //    break;
-            //        default:
-            //            news = news.OrderByDescending(n => n.PublicationDate);
-            //            break;
-            //    }
-
-            //    newsDtoList = news.Skip((pageNumber - 1) * newsPerPage)
-            //        .Take(newsPerPage)
-            //        .Select(n => _mapper.Map<NewsDto>(n))
-            //        .ToList();
-            //}
-            //return new Tuple<IEnumerable<NewsDto>, int>(newsDtoList, count);
+            return await _mediator.Send(new GetNewsPerPageQuery()
+            {
+                Ids = rssIds,
+                NewsPerPage = newsPerPage,
+                PageNumber = pageNumber,
+                SortOrder = sortOrder,
+                MinimalRating = minimalRating
+            });
         }
 
         public async Task Aggregate()
@@ -125,43 +86,13 @@ namespace GoodNewsAggregator.Services.Implementation
             var rssSources = await _mediator.Send(new GetAllRssSourceQuery());
             var currentNewsUrls = await _mediator.Send(new GetAllExistingNewsUrlsQuery());
 
-            Parallel.ForEach(rssSources, (rssSource) =>
+            Parallel.ForEach(rssSources, new ParallelOptions{MaxDegreeOfParallelism = 1}, (rssSource) =>
             {
-                var parser = _parsers.Single(p => p.Name.Equals(rssSource.Name));
-
-                using var reader = XmlReader.Create(rssSource.Url);
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-
-                if (feed.Items.Any())
+                var newsFromRss = GetNewsInfoFromRssSource(rssSource, currentNewsUrls);
+                foreach (var n in newsFromRss)
                 {
-                    foreach (var syndicationItem in feed.Items
-                        .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i))))
-                    {
-                        try
-                        {
-                            news.Add(new NewsDto
-                            {
-                                Id = Guid.NewGuid(),
-                                RssSourceId = rssSource.Id,
-                                Author = parser.GetAuthor(syndicationItem),
-                                Category = parser.GetCategory(syndicationItem),
-                                Url = parser.GetUrl(syndicationItem),
-                                ImageUrl = parser.GetImageUrl(syndicationItem),
-                                ShortNewsFromRssSource =
-                                    Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
-                                Title = syndicationItem.Title.Text,
-                                PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
-                                Status = NewsStatus.RssCompleted
-                            });
-                        }
-                        catch (Exception)
-                        {
-                            Log.Error($"News information cant received from rss source {rssSource.Name}");
-                        }
-                    }
+                    news.Add(n);
                 }
-
             });
 
             if (news.Any()) await AddRange(news);
@@ -172,12 +103,14 @@ namespace GoodNewsAggregator.Services.Implementation
             var newsWithoutBody = new ConcurrentBag<NewsWithRssNameDto>(await _mediator
                 .Send(new GetAllExistingNewsWithoutBodyQuery()));
 
-            Parallel.ForEach(newsWithoutBody, async (n) =>
+            Parallel.ForEach(newsWithoutBody, new ParallelOptions{ MaxDegreeOfParallelism = 1}, async (n) =>
             {
                 try
                 {
                     var parser = _parsers.Single(p => p.Name.Equals(n.RssSourceName));
-                    n.Body = await parser.GetBody(n.Url);
+                    var body =  parser.GetBody(n.Url);
+                    if (body == null) return;
+                    n.Body = body;
                     n.Status = NewsStatus.BodyCompleted;
                 }
                 catch 
@@ -188,11 +121,14 @@ namespace GoodNewsAggregator.Services.Implementation
             });
 
             var updatedNews = newsWithoutBody
+                .Where(n => n.Status == NewsStatus.BodyCompleted)
                 .Select(n => new NewsDto
                 {
                     Id = n.Id,
-                    Body = n.Body
-                });
+                    Body = n.Body,
+                    Status = n.Status
+                })
+                .ToList();
 
             if (newsWithoutBody.Any()) await UpdateRange(updatedNews);
         }
@@ -204,14 +140,22 @@ namespace GoodNewsAggregator.Services.Implementation
 
             Parallel.ForEach(newsWithoutRating, async (n) =>
             {
-                n.Rating = await RateNews(n.Id);
-                n.Status = NewsStatus.RatingCompleted;
+                var rating = await RateNews(n.Id);
+                if (rating != null)
+                {
+                    n.Rating = rating.Value;
+                    n.Status = NewsStatus.RatingCompleted;
+                }
             });
+
+            await UpdateRange(newsWithoutRating
+                .Where(n => n.Status == NewsStatus.RatingCompleted)
+                .ToList());
         }
 
-        private async Task<double> RateNews(Guid id)
+        private async Task<double?> RateNews(Guid id)
         {
-            var pureNewsText = await _mediator.Send(new GetPureNewsTextByIdQuery {Id = id});
+            var pureNewsText = await GetPureNewsText(id);
             
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders
@@ -230,7 +174,7 @@ namespace GoodNewsAggregator.Services.Implementation
 
             var responseString = await response.Content.ReadAsStringAsync();
 
-            if (responseString == null) return 0;
+            if (responseString == "") return null;
 
             string afinn =(await System.IO.File.ReadAllTextAsync(@"AFINN-ru.json", Encoding.UTF8))
                 .Replace("\n", " ");
@@ -240,7 +184,7 @@ namespace GoodNewsAggregator.Services.Implementation
 
             var val = stuff?.annotations.lemma;
 
-            if (val == null || values == null) return default;
+            if (val == null || values == null) return null;
 
             var sum = 0;
             var count = 0;
@@ -256,7 +200,7 @@ namespace GoodNewsAggregator.Services.Implementation
             return rating;
         }
 
-        public async Task<string> GetPureNewsText(Guid id)
+        private async Task<string> GetPureNewsText(Guid id)
         {
             return await _mediator.Send(new GetPureNewsTextByIdQuery { Id = id });
         }
@@ -301,26 +245,24 @@ namespace GoodNewsAggregator.Services.Implementation
             return await _mediator.Send(query);
         }
 
-        public async Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource)
+        private IEnumerable<NewsDto> GetNewsInfoFromRssSource(RssSourceDto rssSource,
+            IEnumerable<string> currentNewsUrls)
         {
+            var news = new List<NewsDto>();
             var parser = _parsers.Single(p => p.Name.Equals(rssSource.Name));
-
-            var news = new ConcurrentBag<NewsDto>();
 
             using var reader = XmlReader.Create(rssSource.Url);
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
 
-            if (!feed.Items.Any()) return news;
-                
-            var currentNewsUrls = await _mediator.Send(new GetAllExistingNewsUrlsQuery());
+            if (!feed.Items.Any()) return default;
 
             foreach (var syndicationItem in feed.Items
                 .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i))))
             {
                 try
                 {
-                    news.Add( new NewsDto
+                    news.Add(new NewsDto
                     {
                         Id = Guid.NewGuid(),
                         RssSourceId = rssSource.Id,
@@ -328,7 +270,8 @@ namespace GoodNewsAggregator.Services.Implementation
                         Category = parser.GetCategory(syndicationItem),
                         Url = parser.GetUrl(syndicationItem),
                         ImageUrl = parser.GetImageUrl(syndicationItem),
-                        ShortNewsFromRssSource = Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
+                        ShortNewsFromRssSource =
+                            Regex.Replace(syndicationItem.Summary.Text.Trim(), @"<.*?>", ""),
                         Title = syndicationItem.Title.Text,
                         PublicationDate = syndicationItem.PublishDate.DateTime.ToUniversalTime(),
                         Status = NewsStatus.RssCompleted
@@ -336,9 +279,8 @@ namespace GoodNewsAggregator.Services.Implementation
                 }
                 catch (Exception)
                 {
-                    Log.Error("News information cant received from rss source");
+                    Log.Error($"News information cant received from rss source {rssSource.Name}");
                 }
-                        
             }
 
             return news;
@@ -362,12 +304,7 @@ namespace GoodNewsAggregator.Services.Implementation
 
         public async Task<NewsWithRssNameDto> GetNewsWithRssSourceNameById(Guid id)
         {
-            throw new NotImplementedException();
-            //var result = await _unitOfWork.News
-            //    .FindBy(n => n.Id.Equals(id),
-            //        n => n.RssSource)
-            //    .FirstOrDefaultAsync();
-            //return _mapper.Map<NewsWithRssNameDto>(result);
+            return await _mediator.Send(new GetNewsWithRssSourceNameByIdQuery() {Id = id});
         }
     }
 }

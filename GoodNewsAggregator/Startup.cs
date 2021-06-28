@@ -92,14 +92,7 @@ namespace GoodNewsAggregator
             //    }
             //});
 
-            //services.AddAutoMapper(typeof(Startup));
 
-            //var mapperConfig = new MapperConfiguration(mc =>
-            //{
-            //    mc.AddProfile(new MappingProfile());
-            //});
-            //var mapper = mapperConfig.CreateMapper();
-            //services.AddSingleton(mapper);
             services.AddAutoMapper(typeof(MappingProfile), typeof(MappingProfile2));
 
             services.AddControllersWithViews();

@@ -19,9 +19,10 @@ namespace GoodNewsAggregator.DAL.Repositories.Interfaces
         Task Add (T entity);
         Task AddRange(IEnumerable<T> entities);
 
-        Task Update(T entity);
+        void Update(T entity);
+        void UpdateRange(IEnumerable<T> entities);
 
-        Task Remove(Guid id);
-        Task RemoveRange(IEnumerable<T> entities);
+        void Remove(Guid id);
+        void RemoveRange(IEnumerable<T> entities);
     }
 }

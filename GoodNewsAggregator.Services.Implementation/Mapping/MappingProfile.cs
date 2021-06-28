@@ -32,7 +32,9 @@ namespace GoodNewsAggregator.Services.Implementation.Mapping
 
             CreateMap<NewsDto, AddNewsCommand>();
             CreateMap<NewsDto, UpdateNewsCommand>();
-            
+
+            CreateMap<UserDto, User>();
+
         }
     }
 }

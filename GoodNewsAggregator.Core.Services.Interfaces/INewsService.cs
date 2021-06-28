@@ -7,28 +7,25 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
 {
     public interface INewsService
     {
-        Task<IEnumerable<NewsDto>> GetNewsBySourceId(Guid? id);
+        Task<IEnumerable<NewsDto>> GetNewsByRssSourceIds(Guid[] ids);
         Task<NewsDto> GetNewsById(Guid id);
         Task<IEnumerable<NewsDto>> GetAllNews();
-        Task<IEnumerable<NewsDto>> GetNewsInfoFromRssSource(RssSourceDto rssSource);
         Task<NewsWithRssNameDto> GetNewsWithRssSourceNameById(Guid id);
         Task<Tuple<IEnumerable<NewsDto> , int>> GetNewsPerPage(Guid[] rssIds,
             int pageNumber,
             int newsPerPage,
-            string sortOrder);
+            string sortOrder,
+            double? minimalRating);
 
         Task Aggregate();
         Task GetBodies();
         Task Rate30News();
 
-
-
-        Task<string> GetPureNewsText(Guid id);
-
         Task<int> Add(NewsDto news);
         Task<int> AddRange(IEnumerable<NewsDto> news);
 
         Task<int> Update(NewsDto news);
+        Task<int> UpdateRange(IEnumerable<NewsDto> news);
         Task<int> Delete(Guid id);
     }
 }

@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.WebAPI",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.DAL.CQRS", "GoodNewsAggregator.DAL.CQRS\GoodNewsAggregator.DAL.CQRS.csproj", "{3A78F977-FF74-48D2-AB2F-B80A17905627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNewsAggregator.Core.Data", "GoodNewsAggregator.Core.Data\GoodNewsAggregator.Core.Data.csproj", "{444D8B5C-74F0-4866-AAA5-515D8054DD51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoodNewsAggregator.Core.WebApi", "GoodNewsAggregator.Core.Data\GoodNewsAggregator.Core.WebApi.csproj", "{444D8B5C-74F0-4866-AAA5-515D8054DD51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

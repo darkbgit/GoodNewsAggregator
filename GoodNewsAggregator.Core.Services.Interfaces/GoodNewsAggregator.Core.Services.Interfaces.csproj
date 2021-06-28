@@ -10,7 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GoodNewsAggregator.Core.Data\GoodNewsAggregator.Core.WebApi.csproj" />
     <ProjectReference Include="..\GoodNewsAggregator.Core.DTOs\GoodNewsAggregator.Core.DTOs.csproj" />
+    <ProjectReference Include="..\GoodNewsAggregator.DAL.CQRS\GoodNewsAggregator.DAL.CQRS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

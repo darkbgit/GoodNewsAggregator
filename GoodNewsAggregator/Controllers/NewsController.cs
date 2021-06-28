@@ -18,34 +18,31 @@ using GoodNewsAggregator.Models.ViewModels;
 using GoodNewsAggregator.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using GoodNewsAggregator.Utilities.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace GoodNewsAggregator.Controllers
 {
     //[Authorize]
     public class NewsController : Controller
     {
-        //private readonly GoodNewsAggregatorContext _context;
-
         private readonly INewsService _newsService;
         private readonly IRssSourceService _rssSourceService;
         private readonly ICommentService _commentService;
-        private readonly IWebPageParser _onlinerParser;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
         public NewsController(IRssSourceService rssSourceService,
             INewsService newsService,
-            IWebPageParser onlinerParser,
-            IMapper mapper, ICommentService commentService)
+            IMapper mapper, ICommentService commentService, UserManager<User> userManager)
         {
             _rssSourceService = rssSourceService;
             _newsService = newsService;
-            _onlinerParser = onlinerParser;
             _mapper = mapper;
             _commentService = commentService;
+            _userManager = userManager;
         }
 
 
-        // GET: News
         [HttpGet]
         public async Task<IActionResult> Index(Guid[] rssIds, int page = 1)
         {
@@ -65,10 +62,20 @@ namespace GoodNewsAggregator.Controllers
                 Checked = !rssIds.Any() || rssIds.Contains(r.Id)
             });
 
+            double? minimalRating = null;
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName != null)
+            {
+                var user = await _userManager.FindByNameAsync(userName);
+                minimalRating = user.MinimalRating;
+            }
+
+
             var (newsPerPage, count) = await _newsService.GetNewsPerPage(rssIds,
                 page,
                 Constants.NEWS_PER_PAGE,
-                "");
+                "",
+                minimalRating);
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
 
@@ -81,13 +88,6 @@ namespace GoodNewsAggregator.Controllers
                 Pagination = pageInfo
             };
 
-            //if (!HttpContext.User.Identity.IsAuthenticated)
-            //{
-            //    return Content(
-            //        "<script language='javascript' type='text/javascript'>document.querySelector('button[data-toggle='ajax-modal']').click();</script>");
-            //    //HttpContext.Response.Headers.Add("REQUIRES_AUTH", "1");
-            //}
-
             return View(newsListWithRssWithPagination);
         }
 
@@ -99,10 +99,19 @@ namespace GoodNewsAggregator.Controllers
             int page = 1)
         {
 
+            double? minimalRating = null;
+            var userName = HttpContext.User.Identity?.Name;
+            if (userName != null)
+            {
+                var user = await _userManager.FindByNameAsync(userName);
+                minimalRating = user.MinimalRating;
+            }
+
             var (newsPerPage, count) = await  _newsService.GetNewsPerPage(rssIds,
                 page,
                 Constants.NEWS_PER_PAGE,
-                sortOrder);
+                sortOrder,
+                minimalRating);
 
             var newsList = newsPerPage.Select(n => _mapper.Map<NewsList>(n)).ToList();
             
@@ -237,46 +246,11 @@ namespace GoodNewsAggregator.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Aggregate(CreateNewsViewModel source)
+        public async Task<IActionResult> Aggregate()
         {
-            //try
-            //{
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                var rssSources = await _rssSourceService
-                    .GetAllRssSources();
-                var newInfos = new List<NewsDto>();
-
-            foreach (var rssSource in rssSources)
-            {
-                try
-                {
-                    var newsList = await _newsService
-                    .GetNewsInfoFromRssSource(rssSource);
-
-
-                    newInfos.AddRange(newsList);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, $"Aggregation error {e.Message}");
-                }
-
-            }
-
-
-            try 
-            { 
-                await _newsService.AddRange(newInfos);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, $"Aggregation error {e.Message}");
-            }
-            stopwatch.Stop();
-            Log.Information($"Aggregation was executed in {stopwatch.ElapsedMilliseconds}");
-
-            return RedirectToAction(nameof(Index));
+            await _newsService.Aggregate();
+            
+            return Ok();
         }
     }
 }

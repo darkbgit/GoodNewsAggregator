@@ -49,13 +49,14 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
             return author;
         }
 
-        public async Task<string> GetBody(string url)
+        public string GetBody(string url)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(url);
-
+            var doc =  web.LoadFromWebAsync(url).Result;
 
             var node = doc.DocumentNode.SelectSingleNode("//div[@class='news-text']");
+
+            if (node == null) return null;
 
             node.SelectNodes("//div[@class='news-reference']|//div[@class='news-widget news-widget_special']|//script|//p[@style='text-align: right;']")
                 .ToList()

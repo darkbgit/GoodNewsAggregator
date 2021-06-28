@@ -12,7 +12,7 @@ namespace GoodNewsAggregator.Core.Services.Interfaces
     {
         public string Name { get; }
 
-        Task<string> GetBody(string url);
+        string GetBody(string url);
 
         string GetAuthor(SyndicationItem item);
 

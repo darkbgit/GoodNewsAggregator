@@ -20,6 +20,7 @@ namespace GoodNewsAggregator.DAL.Core.Entities
         public int Year { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
     }
 }

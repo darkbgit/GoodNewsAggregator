@@ -25,6 +25,8 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation.Repositories
         public IQueryable<T> FindBy(Expression<Func<T, bool>> predicate,
             params Expression<Func<T, object>>[] includes)
         {
+            Db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
             var result = Table.Where(predicate);
             if (includes.Any())
             {
@@ -34,7 +36,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation.Repositories
                             => current.Include(include));
             }
 
-            return result.AsNoTracking();
+            return result;
         }
 
         public async Task<T> Get(Guid id)
@@ -44,7 +46,7 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation.Repositories
 
         public IQueryable<T> GetAll()
         {
-            return Table.AsNoTracking();
+            return Table;
         }
 
         public async Task Add(T entity)
@@ -57,18 +59,23 @@ namespace GoodNewsAggregator.DAL.Repositories.Implementation.Repositories
             await Table.AddRangeAsync(elements);
         }
 
-        public async Task Update(T element)
+        public void Update(T element)
         {
             Table.Update(element);
         }
 
-        public async Task Remove(Guid id)
+        public void UpdateRange(IEnumerable<T> elements)
+        {
+            Table.UpdateRange(elements);
+        }
+
+        public async void Remove(Guid id)
         {
             var entity = await Get(id);
             Table.Remove(entity);
         }
 
-        public async Task RemoveRange(IEnumerable<T> elements)
+        public void RemoveRange(IEnumerable<T> elements)
         {
             Table.RemoveRange(elements);
         }

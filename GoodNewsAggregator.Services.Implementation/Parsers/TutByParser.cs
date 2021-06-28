@@ -85,7 +85,7 @@ namespace GoodNewsAggregator.Services.Implementation.Parsers
             return author;
         }
 
-        public Task<string> GetBody(string url)
+        public string GetBody(string url)
         {
             return null;
         }
