@@ -70,7 +70,7 @@ namespace GoodNewsAggregator.Services.Implementation
             string sortOrder,
             double? minimalRating = null)
         {
-            return await _mediator.Send(new GetNewsPerPageQuery()
+            return await _mediator.Send(new GetNewsPerPageQuery
             {
                 Ids = rssIds,
                 NewsPerPage = newsPerPage,
@@ -89,6 +89,7 @@ namespace GoodNewsAggregator.Services.Implementation
             Parallel.ForEach(rssSources, new ParallelOptions{MaxDegreeOfParallelism = 1}, (rssSource) =>
             {
                 var newsFromRss = GetNewsInfoFromRssSource(rssSource, currentNewsUrls);
+                if (newsFromRss == null) return;
                 foreach (var n in newsFromRss)
                 {
                     news.Add(n);
@@ -103,22 +104,22 @@ namespace GoodNewsAggregator.Services.Implementation
             var newsWithoutBody = new ConcurrentBag<NewsWithRssNameDto>(await _mediator
                 .Send(new GetAllExistingNewsWithoutBodyQuery()));
 
-            Parallel.ForEach(newsWithoutBody, new ParallelOptions{ MaxDegreeOfParallelism = 1}, async (n) =>
+            foreach (var news in newsWithoutBody)
             {
                 try
                 {
-                    var parser = _parsers.Single(p => p.Name.Equals(n.RssSourceName));
-                    var body =  parser.GetBody(n.Url);
-                    if (body == null) return;
-                    n.Body = body;
-                    n.Status = NewsStatus.BodyCompleted;
+                    var parser = _parsers.Single(p => p.Name.Equals(news.RssSourceName));
+                    var body =  parser.GetBody(news.Url);
+                    if (body == null) continue;
+                    news.Body = body;
+                    news.Status = NewsStatus.BodyCompleted;
                 }
                 catch 
                 {
-                    Log.Error($"Cant take body from news url {n.Url}");
+                    Log.Error($"Cant take body from news url {news.Url}");
                 }
                 
-            });
+            }
 
             var updatedNews = newsWithoutBody
                 .Where(n => n.Status == NewsStatus.BodyCompleted)
@@ -138,15 +139,17 @@ namespace GoodNewsAggregator.Services.Implementation
             var newsWithoutRating = new ConcurrentBag<NewsDto>(await _mediator
                 .Send(new GetAllExistingNewsWithoutRatingQuery()));
 
-            Parallel.ForEach(newsWithoutRating, async (n) =>
+            foreach (var news in newsWithoutRating)
             {
-                var rating = await RateNews(n.Id);
+                var rating = await RateNews(news.Id);
                 if (rating != null)
                 {
-                    n.Rating = rating.Value;
-                    n.Status = NewsStatus.RatingCompleted;
+                    news.Rating = rating.Value;
+                    news.Status = NewsStatus.RatingCompleted;
                 }
-            });
+            }
+
+ 
 
             await UpdateRange(newsWithoutRating
                 .Where(n => n.Status == NewsStatus.RatingCompleted)
@@ -255,10 +258,14 @@ namespace GoodNewsAggregator.Services.Implementation
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
 
-            if (!feed.Items.Any()) return default;
+            if (!feed.Items.Any()) return null;
+            var newFeeds = feed.Items
+                .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i)))
+                .ToList();
 
-            foreach (var syndicationItem in feed.Items
-                .Where(i => !currentNewsUrls.Contains(parser.GetUrl(i))))
+            if (newFeeds.Count == 0) return null;
+
+            foreach (var syndicationItem in newFeeds)
             {
                 try
                 {
@@ -284,6 +291,7 @@ namespace GoodNewsAggregator.Services.Implementation
             }
 
             return news;
+            
         }
 
         public static string GetPureShortNewsFromRssSource(string shortNews)

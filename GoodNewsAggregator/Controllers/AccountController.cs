@@ -159,7 +159,7 @@ namespace GoodNewsAggregator.Controllers
 
         public IActionResult UserInfo()
         {
-            return HttpContext.User.Identity.IsAuthenticated ? View("_Logout") : View("_Login");
+            return HttpContext.User.Identity is { IsAuthenticated: true } ? View("_Logout") : View("_Login");
         }
     }
 }

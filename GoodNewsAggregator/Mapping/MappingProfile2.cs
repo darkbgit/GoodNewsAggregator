@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodNewsAggregator.Models.ViewModels.Comments;
 
 namespace GoodNewsAggregator.Mapping
 {
@@ -44,7 +45,7 @@ namespace GoodNewsAggregator.Mapping
 
             CreateMap<NewsWithRssNameDto, NewsWithCommentsViewModel>();
 
-
+            CreateMap<CommentDto, OneCommentViewModel>();
 
 
         }

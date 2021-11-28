@@ -25,6 +25,8 @@ namespace GoodNewsAggregator.Services.Implementation.Mapping
             CreateMap<Comment, CommentDto>();
             CreateMap<CommentDto, Comment>();
 
+            
+
             CreateMap<News, NewsWithRssNameDto>();
 
             CreateMap<AddNewsCommand, News>();

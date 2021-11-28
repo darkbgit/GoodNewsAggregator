@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using GoodNewsAggregator.Core.DTOs;
 using GoodNewsAggregator.Core.Services.Interfaces;
 using GoodNewsAggregator.DAL.Core.Entities;
@@ -16,30 +17,38 @@ namespace GoodNewsAggregator.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
         public CommentsController(ICommentService commentService,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            IMapper mapper)
         {
             _commentService = commentService;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
-        public async Task<IActionResult> List(Guid newsId)
+        public async Task<IActionResult> ListAsync(Guid newsId)
         {
             var comments = await _commentService.GetByNewsId(newsId);
 
-            if (comments != null)
-            {
-                comments.ToList().ForEach(c => 
+            if (comments == null) return default;
+
+            var commentModels = comments
+                .Select(async c =>  new OneCommentViewModel
                 {
-                    c.UserName =
-                       _userManager.FindByIdAsync(c.UserId.ToString()).Result.UserName;
-                });
-            }
+                    Id = c.Id,
+                    PublicationDate = c.PublicationDate,
+                    Text = c.Text,
+                    UserName = (await _userManager.FindByIdAsync(c.UserId.ToString())).UserName
+                })
+                .ToList();
+
+            var cm = await Task.WhenAll(commentModels);
 
             var commentListViewModel = new CommentsListViewModel()
             {
-                Comments = comments,
+                Comments = cm.ToList(),
                 NewsId = newsId
             };
             return View(commentListViewModel);
@@ -47,11 +56,10 @@ namespace GoodNewsAggregator.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]CreateCommentViewModel model)
+        public async Task<IActionResult> CreateAsync([FromBody]CreateCommentViewModel model)
         {
             if (ModelState.IsValid)
             {
-
                 var user = await _userManager.GetUserAsync(HttpContext.User);
 
                 var commentDto = new CommentDto()
@@ -61,17 +69,15 @@ namespace GoodNewsAggregator.Controllers
                     Text = model.CommentText,
                     PublicationDate = DateTime.Now.ToUniversalTime(),
                     UserId = user.Id,
-                    UserName = user.UserName
                 };
 
                 await _commentService.Add(commentDto);
             }
-
             return Ok();
         }
 
         [HttpPost]
-        public async Task<int> GetTotalComments(Guid newsId)
+        public async Task<int> GetTotalCommentsAsync(Guid newsId)
         {
             return await _commentService.GetNumberOfCommentsByNewsId(newsId);
         }

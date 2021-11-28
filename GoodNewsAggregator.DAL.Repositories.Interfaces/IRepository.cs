@@ -15,8 +15,8 @@ namespace GoodNewsAggregator.DAL.Repositories.Interfaces
 
         Task<T> Get(Guid id);
         IQueryable<T> GetAll();
-        
-        Task Add (T entity);
+
+        Task Add(T entity);
         Task AddRange(IEnumerable<T> entities);
 
         void Update(T entity);

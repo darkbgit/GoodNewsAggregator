@@ -10,6 +10,6 @@ namespace GoodNewsAggregator.Models.ViewModels.Comments
     {
         public Guid NewsId { get; set; }
 
-        public IEnumerable<CommentDto> Comments { get; set; }
+        public IEnumerable<OneCommentViewModel> Comments { get; set; }
     }
 }
